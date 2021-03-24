@@ -45,11 +45,25 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Player player = new Player(newPlayerRequest.getName(), "RED", newPlayerRequest.getPhone());
+        Player player = new Player();
 
-//        player.setName(newPlayerRequest.getName());
-//        player.setColor("RED");
-//        player.setPhone(newPlayerRequest.getPhone());
+        // setName
+        if (true) {
+            player.setName(newPlayerRequest.getName());
+        }
+
+        // setColor
+        player.setColor("RED");
+
+        // setPhone
+        if (newPlayerRequest.getPhone().equals("true")) {
+            player.setPhone(true);
+        } else if (newPlayerRequest.getPhone().equals("false")) {
+            player.setPhone(false);
+        } else {
+            errorResponse.addError("newPlayerRequest.phone", newPlayerRequest.getPhone() + "must be  true/false" );
+            return ResponseEntity.status(400).body(errorResponse);
+        }
 
         playerRepository.save(player);
 
@@ -57,9 +71,8 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
 
-
     private PlayerResponse createResponseObject (Player player) {
-        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor());
+        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone());
 
         return playerResponse;
     }
