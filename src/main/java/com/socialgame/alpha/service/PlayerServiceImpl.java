@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.EColors;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
@@ -46,7 +47,7 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public ResponseEntity<?> togglePlayerColor(Long id) {
+    public ResponseEntity<?> togglePlayerColor(Long id)  {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
@@ -63,7 +64,6 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
 
-
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -77,7 +77,7 @@ public class PlayerServiceImpl implements PlayerService{
         // if (!name already exists in game)
 
         // setColor
-        player.setColor("RED");
+        player.setColor(EColors.newPlayerColor(2));
 
         // setPhone
         if (newPlayerRequest.getPhone().equals("true")) {
@@ -93,10 +93,6 @@ public class PlayerServiceImpl implements PlayerService{
 
         return ResponseEntity.ok(createResponseObject(player));
     }
-
-
-
-
 
 
     private PlayerResponse createResponseObject (Player player) {

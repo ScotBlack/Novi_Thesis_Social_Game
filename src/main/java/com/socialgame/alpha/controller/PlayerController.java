@@ -1,6 +1,7 @@
 package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/test")
@@ -38,7 +36,9 @@ public class PlayerController {
     }
 
     @GetMapping (path="/player/toggle/{id}")
-    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id) { return playerService.togglePlayerColor(id);}
+    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
+        return playerService.togglePlayerColor(id);
+    }
 
     @PostMapping(path ="/newplayer")
     public ResponseEntity<?> newPlayer(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {

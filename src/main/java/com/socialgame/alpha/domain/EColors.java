@@ -38,7 +38,7 @@ public enum EColors {
     }
 
 
-    public void newPlayerColor(int lobbySize) {
-
+    public static String newPlayerColor(int playerSize) {
+        return colors()[playerSize];
     }
 }

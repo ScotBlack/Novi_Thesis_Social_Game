@@ -1,6 +1,8 @@
 package com.socialgame.alpha.config;
 
+import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -10,17 +12,20 @@ import org.springframework.context.annotation.Configuration;
 public class PlayerConfig {
 
     @Bean
-    CommandLineRunner commandLineRunner(PlayerRepository playerRepository) {
+    CommandLineRunner commandLineRunner(PlayerRepository playerRepository, GameRepository gameRepository) {
         return args -> {
-            Player ian = new Player ("Ian", "RED", true);
-            Player afi = new Player ("Afi", "BLUE", true);
-            Player ben = new Player("Ben", "GREEN", true);
 
+            Game testGame = new Game("FFA");
+
+            Player ian = new Player ("Ian", "RED", true, testGame);
+            Player afi = new Player ("Afi", "BLUE", true, testGame);
+            Player ben = new Player("Ben", "GREEN", true, testGame);
+
+
+            gameRepository.save(testGame);
             playerRepository.save(ian);
             playerRepository.save(afi);
             playerRepository.save(ben);
         };
     }
-
-
 }

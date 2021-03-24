@@ -11,12 +11,25 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
     private String gameType;
-
 
     @OneToMany
     private Set<Player> players;
 
+    public Game() {
+    }
 
+    public Game(String gameType) {
+        this.gameType = gameType;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getGameType() { return gameType; }
+    public void setGameType(String gameType) { this.gameType = gameType; }
+
+    public Set<Player> getPlayers() { return players; }
+    public void setPlayers(Set<Player> players) { this.players = players; }
 }
+
