@@ -1,6 +1,7 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -38,6 +39,20 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         Player player = optionalPlayer.get();
+        return ResponseEntity.ok(createResponseObject(player));
+    }
+
+    @Override
+    public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Player player = new Player(newPlayerRequest.getName(), "RED", newPlayerRequest.getPhone());
+
+//        player.setName(newPlayerRequest.getName());
+//        player.setColor("RED");
+//        player.setPhone(newPlayerRequest.getPhone());
+
+        playerRepository.save(player);
+
         return ResponseEntity.ok(createResponseObject(player));
     }
 

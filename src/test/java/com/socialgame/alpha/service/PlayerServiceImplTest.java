@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,11 @@ public class PlayerServiceImplTest {
     @Mock
     private PlayerRepository playerRepository;
 
+
+//    @Before
+//    void setUp() {
+//
+//    }
 
     @Test
     void notExistingId_ShouldReturnError() {

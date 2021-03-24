@@ -12,9 +12,9 @@ public class PlayerConfig {
     @Bean
     CommandLineRunner commandLineRunner(PlayerRepository playerRepository) {
         return args -> {
-            Player ian = new Player ("Ian", "RED");
-            Player afi = new Player ("Afi", "BLUE");
-            Player ben = new Player("Ben", "GREEN");
+            Player ian = new Player ("Ian", "RED", true);
+            Player afi = new Player ("Afi", "BLUE", true);
+            Player ben = new Player("Ben", "GREEN", true);
 
             playerRepository.save(ian);
             playerRepository.save(afi);
