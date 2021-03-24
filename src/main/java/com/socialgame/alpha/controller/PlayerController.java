@@ -18,18 +18,14 @@ import java.util.List;
 @RequestMapping("/test")
 public class PlayerController {
 
-    private PlayerRepository playerRepository;
     private PlayerService playerService;
-
-    @Autowired
-    public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
     @GetMapping (path="/players")
-    public ResponseEntity<?> printAllPlayers () {
-        return playerService.printAllPlayers();
+    public ResponseEntity<?> findAllPlayers () {
+        return playerService.findAllPlayers();
     }
 
     @GetMapping (path="player/{id}")

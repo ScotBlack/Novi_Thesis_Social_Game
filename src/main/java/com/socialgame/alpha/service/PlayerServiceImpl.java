@@ -1,6 +1,7 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public ResponseEntity<?> printAllPlayers() {
+    public ResponseEntity<?> findAllPlayers() {
         List<Player> players = playerRepository.findAll();
 
         return ResponseEntity.ok(players);
@@ -28,15 +29,16 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public ResponseEntity<?> findPlayerByID(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
         if (optionalPlayer.isEmpty()) {
-            return ResponseEntity.status(404).body("lol error");
+            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
         }
 
         Player player = optionalPlayer.get();
         return ResponseEntity.ok(createResponseObject(player));
-
     }
 
 
