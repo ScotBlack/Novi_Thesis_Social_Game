@@ -11,6 +11,7 @@ public class Player {
 
     private String name;
     private String color;
+    private Integer score;
 
 //    private Game game;
 
