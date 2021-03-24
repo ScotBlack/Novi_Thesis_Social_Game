@@ -2,14 +2,14 @@ package com.socialgame.alpha.domain;
 
 public enum EColors {
 
-    COLOR_RED,
-    COLOR_BLUE,
-    COLOR_GREEN,
-    COLOR_YELLOW,
-    COLOR_TEAL,
-    COLOR_PINK,
-    COLOR_ORANGE,
-    COLOR_PURPLE;
+    RED,
+    BLUE,
+    GREEN,
+    YELLOW,
+    TEAL,
+    PINK,
+    ORANGE,
+    PURPLE;
 
     public static String[] colors() {
         EColors[] values = values();
@@ -22,13 +22,23 @@ public enum EColors {
         return colors;
     }
 
-    public void newPlayerColor(int lobbySize) {
+    public static String toggleColor(String color) {
+        String[] colors = colors();
 
+        for (int i = 0; i < colors.length; i++) {
+            if (color.equals(colors[i])) {
+                if (i == 7) {
+                    return colors[0];
+                } else {
+                    return colors[i + 1];
+                }
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
-    public void toggleColor(int lobbySize) {
 
+    public static String newPlayerColor(int playerSize) {
+        return colors()[playerSize];
     }
-
-
 }

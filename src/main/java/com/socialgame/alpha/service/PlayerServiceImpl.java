@@ -1,6 +1,8 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.EColors;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
@@ -28,6 +30,7 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(players);
     }
 
+
     @Override
     public ResponseEntity<?> findPlayerByID(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -42,6 +45,25 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
+
+    @Override
+    public ResponseEntity<?> togglePlayerColor(Long id)  {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Player> optionalPlayer = playerRepository.findById(id);
+
+        if (optionalPlayer.isEmpty()) {
+            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Player player = optionalPlayer.get();
+        player.setColor(EColors.toggleColor(player.getColor()));
+        playerRepository.save(player);
+
+        return ResponseEntity.ok(createResponseObject(player));
+    }
+
+
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -52,8 +74,10 @@ public class PlayerServiceImpl implements PlayerService{
             player.setName(newPlayerRequest.getName());
         }
 
+        // if (!name already exists in game)
+
         // setColor
-        player.setColor("RED");
+        player.setColor(EColors.newPlayerColor(2));
 
         // setPhone
         if (newPlayerRequest.getPhone().equals("true")) {

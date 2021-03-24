@@ -13,17 +13,17 @@ public class Player {
     private String color;
     private Boolean phone;
 
-
-//    private Game game;
-
+    @OneToOne
+    private Game game;
 
     public Player() {
     }
 
-    public Player(String name, String color, Boolean phone) {
+    public Player(String name, String color, Boolean phone, Game game) {
         this.name = name;
         this.color = color;
         this.phone = phone;
+        this.game = game;
     }
 
     public Long getId() { return id; }
