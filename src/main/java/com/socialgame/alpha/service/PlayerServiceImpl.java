@@ -25,9 +25,9 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public ResponseEntity<?> findAllPlayers() {
-        List<Player> players = playerRepository.findAll();
+//        List<Player> players = playerRepository.findAll();
 
-        return ResponseEntity.ok(players);
+        return ResponseEntity.ok(playerRepository.findAll());
     }
 
 
