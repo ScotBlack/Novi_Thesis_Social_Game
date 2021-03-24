@@ -7,5 +7,7 @@ public interface PlayerService {
 
     ResponseEntity<?> findAllPlayers();
     ResponseEntity<?> findPlayerByID(Long id);
+    ResponseEntity<?> togglePlayerColor(Long id);
     ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest);
+
 }
