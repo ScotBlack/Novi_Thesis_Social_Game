@@ -27,7 +27,7 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
-    public ResponseEntity<?> printPlayer(Long id) {
+    public ResponseEntity<?> findPlayerByID(Long id) {
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
         if (optionalPlayer.isEmpty()) {

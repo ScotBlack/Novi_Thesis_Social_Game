@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 public interface PlayerService {
 
     ResponseEntity<?> printAllPlayers();
-    ResponseEntity<?> printPlayer(Long id);
+    ResponseEntity<?> findPlayerByID(Long id);
 }
