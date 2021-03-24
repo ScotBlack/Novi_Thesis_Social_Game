@@ -2,16 +2,21 @@ package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/test")
@@ -37,5 +42,16 @@ public class PlayerController {
         return playerService.newPlayer(newPlayerRequest);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
 
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String errorType = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errorResponse.addError(errorType, errorMessage);});
+
+        return ResponseEntity.status(400).body(errorResponse);
+    }
 }

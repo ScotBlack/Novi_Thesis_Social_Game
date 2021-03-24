@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 
 public class NewPlayerRequest {
 
-//    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Name is required")
     private String name;
 
 //    @NotBlank(message = "PhonePresent is required ")
