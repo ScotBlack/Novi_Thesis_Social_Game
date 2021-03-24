@@ -11,7 +11,8 @@ public class Player {
 
     private String name;
     private String color;
-    private Integer score;
+    private Boolean phone;
+
 
 //    private Game game;
 
@@ -19,9 +20,10 @@ public class Player {
     public Player() {
     }
 
-    public Player(String name, String color) {
+    public Player(String name, String color, Boolean phone) {
         this.name = name;
         this.color = color;
+        this.phone = phone;
     }
 
     public Long getId() { return id; }
@@ -32,4 +34,7 @@ public class Player {
 
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }
+
+    public Boolean getPhone() { return phone; }
+    public void setPhone(Boolean phone) { this.phone = phone; }
 }
