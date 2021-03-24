@@ -47,13 +47,23 @@ public class PlayerServiceImpl implements PlayerService{
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
+        // setName
         if (true) {
             player.setName(newPlayerRequest.getName());
         }
 
-
+        // setColor
         player.setColor("RED");
-        player.setPhone(newPlayerRequest.getPhone());
+
+        // setPhone
+        if (newPlayerRequest.getPhone().equals("true")) {
+            player.setPhone(true);
+        } else if (newPlayerRequest.getPhone().equals("false")) {
+            player.setPhone(false);
+        } else {
+            errorResponse.addError("newPlayerRequest.phone", newPlayerRequest.getPhone() + "must be  true/false" );
+            return ResponseEntity.status(400).body(errorResponse);
+        }
 
         playerRepository.save(player);
 
