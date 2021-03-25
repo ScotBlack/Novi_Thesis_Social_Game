@@ -60,17 +60,24 @@ public class PlayerServiceImpl implements PlayerService{
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-
         Player player = optionalPlayer.get();
-        player.setColor(EColors.toggleColor(player.getColor()));
+        player.setColor(togglePlayerColor(player.getColor()));
         playerRepository.save(player);
 
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-    public void helperMethod(){
+    public String togglePlayerColor(String color) {
+        String[] colors = EColors.colors();
 
+        for (int i = 0; i < colors.length; i++) {
+            if (color.equals(colors[i]) && i < 7) {
+                return colors[i + 1];
+            }
+        }
+        return colors[0];
     }
+
 
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
@@ -102,7 +109,6 @@ public class PlayerServiceImpl implements PlayerService{
         player.setColor(EColors.colors()[newPlayerColor(game)]);
         player.setPhone(newPlayerRequest.getPhone().equals("true"));
         player.setGame(game);
-
         game.addPlayer(player);
 
         playerRepository.save(player);
