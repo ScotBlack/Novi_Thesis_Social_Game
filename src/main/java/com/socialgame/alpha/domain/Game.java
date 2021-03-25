@@ -1,6 +1,7 @@
 package com.socialgame.alpha.domain;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,9 +12,10 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column
     private String gameType;
 
-    @OneToMany
+    @OneToMany (mappedBy="game")
     private Set<Player> players;
 
     public Game() {
@@ -21,6 +23,7 @@ public class Game {
 
     public Game(String gameType) {
         this.gameType = gameType;
+        this.players = new HashSet<Player>();
     }
 
     public Long getId() { return id; }
@@ -31,5 +34,9 @@ public class Game {
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
+
+    public void addPlayer (Player player) {
+        this.players.add(player);
+    }
 }
 

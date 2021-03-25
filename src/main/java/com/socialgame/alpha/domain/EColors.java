@@ -12,13 +12,9 @@ public enum EColors {
     PURPLE;
 
     public static String[] colors() {
-        EColors[] values = values();
-        String[] colors = new String[values.length];
-
-        for (int i = 0; i < values.length; i++) {
-            colors[i] = values[i].name();
-        }
-
+//        EColors[] values = values();
+        String[] colors = new String[values().length];
+        for (int i = 0; i < values().length; i++) { colors[i] = values()[i].name(); }
         return colors;
     }
 
@@ -37,8 +33,4 @@ public enum EColors {
         throw new IllegalArgumentException();
     }
 
-
-    public static String newPlayerColor(int playerSize) {
-        return colors()[playerSize];
-    }
 }

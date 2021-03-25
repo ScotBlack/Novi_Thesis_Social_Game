@@ -1,33 +1,37 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.EColors;
+import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
+import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PlayerServiceImpl implements PlayerService{
 
     private PlayerRepository playerRepository;
+    private GameRepository gameRepository;
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
+
+    @Autowired
+    public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
 
     @Override
     public ResponseEntity<?> findAllPlayers() {
         List<Player> players = playerRepository.findAll();
 
-        return ResponseEntity.ok(players);
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
 
@@ -56,6 +60,7 @@ public class PlayerServiceImpl implements PlayerService{
             return ResponseEntity.status(404).body(errorResponse);
         }
 
+
         Player player = optionalPlayer.get();
         player.setColor(EColors.toggleColor(player.getColor()));
         playerRepository.save(player);
@@ -63,41 +68,76 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
+    public void helperMethod(){
+
+    }
 
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
-        // setName
-        if (true) {
-            player.setName(newPlayerRequest.getName());
+        // check if game exist
+        if (gameRepository.findById(newPlayerRequest.getGameId()).isEmpty()) {
+            errorResponse.addError("404", "Game with ID: " + newPlayerRequest.getGameId() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
         }
 
-        // if (!name already exists in game)
+        Game game = gameRepository.findById(newPlayerRequest.getGameId()).get();
 
-        // setColor
-        player.setColor(EColors.newPlayerColor(2));
+        // check if game has player with same name:
+        if (playerRepository.findPlayerByNameAndGameId(game.getId(), newPlayerRequest.getName()) != null) {
+            errorResponse.addError("409", "Name already exists in game.");
+        }
 
-        // setPhone
-        if (newPlayerRequest.getPhone().equals("true")) {
-            player.setPhone(true);
-        } else if (newPlayerRequest.getPhone().equals("false")) {
-            player.setPhone(false);
-        } else {
-            errorResponse.addError("newPlayerRequest.phone", newPlayerRequest.getPhone() + "must be  true/false" );
+        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
+            errorResponse.addError("406", "Phone must be either true or false");
+        }
+
+        if (errorResponse.getErrors().size() > 0) {
             return ResponseEntity.status(400).body(errorResponse);
         }
 
+        player.setName(newPlayerRequest.getName());
+        player.setColor(EColors.colors()[newPlayerColor(game)]);
+        player.setPhone(newPlayerRequest.getPhone().equals("true"));
+        player.setGame(game);
+
+        game.addPlayer(player);
+
         playerRepository.save(player);
+        gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(player));
     }
 
+    public int newPlayerColor(Game game) {
+        int c = 0;
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            c++;
+            if (c == 8) {
+                c = 0;
+            }
+        }
+        return c;
+    }
 
-    private PlayerResponse createResponseObject (Player player) {
-        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone());
+
+    public PlayerResponse createResponseObject (Player player) {
+        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
 
         return playerResponse;
+    }
+
+
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
+        Set<PlayerResponse> playerResponseList = new HashSet<>();
+
+        for (Player player : players) {
+            PlayerResponse playerResponse = createResponseObject(player);
+            playerResponseList.add(playerResponse);
+        }
+
+        return playerResponseList;
     }
 }

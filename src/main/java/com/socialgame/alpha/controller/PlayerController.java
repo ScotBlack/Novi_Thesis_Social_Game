@@ -25,17 +25,17 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
-    @GetMapping (path="/players")
+    @GetMapping(path="/players")
     public ResponseEntity<?> findAllPlayers () {
         return playerService.findAllPlayers();
     }
 
-    @GetMapping (path="/player/{id}")
+    @GetMapping(path="/player/{id}")
     public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
         return playerService.findPlayerByID(id);
     }
 
-    @GetMapping (path="/player/toggle/{id}")
+    @GetMapping(path="/player/toggle/{id}")
     public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
         return playerService.togglePlayerColor(id);
     }
@@ -44,7 +44,6 @@ public class PlayerController {
     public ResponseEntity<?> newPlayer(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
         return playerService.newPlayer(newPlayerRequest);
     }
-
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
