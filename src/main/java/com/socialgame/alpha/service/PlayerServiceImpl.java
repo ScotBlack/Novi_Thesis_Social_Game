@@ -72,11 +72,26 @@ public class PlayerServiceImpl implements PlayerService{
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        // player
+        if (!gameExists(newPlayerRequest.getGameId())) {
+            errorResponse.addError("404", "Player with ID: " + newPlayerRequest.getGameId() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = gameRepository.findById(newPlayerRequest.getGameId()).get();
         Player player = new Player();
+
+        // check if game has player with same name:
+        if (playerRepository.findPlayerByNameAndGameId(game.getId(), newPlayerRequest.getName()) != null) {
+            errorResponse.addError("409", "Name already exists in game.");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
         player.setName(newPlayerRequest.getName());
+
+
         player.setColor(EColors.newPlayerColor(2));
 
+            // phone
         if (newPlayerRequest.getPhone().equals("true")) {
             player.setPhone(true);
         } else if (newPlayerRequest.getPhone().equals("false")) {
@@ -86,14 +101,9 @@ public class PlayerServiceImpl implements PlayerService{
 
         }
 
-        // game
-        if (!gameExists(newPlayerRequest.getGameId())) {
-            errorResponse.addError("404", "Player with ID: " + newPlayerRequest.getGameId() + " does not exist.");
-        } else {
-            Game game = gameRepository.findById(newPlayerRequest.getGameId()).get();
             player.setGame(game);
             game.addPlayer(player);
-        }
+
 
         playerRepository.save(player);
 
