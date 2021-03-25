@@ -31,5 +31,9 @@ public class Game {
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
+
+    public void addPlayer (Player player) {
+        this.players.add(player);
+    }
 }
 

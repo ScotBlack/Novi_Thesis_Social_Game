@@ -21,11 +21,11 @@ public class PlayerConfig {
             Player afi = new Player ("Afi", "BLUE", true, testGame);
             Player ben = new Player("Ben", "GREEN", true, testGame);
 
-
             gameRepository.save(testGame);
             playerRepository.save(ian);
             playerRepository.save(afi);
             playerRepository.save(ben);
+
         };
     }
 }

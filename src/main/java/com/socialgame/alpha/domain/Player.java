@@ -13,7 +13,7 @@ public class Player {
     private String color;
     private Boolean phone;
 
-    @OneToOne
+    @ManyToOne
     private Game game;
 
     public Player() {
@@ -37,4 +37,7 @@ public class Player {
 
     public Boolean getPhone() { return phone; }
     public void setPhone(Boolean phone) { this.phone = phone; }
+
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
 }
