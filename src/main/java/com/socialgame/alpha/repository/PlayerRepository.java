@@ -12,8 +12,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
     Player findPlayerByNameAndGameId(@Param("gameId") Long gameId,
-                                        @Param("name") String name);
+                                     @Param("name") String name);
 
 
-    // and p.name = :name"  @Param("name") String name);
+
 }

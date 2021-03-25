@@ -60,6 +60,7 @@ public class PlayerServiceImpl implements PlayerService{
             return ResponseEntity.status(404).body(errorResponse);
         }
 
+
         Player player = optionalPlayer.get();
         player.setColor(EColors.toggleColor(player.getColor()));
         playerRepository.save(player);
@@ -67,26 +68,33 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
+    public void helperMethod(){
+
+    }
 
     @Override
     public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
+        Player player = new Player();
 
-        if (!gameExists(newPlayerRequest.getGameId())) {
-            errorResponse.addError("404", "Player with ID: " + newPlayerRequest.getGameId() + " does not exist.");
+        // check if game exist
+        if (gameRepository.findById(newPlayerRequest.getGameId()).isEmpty()) {
+
+            errorResponse.addError("404", "Game with ID: " + newPlayerRequest.getGameId() + " does not exist.");
+
             return ResponseEntity.status(404).body(errorResponse);
         }
 
         Game game = gameRepository.findById(newPlayerRequest.getGameId()).get();
-        Player player = new Player();
 
         // check if game has player with same name:
         if (playerRepository.findPlayerByNameAndGameId(game.getId(), newPlayerRequest.getName()) != null) {
             errorResponse.addError("409", "Name already exists in game.");
-            return ResponseEntity.status(400).body(errorResponse);
+//            return ResponseEntity.status(400).body(errorResponse);
         }
 
         player.setName(newPlayerRequest.getName());
+
 
 
         player.setColor(EColors.newPlayerColor(2));
@@ -108,16 +116,6 @@ public class PlayerServiceImpl implements PlayerService{
         playerRepository.save(player);
 
         return ResponseEntity.ok(createResponseObject(player));
-    }
-
-
-    public boolean gameExists (Long gameId) {
-        Optional<Game> optionalGame = gameRepository.findById(gameId);
-
-        if (optionalGame.isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
 
