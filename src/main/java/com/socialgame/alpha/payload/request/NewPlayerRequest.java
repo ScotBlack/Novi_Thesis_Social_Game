@@ -8,8 +8,8 @@ public class NewPlayerRequest {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @NotNull
-    @Pattern(regexp = "^true$|^false$", message = "allowed input: true or false")
+    @NotBlank
+//    @Pattern(regexp = "^true$|^false$", message = "allowed input: true or false")
     private String phone;
 
     @NotNull
@@ -19,7 +19,7 @@ public class NewPlayerRequest {
     public void setName(String name) { this.name = name; }
 
     public String getPhone() { return phone; }
-    public void setPhone(String phonePresent) { this.phone = phonePresent; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public Long getGameId() { return gameId; }
     public void setGameId(Long gameId) { this.gameId = gameId; }

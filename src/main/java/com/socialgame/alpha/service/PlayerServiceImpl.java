@@ -79,9 +79,7 @@ public class PlayerServiceImpl implements PlayerService{
 
         // check if game exist
         if (gameRepository.findById(newPlayerRequest.getGameId()).isEmpty()) {
-
             errorResponse.addError("404", "Game with ID: " + newPlayerRequest.getGameId() + " does not exist.");
-
             return ResponseEntity.status(404).body(errorResponse);
         }
 
@@ -90,32 +88,38 @@ public class PlayerServiceImpl implements PlayerService{
         // check if game has player with same name:
         if (playerRepository.findPlayerByNameAndGameId(game.getId(), newPlayerRequest.getName()) != null) {
             errorResponse.addError("409", "Name already exists in game.");
-//            return ResponseEntity.status(400).body(errorResponse);
+        }
+
+        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
+            errorResponse.addError("406", "Phone must be either true or false");
+        }
+
+        if (errorResponse.getErrors().size() > 0) {
+            return ResponseEntity.status(400).body(errorResponse);
         }
 
         player.setName(newPlayerRequest.getName());
+        player.setColor(EColors.colors()[newPlayerColor(game)]);
+        player.setPhone(newPlayerRequest.getPhone().equals("true"));
+        player.setGame(game);
 
-
-
-        player.setColor(EColors.newPlayerColor(2));
-
-            // phone
-        if (newPlayerRequest.getPhone().equals("true")) {
-            player.setPhone(true);
-        } else if (newPlayerRequest.getPhone().equals("false")) {
-            player.setPhone(false);
-        } else {
-            errorResponse.addError("newPlayerRequest.phone", newPlayerRequest.getPhone() + "must be  true/false" );
-
-        }
-
-            player.setGame(game);
-            game.addPlayer(player);
-
+        game.addPlayer(player);
 
         playerRepository.save(player);
+        gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(player));
+    }
+
+    public int newPlayerColor(Game game) {
+        int c = 0;
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            c++;
+            if (c == 8) {
+                c = 0;
+            }
+        }
+        return c;
     }
 
 
