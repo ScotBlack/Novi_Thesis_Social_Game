@@ -3,17 +3,22 @@ package com.socialgame.alpha.domain;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "player")
 public class Player {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column
     private String name;
+    @Column
     private String color;
+    @Column
     private Boolean phone;
 
     @ManyToOne
+    @JoinColumn(name="game_id")
     private Game game;
 
     public Player() {

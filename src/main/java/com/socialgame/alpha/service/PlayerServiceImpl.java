@@ -3,19 +3,16 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.EColors;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PlayerServiceImpl implements PlayerService{
@@ -32,9 +29,9 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public ResponseEntity<?> findAllPlayers() {
-//        List<Player> players = playerRepository.findAll();
+        List<Player> players = playerRepository.findAll();
 
-        return ResponseEntity.ok(playerRepository.findAll());
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
 
@@ -98,8 +95,6 @@ public class PlayerServiceImpl implements PlayerService{
             game.addPlayer(player);
         }
 
-
-
         playerRepository.save(player);
 
         return ResponseEntity.ok(createResponseObject(player));
@@ -116,9 +111,21 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
 
-    private PlayerResponse createResponseObject (Player player) {
+    public PlayerResponse createResponseObject (Player player) {
         PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
 
         return playerResponse;
+    }
+
+
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
+        Set<PlayerResponse> playerResponseList = new HashSet<>();
+
+        for (Player player : players) {
+            PlayerResponse playerResponse = createResponseObject(player);
+            playerResponseList.add(playerResponse);
+        }
+
+        return playerResponseList;
     }
 }
