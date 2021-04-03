@@ -18,15 +18,15 @@ public class PlayerConfig {
             Game testGame = new Game("FFA");
             Game testGame2 = new Game("Teams");
 
-//            Player ian = new Player ("Ian", "RED", true, testGame);
-//            Player afi = new Player ("Afi", "BLUE", true, testGame);
-//            Player ben = new Player("Ben", "GREEN", true, testGame);
+            Player ian = new Player ("Ian", "RED", true, testGame);
+            Player afi = new Player ("Afi", "BLUE", true, testGame);
+            Player ben = new Player("Ben", "GREEN", true, testGame);
 
             gameRepository.save(testGame);
             gameRepository.save(testGame2);
-//            playerRepository.save(ian);
-//            playerRepository.save(afi);
-//            playerRepository.save(ben);
+            playerRepository.save(ian);
+            playerRepository.save(afi);
+            playerRepository.save(ben);
 
         };
     }
