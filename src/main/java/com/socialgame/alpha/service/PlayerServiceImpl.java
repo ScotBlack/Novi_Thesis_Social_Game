@@ -63,6 +63,7 @@ public class PlayerServiceImpl implements PlayerService{
         Player player = optionalPlayer.get();
         player.setColor(togglePlayerColor(player.getColor()));
         playerRepository.save(player);
+//        List<Player> players = playerRepository.findAll();
 
         return ResponseEntity.ok(createResponseObject(player));
     }
