@@ -5,6 +5,7 @@ import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
+import com.socialgame.alpha.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,13 @@ public class GameServiceImpl implements GameService {
 
 
     private GameRepository gameRepository;
+    private PlayerRepository playerRepository;
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
+
+    @Autowired
+    public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
     @Override
     public ResponseEntity<?> findAllGames() {
@@ -29,7 +34,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public ResponseEntity<?> findAllPlayersInGame(Long id) {
+    public ResponseEntity<?> findPlayersByGameId(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Game> optionalGame = gameRepository.findById(id);
 
@@ -38,9 +43,7 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Game game = optionalGame.get();
-        Set<Player> players = game.getPlayers();
-        createResponseObject(players);
+        List<Player> players = playerRepository.findPlayersByGameId(id);
 
         return ResponseEntity.ok(createResponseObject(players));
     }
@@ -53,7 +56,7 @@ public class GameServiceImpl implements GameService {
     }
 
 
-    public Set<PlayerResponse> createResponseObject (Set<Player> players) {
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
         Set<PlayerResponse> playerResponseList = new HashSet<>();
 
         for (Player player : players) {
