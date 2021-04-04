@@ -48,6 +48,12 @@ public class GameServiceImpl implements GameService {
         return ResponseEntity.ok(createResponseObject(players));
     }
 
+    @Override
+    public ResponseEntity<?> verifyPlayers(Long id) {
+        return ResponseEntity.ok(createResponseObject());
+    }
+
+
 
     public PlayerResponse createResponseObject (Player player) {
         PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
