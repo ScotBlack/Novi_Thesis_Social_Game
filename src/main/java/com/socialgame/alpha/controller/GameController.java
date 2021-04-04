@@ -27,9 +27,9 @@ public class GameController {
         return gameService.findPlayersByGameId(id);
     }
 
-    @GetMapping(path="game/{id}/verify")
-    public ResponseEntity<?> verifyPlayers(@PathVariable("id")Long id) {
-        return gameService.verifyPlayers(id);
+    @GetMapping(path="/game/{id}/lobbyHeader")
+    public ResponseEntity<?> lobbyHeader(@PathVariable("id")Long id) {
+        return gameService.lobbyHeader(id);
     }
 
 

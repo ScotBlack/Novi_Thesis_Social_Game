@@ -6,5 +6,5 @@ public interface GameService {
 
     public ResponseEntity<?> findAllGames();
     public ResponseEntity<?> findPlayersByGameId(Long id);
-    public ResponseEntity<?> verifyPlayers(Long id);
+    public ResponseEntity<?> lobbyHeader(Long id);
 }
