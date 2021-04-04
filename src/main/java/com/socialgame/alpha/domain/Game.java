@@ -15,6 +15,9 @@ public class Game {
     @Column
     private String gameType;
 
+    @Column
+    private int points;
+
     @OneToMany (mappedBy="game")
     private Set<Player> players;
 
@@ -23,6 +26,7 @@ public class Game {
 
     public Game(String gameType) {
         this.gameType = gameType;
+        this.points = 100;
         this.players = new HashSet<Player>();
     }
 
@@ -31,6 +35,9 @@ public class Game {
 
     public String getGameType() { return gameType; }
     public void setGameType(String gameType) { this.gameType = gameType; }
+
+    public int getPoints() { return points; }
+    public void setPoints(int points) { this.points = points; }
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
