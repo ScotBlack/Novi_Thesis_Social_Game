@@ -1,5 +1,6 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.EColors;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.response.ErrorResponse;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class GameServiceImpl implements GameService {
@@ -60,10 +58,71 @@ public class GameServiceImpl implements GameService {
         }
 
         Game game = optionalGame.get();
+        List<Player> players = playerRepository.findPlayersByGameId(id);
+
+        // make list of players & phones per color
+        List<Integer> teamsList = new ArrayList<>();
+        String[] colors = EColors.colors();
+
+        for (String c : colors) {
+            int playerNum = 0;
+            int phoneNum = 0;
+
+            for (Player p : players) {
+                if (p.getColor().equals(c)) {
+                    playerNum++;
+                    if (p.getPhone()) {
+                        phoneNum++;
+                    }
+                }
+            }
+            if (playerNum == 1 && phoneNum == 0) { // 1 player / 0 phone = classic
+                teamsList.add(0);
+            } else if (playerNum == 1 && phoneNum == 1) { // 1 player / 1 phone = ffa
+                teamsList.add(1);
+            } else if (playerNum > 1 && phoneNum > 0) { // 2+ players / 1+ phones = team
+                teamsList.add(2);
+            } else if (playerNum > 1 && phoneNum == 0) { // 2+ players / 0 phones = team (without phone)
+                teamsList.add(3);
+            }
+        }
+        boolean canStart = false;
+        String status = null;
+
+        if (game.getGameType().equals("classic")) {
+            if (teamsList.contains(2) || teamsList.contains(3)) {
+                canStart = false;
+                status = "Every player needs it's own color";
+            } else {
+                canStart = true;
+                status = "Classic game can be started";
+            }
+        } else if (game.getGameType().equals("ffa")) {
+            if (teamsList.contains(0)) {
+                canStart = false;
+                status = "Every players need it's own phone";
+            } else if (teamsList.contains(2) || teamsList.contains(3)) {
+                canStart = false;
+                status = "Every players need it's own color";
+            } else {
+                canStart = true;
+                status = "FFA game can be started";
+            }
+        } else if (game.getGameType().equals("teams")) {
+            if (teamsList.contains(0) || teamsList.contains(1)) {
+                canStart = false;
+                status = "Every team needs at least 2 players ";
+            } else if (teamsList.contains(3)) {
+                canStart = false;
+                status = "Every team needs at least 1 player with phone ";
+            } else {
+                canStart = true;
+                status = "Team game can be started";
+            }
+        }
 
 
-
-        return ResponseEntity.ok(createResponseObject(id, true, "Every teams needs at least 1 player with phone", game));
+        return ResponseEntity.ok(createResponseObject(id, canStart, status, game));
     }
 
 
