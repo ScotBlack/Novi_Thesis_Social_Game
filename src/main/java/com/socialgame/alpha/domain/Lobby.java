@@ -14,6 +14,9 @@ public class Lobby {
     private Long id;
 
     @Column
+    private Long gameId;
+
+    @Column
     @Value("ffa")
     private String gameType;
     @Column
@@ -33,8 +36,13 @@ public class Lobby {
     public Lobby() {
     }
 
-    public Lobby(Player player) {
-        this.players = new HashSet<Player>();
+    public Lobby(Player player, Long gameId) {
+        this.gameId = gameId;
+        this.gameType = "FFA";
+        this.points = 100;
+        this.status = "Need more players.";
+        this.canStart = false;
+        this.players = new HashSet<>();
         this.players.add(player);
     }
 
@@ -44,6 +52,14 @@ public class Lobby {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(Long gameId) {
+        this.gameId = gameId;
     }
 
     public String getGameType() {
