@@ -23,6 +23,10 @@ public class Player {
     @JoinColumn(name="game_id")
     private Game game;
 
+    @ManyToOne
+    @JoinColumn(name="team_id")
+    private Team team;
+
     public Player() {
     }
 
