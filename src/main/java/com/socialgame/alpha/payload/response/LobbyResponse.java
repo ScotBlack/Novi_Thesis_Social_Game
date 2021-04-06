@@ -1,19 +1,24 @@
 package com.socialgame.alpha.payload.response;
 
-public class LobbyHeaderResponse {
+public class LobbyResponse {
+    private Long id;
     private Long gameId;
     private Boolean canStart;
     private String status;
     private String gameType;
     private int points;
 
-    public LobbyHeaderResponse(Long gameId, Boolean canStart, String status, String gameType, int points) {
+    public LobbyResponse(Long id, Long gameId, Boolean canStart, String status, String gameType, int points) {
+        this.id = id;
         this.gameId = gameId;
         this.canStart = canStart;
         this.status = status;
         this.gameType = gameType;
         this.points = points;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public Long getGameId() { return gameId; }
     public void setGameId(Long gameId) { this.gameId = gameId; }

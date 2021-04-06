@@ -6,7 +6,7 @@ import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
-import com.socialgame.alpha.payload.response.LobbyHeaderResponse;
+import com.socialgame.alpha.payload.response.LobbyResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
@@ -207,7 +207,6 @@ public class GameServiceImpl implements GameService {
         }
 
         game.setTeams(teams);
-
         gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(players));
@@ -215,27 +214,27 @@ public class GameServiceImpl implements GameService {
 
 
     public PlayerResponse createResponseObject (Player player) {
-//        long teamId = -1;
-//        if (player.getTeam()!= null) {
-//            teamId = player.getTeam().getId();
-//        }
+        long teamId = -1;
+        if (player.getTeam()!= null) {
+            teamId = player.getTeam().getId();
+        }
         PlayerResponse playerResponse =
                 new PlayerResponse (
                         player.getId(),
                         player.getName(),
                         player.getColor(),
                         player.getPhone(),
-                        player.getGame().getId()
-//                        teamId
+                        player.getGame().getId(),
+                        teamId
                 );
 
         return playerResponse;
     }
 
-    public LobbyHeaderResponse createResponseObject (Long gameId, Boolean canStart, String status, Game game) {
-        LobbyHeaderResponse lobbyHeaderResponse = new LobbyHeaderResponse(gameId, canStart, status, game.getGameType(), game.getPoints());
+    public LobbyResponse createResponseObject (Long gameId, Boolean canStart, String status, Game game) {
+        LobbyResponse lobbyResponse = new LobbyResponse(gameId, gameId, canStart, status, game.getGameType(), game.getPoints()); // bugged due to Lobby Id
 
-        return lobbyHeaderResponse;
+        return lobbyResponse;
     }
 
 

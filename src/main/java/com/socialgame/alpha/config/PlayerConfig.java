@@ -15,18 +15,18 @@ public class PlayerConfig {
     CommandLineRunner commandLineRunner(PlayerRepository playerRepository, GameRepository gameRepository) {
         return args -> {
 
-            Game testGame = new Game("teams");
-            Game testGame2 = new Game("teams");
-
-            Player ian = new Player ("Ian", "RED", true, testGame);
-            Player afi = new Player ("Afi", "BLUE", true, testGame);
-            Player ben = new Player("Ben", "GREEN", true, testGame);
-
-            gameRepository.save(testGame);
-            gameRepository.save(testGame2);
-            playerRepository.save(ian);
-            playerRepository.save(afi);
-            playerRepository.save(ben);
+//            Game testGame = new Game("teams");
+//            Game testGame2 = new Game("teams");
+//
+//            Player ian = new Player ("Ian", "RED", true, testGame);
+//            Player afi = new Player ("Afi", "BLUE", true, testGame);
+//            Player ben = new Player("Ben", "GREEN", true, testGame);
+//
+//            gameRepository.save(testGame);
+//            gameRepository.save(testGame2);
+//            playerRepository.save(ian);
+//            playerRepository.save(afi);
+//            playerRepository.save(ben);
 
         };
     }
