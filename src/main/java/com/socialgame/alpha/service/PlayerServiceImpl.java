@@ -131,7 +131,19 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     public PlayerResponse createResponseObject (Player player) {
-        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
+//        long teamId = -1;
+//        if (player.getTeam()!= null) {
+//            teamId = player.getTeam().getId();
+//        }
+        PlayerResponse playerResponse =
+                new PlayerResponse (
+                        player.getId(),
+                        player.getName(),
+                        player.getColor(),
+                        player.getPhone(),
+                        player.getGame().getId()
+//                        teamId
+                        );
 
         return playerResponse;
     }

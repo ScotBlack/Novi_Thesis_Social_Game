@@ -3,11 +3,13 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.EColors;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.payload.response.LobbyHeaderResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
+import com.socialgame.alpha.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,16 @@ public class GameServiceImpl implements GameService {
 
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private TeamRepository teamRepository;
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
+
+    @Autowired
+    public void setTeamRepository(TeamRepository teamRepository) { this.teamRepository = teamRepository;}
 
     @Override
     public ResponseEntity<?> findAllGames() {
@@ -88,8 +94,10 @@ public class GameServiceImpl implements GameService {
         }
         boolean canStart = false;
         String status = null;
-
-        if (game.getGameType().equals("classic")) {
+        if (teamsList.size() == 1) {
+            canStart = false;
+            status = "Need at least 2 teams or players";
+        } else if (game.getGameType().equals("classic")) {
             if (teamsList.contains(2) || teamsList.contains(3)) {
                 canStart = false;
                 status = "Every player needs it's own color";
@@ -121,14 +129,105 @@ public class GameServiceImpl implements GameService {
             }
         }
 
+        game.setCanStart(canStart);
+        gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(id, canStart, status, game));
     }
 
+    @Override
+    public ResponseEntity<?> setGameType(Long id, String gameType) {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        if (!gameType.equals("classic") && !gameType.equals("ffa") && !gameType.equals("teams")) {
+            errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+        game.setGameType(gameType);
+        gameRepository.save(game);
+
+        return lobbyHeader(id);
+    }
+
+    @Override
+    public ResponseEntity<?> start(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+
+        if (!game.getCanStart()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " cannot be started right now.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByGameId(id);
+        String[] colors = EColors.colors();
+        Set<Team> teams = new HashSet<>();
+
+
+        // create Set of Players for every color/team
+        for (String c : colors) {
+            Set<Player> teamPlayers = new HashSet<>();
+
+//            loop:
+            for (Player p : players) {
+                if (teamPlayers.isEmpty() && p.getColor().equals(c) && p.getPhone()) {
+                    teamPlayers.add(p);
+//                    break;
+                }
+            }
+            for (Player p : players) {
+                if (p.getColor().equals(c) && !teamPlayers.contains(p)) {
+                    teamPlayers.add(p);
+                }
+            }
+
+            if (!teamPlayers.isEmpty()) {
+                teams.add(new Team(c, teamPlayers, game));
+            }
+        }
+
+        for (Team t : teams) {
+            teamRepository.save(t);
+        }
+
+        game.setTeams(teams);
+
+        gameRepository.save(game);
+
+        return ResponseEntity.ok(createResponseObject(players));
+    }
 
 
     public PlayerResponse createResponseObject (Player player) {
-        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
+//        long teamId = -1;
+//        if (player.getTeam()!= null) {
+//            teamId = player.getTeam().getId();
+//        }
+        PlayerResponse playerResponse =
+                new PlayerResponse (
+                        player.getId(),
+                        player.getName(),
+                        player.getColor(),
+                        player.getPhone(),
+                        player.getGame().getId()
+//                        teamId
+                );
 
         return playerResponse;
     }
@@ -138,6 +237,7 @@ public class GameServiceImpl implements GameService {
 
         return lobbyHeaderResponse;
     }
+
 
     public Set<PlayerResponse> createResponseObject (List<Player> players) {
         Set<PlayerResponse> playerResponseList = new HashSet<>();

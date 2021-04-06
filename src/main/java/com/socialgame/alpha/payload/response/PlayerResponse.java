@@ -9,6 +9,7 @@ public class PlayerResponse {
     private String color;
     private Boolean phone;
     private Long gameId;
+    private Long teamId;
 
 
     public PlayerResponse(Long id, String name, String color, Boolean phone, Long gameId) {
@@ -17,6 +18,7 @@ public class PlayerResponse {
         this.color = color;
         this.phone = phone;
         this.gameId = gameId;
+//        this.teamId = teamId;
     }
 
     public Long getId() { return id; }
@@ -31,7 +33,10 @@ public class PlayerResponse {
     public Boolean getPhone() { return phone; }
     public void setPhone(Boolean phone) { this.phone = phone; }
 
-    public Long getGame() { return gameId; }
-    public void setGame(Long gameId) { this.gameId = gameId; }
+    public Long getGameId() { return gameId; }
+    public void setGameId(Long gameId) { this.gameId = gameId; }
+
+//    public Long getTeamId() { return teamId; }
+//    public void setTeamId(Long teamId) { this.teamId = teamId; }
 }
 
