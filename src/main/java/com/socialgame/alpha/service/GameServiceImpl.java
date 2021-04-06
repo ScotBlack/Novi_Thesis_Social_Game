@@ -133,7 +133,16 @@ public class GameServiceImpl implements GameService {
         return ResponseEntity.ok(createResponseObject(id, canStart, status, game));
     }
 
-    public ResponseEntity<?> createTeams(Long id) {
+    @Override
+    public ResponseEntity<?> setGameType(Long id, String gameType) {
+
+
+
+        return ResponseEntity.ok(createResponseObject(players));
+    }
+
+    @Override
+    public ResponseEntity<?> start(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Game> optionalGame = gameRepository.findById(id);
 
@@ -154,6 +163,7 @@ public class GameServiceImpl implements GameService {
         Set<Team> teams = new HashSet<>();
 
 
+        // create Set of Players for every color/team
         for (String c : colors) {
             Set<Player> teamPlayers = new HashSet<>();
 
@@ -175,14 +185,32 @@ public class GameServiceImpl implements GameService {
             }
         }
 
-        // save teams (TEAMREPO)
-        // set teams (game)
-        // save game (gamerepo)
+        for (Team t : teams) {
+            teamRepository.save(t);
+        }
+
+        game.setTeams(teams);
+
+        gameRepository.save(game);
+
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
 
     public PlayerResponse createResponseObject (Player player) {
-        PlayerResponse playerResponse = new PlayerResponse (player.getId(), player.getName(), player.getColor(), player.getPhone(), player.getGame().getId());
+//        long teamId = -1;
+//        if (player.getTeam()!= null) {
+//            teamId = player.getTeam().getId();
+//        }
+        PlayerResponse playerResponse =
+                new PlayerResponse (
+                        player.getId(),
+                        player.getName(),
+                        player.getColor(),
+                        player.getPhone(),
+                        player.getGame().getId()
+//                        teamId
+                );
 
         return playerResponse;
     }

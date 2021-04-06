@@ -55,4 +55,7 @@ public class Player {
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
+
+    public Team getTeam() { return team; }
+    public void setTeam(Team team) { this.team = team; }
 }

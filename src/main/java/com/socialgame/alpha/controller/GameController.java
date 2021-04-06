@@ -32,5 +32,16 @@ public class GameController {
         return gameService.lobbyHeader(id);
     }
 
+    @GetMapping("/game/{id}/{gameType}")
+    public ResponseEntity<?> setGameType(@PathVariable("id")Long id,
+                                         @PathVariable("gameType")String gameType) {
+        return gameService.setGameType(id, gameType);
+    }
+
+    @GetMapping ("game/{id}/start")
+    public ResponseEntity<?> start (@PathVariable("id")Long id) {
+        return gameService.start(id);
+    }
+
 
 }
