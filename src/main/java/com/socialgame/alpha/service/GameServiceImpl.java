@@ -94,8 +94,10 @@ public class GameServiceImpl implements GameService {
         }
         boolean canStart = false;
         String status = null;
-
-        if (game.getGameType().equals("classic")) {
+        if (teamsList.size() == 1) {
+            canStart = false;
+            status = "Need at least 2 teams or players";
+        } else if (game.getGameType().equals("classic")) {
             if (teamsList.contains(2) || teamsList.contains(3)) {
                 canStart = false;
                 status = "Every player needs it's own color";
@@ -135,10 +137,25 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public ResponseEntity<?> setGameType(Long id, String gameType) {
+        ErrorResponse errorResponse = new ErrorResponse();
 
+        if (!gameType.equals("classic") && !gameType.equals("ffa") && !gameType.equals("teams")) {
+            errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
 
+        Optional<Game> optionalGame = gameRepository.findById(id);
 
-        return ResponseEntity.ok(createResponseObject(players));
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+        game.setGameType(gameType);
+        gameRepository.save(game);
+
+        return lobbyHeader(id);
     }
 
     @Override
@@ -220,6 +237,7 @@ public class GameServiceImpl implements GameService {
 
         return lobbyHeaderResponse;
     }
+
 
     public Set<PlayerResponse> createResponseObject (List<Player> players) {
         Set<PlayerResponse> playerResponseList = new HashSet<>();
