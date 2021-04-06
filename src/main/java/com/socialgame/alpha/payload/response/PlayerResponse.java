@@ -12,13 +12,13 @@ public class PlayerResponse {
     private Long teamId;
 
 
-    public PlayerResponse(Long id, String name, String color, Boolean phone, Long gameId) {
+    public PlayerResponse(Long id, String name, String color, Boolean phone, Long gameId, Long teamId) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.phone = phone;
         this.gameId = gameId;
-//        this.teamId = teamId;
+        this.teamId = teamId;
     }
 
     public Long getId() { return id; }

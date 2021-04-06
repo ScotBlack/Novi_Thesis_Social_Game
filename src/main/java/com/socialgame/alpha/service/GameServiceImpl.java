@@ -207,7 +207,6 @@ public class GameServiceImpl implements GameService {
         }
 
         game.setTeams(teams);
-
         gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(players));
@@ -215,18 +214,18 @@ public class GameServiceImpl implements GameService {
 
 
     public PlayerResponse createResponseObject (Player player) {
-//        long teamId = -1;
-//        if (player.getTeam()!= null) {
-//            teamId = player.getTeam().getId();
-//        }
+        long teamId = -1;
+        if (player.getTeam()!= null) {
+            teamId = player.getTeam().getId();
+        }
         PlayerResponse playerResponse =
                 new PlayerResponse (
                         player.getId(),
                         player.getName(),
                         player.getColor(),
                         player.getPhone(),
-                        player.getGame().getId()
-//                        teamId
+                        player.getGame().getId(),
+                        teamId
                 );
 
         return playerResponse;
