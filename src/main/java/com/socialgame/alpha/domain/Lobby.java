@@ -3,6 +3,7 @@ package com.socialgame.alpha.domain;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -30,6 +31,11 @@ public class Lobby {
     private Set<Player> players;
 
     public Lobby() {
+    }
+
+    public Lobby(Player player) {
+        this.players = new HashSet<Player>();
+        this.players.add(player);
     }
 
     public Long getId() {
