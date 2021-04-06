@@ -121,10 +121,11 @@ public class GameServiceImpl implements GameService {
             }
         }
 
+        game.setCanStart(canStart);
+        gameRepository.save(game);
 
         return ResponseEntity.ok(createResponseObject(id, canStart, status, game));
     }
-
 
 
     public PlayerResponse createResponseObject (Player player) {

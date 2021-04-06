@@ -16,6 +16,8 @@ public class Player {
     private String color;
     @Column
     private Boolean phone;
+    @Column
+    private int points;
 
     @ManyToOne
     @JoinColumn(name="game_id")
@@ -28,6 +30,7 @@ public class Player {
         this.name = name;
         this.color = color;
         this.phone = phone;
+        this.points = 0;
         this.game = game;
     }
 
@@ -42,6 +45,9 @@ public class Player {
 
     public Boolean getPhone() { return phone; }
     public void setPhone(Boolean phone) { this.phone = phone; }
+
+    public int getPoints() { return points; }
+    public void setPoints(int points) { this.points = points; }
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
