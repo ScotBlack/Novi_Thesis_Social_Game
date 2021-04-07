@@ -28,7 +28,9 @@ public class GameController {
     }
 
     @GetMapping(path="/{id}/players")
-    public ResponseEntity<?> findPlayersByGameId(@PathVariable("id") Long id) {
-        return gameService.findPlayersByGameId(id);
+    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
+        return gameService.getPlayers(id);
     }
 }
+
+

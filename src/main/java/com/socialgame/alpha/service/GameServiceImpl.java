@@ -48,7 +48,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public ResponseEntity<?> findPlayersByGameId(Long id) {
+    public ResponseEntity<?> getPlayers(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Game> optionalGame = gameRepository.findById(id);
 
@@ -61,7 +61,6 @@ public class GameServiceImpl implements GameService {
 
         return ResponseEntity.ok(createResponseObject(players));
     }
-
 
     public PlayerResponse createResponseObject (Player player) {
 

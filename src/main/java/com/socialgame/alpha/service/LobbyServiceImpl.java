@@ -49,21 +49,6 @@ public class LobbyServiceImpl implements LobbyService {
         return ResponseEntity.ok(createResponseObject(lobby));
     }
 
-    @Override // must be at GameService
-    public ResponseEntity<?> getPlayers(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByGameId(id);
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
-
     @Override
     public ResponseEntity<?> lobbyStatusUpdate(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
