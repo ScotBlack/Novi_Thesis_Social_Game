@@ -1,6 +1,7 @@
 package com.socialgame.alpha.domain.minigame;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Inheritance
@@ -25,4 +26,5 @@ public abstract class MiniGame {
 
     public String getQuestion() { return question; }
     public void setQuestion(String question) { this.question = question; }
+
 }

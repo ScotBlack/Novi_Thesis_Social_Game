@@ -3,6 +3,7 @@ package com.socialgame.alpha.controller;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.service.PlayerService;
@@ -25,25 +26,34 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
+    // needs other place?
     @GetMapping(path="/players")
     public ResponseEntity<?> findAllPlayers () {
         return playerService.findAllPlayers();
     }
 
+    // needs other place?
     @GetMapping(path="/{id}")
     public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
         return playerService.findPlayerByID(id);
     }
 
-    @GetMapping(path="/toggle/{id}")
-    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
-        return playerService.togglePlayerColor(id);
-    }
-
+    // actual player controls
     @PostMapping(path ="/join")
     public ResponseEntity<?> joinGame(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
         return playerService.joinGame(newPlayerRequest);
     }
+
+    @GetMapping(path="/toggle/{id}")
+    public ResponseEntity<?> toggleColor (@PathVariable("id") Long id)  {
+        return playerService.toggleColor(id);
+    }
+
+    @PostMapping(path="/answer")
+    public ResponseEntity<?> playerAnswer(@Valid @RequestBody PlayerAnswerRequest playerAnswerRequest) {
+        return playerService.playerAnswer(playerAnswerRequest);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
