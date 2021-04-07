@@ -1,12 +1,15 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,6 +27,21 @@ public class GameServiceImpl implements GameService {
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
+
+    @Override
+    public ResponseEntity<?> getTeams(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Set<Color> teams = optionalGame.get().getTeams();
+
+        return ResponseEntity.ok(teams);
+    }
 
 
 //    @Override
@@ -221,7 +239,7 @@ public class GameServiceImpl implements GameService {
     }
 
     public LobbyResponse createResponseObject (Long gameId, Boolean canStart, String status, Game game) {
-        LobbyResponse lobbyResponse = new LobbyResponse(gameId, gameId, canStart, status, game.getGameType(), game.getPoints()); // bugged due to Lobby Id
+        LobbyResponse lobbyResponse = new LobbyResponse(gameId, gameId, canStart, status, game.getGameType().toString(), game.getPoints()); // bugged due to Lobby Id
 
         return lobbyResponse;
     }

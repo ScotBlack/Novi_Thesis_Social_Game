@@ -11,9 +11,9 @@ public enum Color {
     ORANGE,
     PURPLE;
 
-    public static String[] colors() {
-        String[] colors = new String[values().length];
-        for (int i = 0; i < values().length; i++) { colors[i] = values()[i].name(); }
-        return colors;
-    }
+//    public static String[] colors() {
+//        String[] colors = new String[values().length];
+//        for (int i = 0; i < values().length; i++) { colors[i] = values()[i].name(); }
+//        return colors;
+//    }
 }

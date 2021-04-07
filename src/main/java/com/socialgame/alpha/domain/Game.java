@@ -1,10 +1,7 @@
 package com.socialgame.alpha.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "game")
@@ -15,7 +12,7 @@ public class Game {
     private Long id;
 
     @Column
-    private String gameType;
+    private GameType gameType;
     @Column
     private int points;
     @Column
@@ -39,18 +36,21 @@ public class Game {
     public Game() {
     }
 
-    public Game(String gameType) {
+    public Game(GameType gameType) {
         this.gameType = gameType;
         this.points = 100;
         this.started = false;
-        this.players = new HashSet<Player>();
+        this.players = new HashSet<>();
+        this.teams = new HashSet<>();
+        this.captains = new HashSet<>();
+        this.scores = new ArrayList<>();
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getGameType() { return gameType; }
-    public void setGameType(String gameType) { this.gameType = gameType; }
+    public GameType getGameType() { return gameType; }
+    public void setGameType(GameType gameType) { this.gameType = gameType; }
 
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }

@@ -17,7 +17,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/player")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -42,6 +42,11 @@ public class PlayerController {
 
     @PostMapping(path ="/newplayer")
     public ResponseEntity<?> newPlayer(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
+        return playerService.newPlayer(newPlayerRequest);
+    }
+
+    @PostMapping(path ="/join")
+    public ResponseEntity<?> joinGame(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
         return playerService.newPlayer(newPlayerRequest);
     }
 

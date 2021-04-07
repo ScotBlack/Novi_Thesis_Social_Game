@@ -1,5 +1,6 @@
 package com.socialgame.alpha.controller;
 
+import com.socialgame.alpha.domain.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.service.LobbyService;
@@ -34,7 +35,7 @@ public class LobbyController {
     }
 
     @GetMapping(path="/{id}/setGameType/{gameType}")
-    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType")String gameType) {
+    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType") GameType gameType) {
         return lobbyService.setGameType(id, gameType);
     }
 

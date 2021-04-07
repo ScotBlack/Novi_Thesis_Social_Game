@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/lobby")
 public class GameController {
 
     private GameService gameService;
 
     @Autowired
     public void setGameService(GameService gameService) { this.gameService = gameService;}
+
+    @GetMapping(path="/teams/{id}")
+    public ResponseEntity<?> findAllGames(@PathVariable("id") Long id) {
+        return gameService.getTeams(id);
+    }
 
 //    @GetMapping(path="/games")
 //    public ResponseEntity<?> findAllGames() {

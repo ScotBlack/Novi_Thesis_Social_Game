@@ -17,8 +17,7 @@ public class Lobby {
     private Long gameId;
 
     @Column
-    @Value("ffa")
-    private String gameType;
+    private GameType gameType;
     @Column
     @Value("50")
     private int points;
@@ -35,7 +34,7 @@ public class Lobby {
 
     public Lobby(Player player, Long gameId) {
         this.gameId = gameId;
-        this.gameType = "FFA";
+        this.gameType = GameType.FFA;
         this.points = 100;
         this.status = "Need more players.";
         this.canStart = false;
@@ -55,10 +54,10 @@ public class Lobby {
         this.gameId = gameId;
     }
 
-    public String getGameType() {
+    public GameType getGameType() {
         return gameType;
     }
-    public void setGameType(String gameType) {
+    public void setGameType(GameType gameType) {
         this.gameType = gameType;
     }
 
