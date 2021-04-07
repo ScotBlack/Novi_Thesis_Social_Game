@@ -26,4 +26,13 @@ public class Question extends MiniGame {
         this.answers = answers;
         this.topic = topic;
     }
+
+    public String getAnswer() { return answer; }
+    public void setAnswer(String answer) { this.answer = answer; }
+
+    public Set<String> getAnswers() { return answers; }
+    public void setAnswers(Set<String> answers) { this.answers = answers; }
+
+    public String getTopic() { return topic; }
+    public void setTopic(String topic) { this.topic = topic; }
 }

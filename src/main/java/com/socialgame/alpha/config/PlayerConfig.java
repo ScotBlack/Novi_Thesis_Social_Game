@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PlayerConfig {
 
-    @Bean
-    CommandLineRunner commandLineRunner(PlayerRepository playerRepository, GameRepository gameRepository) {
-        return args -> {
+//    @Bean
+//    CommandLineRunner commandLineRunner(PlayerRepository playerRepository, GameRepository gameRepository) {
+//        return args -> {
 
 //            Game testGame = new Game("teams");
 //            Game testGame2 = new Game("teams");
@@ -28,6 +28,6 @@ public class PlayerConfig {
 //            playerRepository.save(afi);
 //            playerRepository.save(ben);
 
-        };
-    }
+//        };
+//    }
 }

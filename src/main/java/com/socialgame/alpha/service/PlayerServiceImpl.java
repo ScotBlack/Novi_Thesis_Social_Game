@@ -3,12 +3,17 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.enums.MiniGameType;
+import com.socialgame.alpha.domain.minigame.MiniGame;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
+import com.socialgame.alpha.repository.minigame.MiniGameRepository;
+import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,8 @@ public class PlayerServiceImpl implements PlayerService{
 
     private PlayerRepository playerRepository;
     private GameRepository gameRepository;
+    private MiniGameRepository miniGameRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
@@ -27,6 +34,11 @@ public class PlayerServiceImpl implements PlayerService{
     @Autowired
     public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
+    @Autowired
+    public void setMiniGameRepository(MiniGameRepository miniGameRepository) { this.miniGameRepository = miniGameRepository;}
+
+    @Autowired
+    public void setQuestionRepository(QuestionRepository questionRepository) { this.questionRepository = questionRepository;}
 
     @Override
     public ResponseEntity<?> findAllPlayers() {
@@ -126,30 +138,29 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-
-    public int newPlayerColor(Game game) {
-        int c = 0;
-        for (int i = 0; i < game.getPlayers().size(); i++) {
-            c++;
-            if (c == 8) {
-                c = 0;
-            }
-        }
-        return c;
-    }
-
     public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Player> optionalPlayer = playerRepository.findById(2L);
 
-        if (optionalPlayer.isEmpty()) {
-            errorResponse.addError("404" , "Player with ID: " + 2 + " does not exist.");
+        if (playerAnswerRequest.getMiniGameType().equals(MiniGameType.QUESTION)) {
+
+        }
+
+        Optional<Question> optionalMiniGame = questionRepository.findById(playerAnswerRequest.getGameId());
+
+        if (optionalMiniGame.isEmpty()) {
+            errorResponse.addError("404" , "MiniGame with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Player player = optionalPlayer.get();
+        Question miniGame = optionalMiniGame.get();
 
-        return ResponseEntity.ok(createResponseObject(player));
+        if (playerAnswerRequest.getAnswer().equals(miniGame.getAnswer())){
+
+        }
+
+
+        return ResponseEntity.ok("bla");
+
     }
 
 

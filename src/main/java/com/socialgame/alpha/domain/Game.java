@@ -23,10 +23,8 @@ public class Game {
     @Column
     private Boolean started;
 
-//    @Column
-//    @OneToMany
-//    private MiniGame currentMiniGame;
-
+    @Column
+    private Long currentMiniGameId;
 
     @OneToMany (mappedBy="game")
     private Set<Player> players;
@@ -71,6 +69,9 @@ public class Game {
     public void setStarted(Boolean started) {
         this.started = started;
     }
+
+    public Long getCurrentMiniGameId() { return currentMiniGameId; }
+    public void setCurrentMiniGameId(Long currentMiniGame) { this.currentMiniGameId = currentMiniGame; }
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
