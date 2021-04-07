@@ -1,5 +1,7 @@
 package com.socialgame.alpha.domain;
 
+import com.socialgame.alpha.domain.enums.Color;
+
 import javax.persistence.*;
 
 @Entity

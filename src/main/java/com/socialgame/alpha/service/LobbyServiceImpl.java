@@ -1,6 +1,8 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.*;
+import com.socialgame.alpha.domain.enums.Color;
+import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
@@ -47,21 +49,6 @@ public class LobbyServiceImpl implements LobbyService {
         return ResponseEntity.ok(createResponseObject(lobby));
     }
 
-    @Override // must be at GameService
-    public ResponseEntity<?> getPlayers(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByGameId(id);
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
-
     @Override
     public ResponseEntity<?> lobbyStatusUpdate(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -79,12 +66,12 @@ public class LobbyServiceImpl implements LobbyService {
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
 
-        for (Color c : Color.values()) {
+        for (Color color : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
 
             for (Player p : players) {
-                if (p.getColor().equals(c)) {
+                if (p.getColor().equals(color)) {
                     playerNum++;
                     if (p.getPhone()) {
                         phoneNum++;
@@ -230,7 +217,6 @@ public class LobbyServiceImpl implements LobbyService {
 
     }
 
-
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
             lobby.getId(),
@@ -266,8 +252,6 @@ public class LobbyServiceImpl implements LobbyService {
 
         return playerResponseList;
     }
-
-
 }
 
 

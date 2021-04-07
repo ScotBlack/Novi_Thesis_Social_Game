@@ -1,10 +1,9 @@
 package com.socialgame.alpha.domain;
 
+import com.socialgame.alpha.domain.enums.GameType;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class Lobby {

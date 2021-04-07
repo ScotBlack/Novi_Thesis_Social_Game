@@ -1,8 +1,7 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.domain.GameType;
+import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.service.LobbyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +21,6 @@ public class LobbyController {
     @PostMapping("create")
     public ResponseEntity<?> createGame (@Valid @RequestBody CreateGameRequest createGameRequest) {
         return lobbyService.createGame(createGameRequest);
-    }
-
-    @GetMapping("/{id}/players")
-    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
-        return lobbyService.getPlayers(id);
     }
 
     @GetMapping("/{id}/status")

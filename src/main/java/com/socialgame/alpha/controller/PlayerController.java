@@ -45,8 +45,6 @@ public class PlayerController {
         return playerService.joinGame(newPlayerRequest);
     }
 
-
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {

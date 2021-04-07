@@ -1,5 +1,10 @@
 package com.socialgame.alpha.domain;
 
+import com.socialgame.alpha.domain.enums.Color;
+import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.domain.minigame.MiniGame;
+
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -17,6 +22,11 @@ public class Game {
     private int points;
     @Column
     private Boolean started;
+
+    @Column
+    @OneToMany
+    private MiniGame currentMiniGame;
+
 
     @OneToMany (mappedBy="game")
     private Set<Player> players;
@@ -58,7 +68,6 @@ public class Game {
     public Boolean getStarted() {
         return started;
     }
-
     public void setStarted(Boolean started) {
         this.started = started;
     }
@@ -69,7 +78,6 @@ public class Game {
     public Set<Color> getTeams() {
         return teams;
     }
-
     public void setTeams(Set<Color> teams) {
         this.teams = teams;
     }
@@ -77,7 +85,6 @@ public class Game {
     public Set<Long> getCaptains() {
         return captains;
     }
-
     public void setCaptains(Set<Long> captains) {
         this.captains = captains;
     }
@@ -85,7 +92,6 @@ public class Game {
     public List<Integer> getScores() {
         return scores;
     }
-
     public void setScores(List<Integer> scores) {
         this.scores = scores;
     }
