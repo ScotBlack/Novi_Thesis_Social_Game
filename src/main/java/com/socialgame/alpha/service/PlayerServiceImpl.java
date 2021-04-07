@@ -4,6 +4,7 @@ import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
@@ -51,7 +52,7 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public ResponseEntity<?> togglePlayerColor(Long id)  {
+    public ResponseEntity<?> toggleColor(Long id)  {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
@@ -105,8 +106,16 @@ public class PlayerServiceImpl implements PlayerService{
             return ResponseEntity.status(400).body(errorResponse);
         }
 
+        int c = 0;
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            c++;
+            if (c == 8) {
+                c = 0;
+            }
+        }
+
         player.setName(newPlayerRequest.getName());
-        player.setColor(Color.values()[newPlayerColor(game)]);
+        player.setColor(Color.values()[c]);
         player.setPhone(newPlayerRequest.getPhone().equals("true"));
         player.setGame(game);
         game.addPlayer(player);
@@ -117,6 +126,7 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
+
     public int newPlayerColor(Game game) {
         int c = 0;
         for (int i = 0; i < game.getPlayers().size(); i++) {
@@ -126,6 +136,20 @@ public class PlayerServiceImpl implements PlayerService{
             }
         }
         return c;
+    }
+
+    public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Player> optionalPlayer = playerRepository.findById(2L);
+
+        if (optionalPlayer.isEmpty()) {
+            errorResponse.addError("404" , "Player with ID: " + 2 + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Player player = optionalPlayer.get();
+
+        return ResponseEntity.ok(createResponseObject(player));
     }
 
 

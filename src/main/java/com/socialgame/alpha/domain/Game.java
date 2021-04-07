@@ -23,9 +23,9 @@ public class Game {
     @Column
     private Boolean started;
 
-    @Column
-    @OneToMany
-    private MiniGame currentMiniGame;
+//    @Column
+//    @OneToMany
+//    private MiniGame currentMiniGame;
 
 
     @OneToMany (mappedBy="game")
