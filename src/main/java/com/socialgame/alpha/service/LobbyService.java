@@ -1,6 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.GameType;
+import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import org.springframework.http.ResponseEntity;
 

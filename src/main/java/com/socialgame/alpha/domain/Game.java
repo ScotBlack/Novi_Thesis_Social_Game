@@ -1,5 +1,8 @@
 package com.socialgame.alpha.domain;
 
+import com.socialgame.alpha.domain.enums.Color;
+import com.socialgame.alpha.domain.enums.GameType;
+
 import javax.persistence.*;
 import java.util.*;
 

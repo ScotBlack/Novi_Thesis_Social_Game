@@ -1,8 +1,7 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.domain.GameType;
+import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.service.LobbyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

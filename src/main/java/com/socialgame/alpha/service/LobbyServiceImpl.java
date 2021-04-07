@@ -1,6 +1,8 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.*;
+import com.socialgame.alpha.domain.enums.Color;
+import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
@@ -79,12 +81,12 @@ public class LobbyServiceImpl implements LobbyService {
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
 
-        for (Color c : Color.values()) {
+        for (Color color : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
 
             for (Player p : players) {
-                if (p.getColor().equals(c)) {
+                if (p.getColor().equals(color)) {
                     playerNum++;
                     if (p.getPhone()) {
                         phoneNum++;
@@ -230,7 +232,6 @@ public class LobbyServiceImpl implements LobbyService {
 
     }
 
-
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
             lobby.getId(),
@@ -266,8 +267,6 @@ public class LobbyServiceImpl implements LobbyService {
 
         return playerResponseList;
     }
-
-
 }
 
 

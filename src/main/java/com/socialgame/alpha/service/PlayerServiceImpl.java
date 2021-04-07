@@ -1,6 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.Color;
+import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
@@ -63,7 +63,6 @@ public class PlayerServiceImpl implements PlayerService{
         Player player = optionalPlayer.get();
         player.setColor(togglePlayerColor(player.getColor()));
         playerRepository.save(player);
-//        List<Player> players = playerRepository.findAll();
 
         return ResponseEntity.ok(createResponseObject(player));
     }
