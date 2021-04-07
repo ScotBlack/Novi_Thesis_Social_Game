@@ -39,7 +39,7 @@ public class LobbyServiceImpl implements LobbyService {
 
         gameRepository.save(game);
 
-        Lobby lobby = new Lobby(player, game.getId());
+        Lobby lobby = new Lobby(game.getId());
 
         playerRepository.save(player);
         lobbyRepository.save(lobby);
@@ -200,7 +200,6 @@ public class LobbyServiceImpl implements LobbyService {
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-
         Game game = optionalGame.get();
 
         if (!lobby.getCanStart()) {
@@ -244,32 +243,17 @@ public class LobbyServiceImpl implements LobbyService {
 
         return lobbyResponse;
     }
-//
-//    public LobbyResponse createResponseObject (Long gameId, Boolean canStart, String status, Lobby lobby) {
-//        LobbyResponse lobbyResponse =
-//            new LobbyResponse(
-//                    gameId,
-//                    gameId,
-//                    canStart,
-//                    status,
-//                    lobby.getGameType().toString(),
-//                    lobby.getPoints()); // bugged due to Lobby Id
-//
-//        return lobbyResponse;
-//    }
 
     public PlayerResponse createResponseObject (Player player) {
-
-        PlayerResponse playerResponse =
-                new PlayerResponse (
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone(),
-                        player.getGame().getId()
-                );
-
-        return playerResponse;
+        return (
+            new PlayerResponse (
+                    player.getId(),
+                    player.getName(),
+                    player.getColor().toString(),
+                    player.getPhone(),
+                    player.getGame().getId()
+            )
+        );
     }
 
     public Set<PlayerResponse> createResponseObject (List<Player> players) {

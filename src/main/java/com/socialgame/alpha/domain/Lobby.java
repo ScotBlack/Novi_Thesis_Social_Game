@@ -32,7 +32,7 @@ public class Lobby {
     public Lobby() {
     }
 
-    public Lobby(Player player, Long gameId) {
+    public Lobby(Long gameId) {
         this.gameId = gameId;
         this.gameType = GameType.FFA;
         this.points = 100;

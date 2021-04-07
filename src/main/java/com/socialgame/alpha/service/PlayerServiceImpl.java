@@ -81,7 +81,7 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
+    public ResponseEntity<?> joinGame(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
@@ -131,17 +131,15 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     public PlayerResponse createResponseObject (Player player) {
-
-        PlayerResponse playerResponse =
-                new PlayerResponse (
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone(),
-                        player.getGame().getId()
-                        );
-
-        return playerResponse;
+        return (
+            new PlayerResponse (
+                player.getId(),
+                player.getName(),
+                player.getColor().toString(),
+                player.getPhone(),
+                player.getGame().getId()
+            )
+        );
     }
 
 
