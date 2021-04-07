@@ -24,8 +24,6 @@ public class Game {
     @OneToMany (mappedBy="game")
     private Set<Player> players;
 
-    @OneToMany (mappedBy="game")
-    private Set<Team> teams;
 
     public Game() {
     }
@@ -35,7 +33,6 @@ public class Game {
         this.points = 100;
         this.canStart = false;
         this.players = new HashSet<Player>();
-        this.teams = new HashSet<>();
     }
 
     public Long getId() { return id; }
@@ -52,9 +49,6 @@ public class Game {
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
-
-    public Set<Team> getTeams() { return teams; }
-    public void setTeams(Set<Team> teams) { this.teams = teams; }
 
     public void addPlayer (Player player) {
         this.players.add(player);

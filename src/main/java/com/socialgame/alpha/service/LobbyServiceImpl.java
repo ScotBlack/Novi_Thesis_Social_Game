@@ -20,7 +20,6 @@ public class LobbyServiceImpl implements LobbyService {
     private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
-    private TeamRepository teamRepository;
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
@@ -31,15 +30,12 @@ public class LobbyServiceImpl implements LobbyService {
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
-    @Autowired
-    public void setTeamRepository(TeamRepository teamRepository) {this.teamRepository = teamRepository;}
-
 
     @Override
     public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
 
         Game game = new Game("ffa");
-        Player player = new Player(createGameRequest.getName(), "RED", true, game);
+        Player player = new Player(createGameRequest.getName(), Color.RED, true, game);
 
         gameRepository.save(game);
 
@@ -82,9 +78,9 @@ public class LobbyServiceImpl implements LobbyService {
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
-        String[] colors = EColors.colors();
+        String[] colors = Color.colors();
 
-        for (String c : colors) {
+        for (Color c : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
 
@@ -213,7 +209,7 @@ public class LobbyServiceImpl implements LobbyService {
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-//        List<Player> players = playerRepository.findPlayersByGameId(game.getId());
+        List<Player> players = playerRepository.findPlayersByGameId(game.getId());
 //        String[] colors = EColors.colors();
 //        Set<Team> teams = new HashSet<>();
 //
@@ -248,7 +244,7 @@ public class LobbyServiceImpl implements LobbyService {
 //        game.setTeams(teams);
 //        gameRepository.save(game);
 
-        return ResponseEntity.ok(createResponseObject());
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
 
@@ -272,18 +268,14 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     public PlayerResponse createResponseObject (Player player) {
-        long teamId = -1;
-        if (player.getTeam()!= null) {
-            teamId = player.getTeam().getId();
-        }
+
         PlayerResponse playerResponse =
                 new PlayerResponse (
                         player.getId(),
                         player.getName(),
-                        player.getColor(),
+                        player.getColor().toString(),
                         player.getPhone(),
-                        player.getGame().getId(),
-                        teamId
+                        player.getGame().getId()
                 );
 
         return playerResponse;

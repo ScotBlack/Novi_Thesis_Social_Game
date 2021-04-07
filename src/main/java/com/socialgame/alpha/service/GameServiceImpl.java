@@ -17,7 +17,6 @@ public class GameServiceImpl implements GameService {
 
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
-    private TeamRepository teamRepository;
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
@@ -25,8 +24,7 @@ public class GameServiceImpl implements GameService {
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
-    @Autowired
-    public void setTeamRepository(TeamRepository teamRepository) { this.teamRepository = teamRepository;}
+
 
 //    @Override
 //    public ResponseEntity<?> findAllGames() {
@@ -209,18 +207,14 @@ public class GameServiceImpl implements GameService {
 //
 
     public PlayerResponse createResponseObject (Player player) {
-        long teamId = -1;
-        if (player.getTeam()!= null) {
-            teamId = player.getTeam().getId();
-        }
+
         PlayerResponse playerResponse =
                 new PlayerResponse (
                         player.getId(),
                         player.getName(),
-                        player.getColor(),
+                        player.getColor().toString(),
                         player.getPhone(),
-                        player.getGame().getId(),
-                        teamId
+                        player.getGame().getId()
                 );
 
         return playerResponse;

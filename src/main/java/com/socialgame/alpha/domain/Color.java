@@ -1,6 +1,6 @@
 package com.socialgame.alpha.domain;
 
-public enum EColors {
+public enum Color {
 
     RED,
     BLUE,

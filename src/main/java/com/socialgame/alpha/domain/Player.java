@@ -13,7 +13,7 @@ public class Player {
     @Column
     private String name;
     @Column
-    private String color;
+    private Color color;
     @Column
     private Boolean phone;
     @Column
@@ -26,7 +26,7 @@ public class Player {
     public Player() {
     }
 
-    public Player(String name, String color, Boolean phone, Game game) {
+    public Player(String name, Color color, Boolean phone, Game game) {
         this.name = name;
         this.color = color;
         this.phone = phone;
@@ -40,8 +40,8 @@ public class Player {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
+    public Color getColor() { return color; }
+    public void setColor(Color color) { this.color = color; }
 
     public Boolean getPhone() { return phone; }
     public void setPhone(Boolean phone) { this.phone = phone; }
