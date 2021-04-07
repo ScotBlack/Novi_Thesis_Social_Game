@@ -17,7 +17,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/player")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -30,19 +30,19 @@ public class PlayerController {
         return playerService.findAllPlayers();
     }
 
-    @GetMapping(path="/player/{id}")
+    @GetMapping(path="/{id}")
     public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
         return playerService.findPlayerByID(id);
     }
 
-    @GetMapping(path="/player/toggle/{id}")
+    @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
         return playerService.togglePlayerColor(id);
     }
 
-    @PostMapping(path ="/newplayer")
-    public ResponseEntity<?> newPlayer(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
-        return playerService.newPlayer(newPlayerRequest);
+    @PostMapping(path ="/join")
+    public ResponseEntity<?> joinGame(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
+        return playerService.joinGame(newPlayerRequest);
     }
 
 

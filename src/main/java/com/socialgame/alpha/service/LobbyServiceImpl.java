@@ -1,23 +1,18 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.EColors;
-import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
+import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LobbyServiceImpl implements LobbyService {
@@ -39,17 +34,32 @@ public class LobbyServiceImpl implements LobbyService {
     @Override
     public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
 
-        Game game = new Game("ffa");
-        Player player = new Player(createGameRequest.getName(), "RED", true, game);
+        Game game = new Game(GameType.FFA);
+        Player player = new Player(createGameRequest.getName(), Color.RED, true, game);
 
         gameRepository.save(game);
 
-        Lobby lobby = new Lobby(player, game.getId());
+        Lobby lobby = new Lobby(game.getId());
 
         playerRepository.save(player);
         lobbyRepository.save(lobby);
 
         return ResponseEntity.ok(createResponseObject(lobby));
+    }
+
+    @Override // must be at GameService
+    public ResponseEntity<?> getPlayers(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByGameId(id);
+
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
     @Override
@@ -68,9 +78,8 @@ public class LobbyServiceImpl implements LobbyService {
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
-        String[] colors = EColors.colors();
 
-        for (String c : colors) {
+        for (Color c : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
 
@@ -96,14 +105,14 @@ public class LobbyServiceImpl implements LobbyService {
         String status = null;
         if (teamsList.size() == 1) {
             status = "Need at least 2 teams or players";
-        } else if (lobby.getGameType().equals("CLASSIC")) {
+        } else if (lobby.getGameType().equals(GameType.CLASSIC)) {
             if (teamsList.contains(2) || teamsList.contains(3)) {
                 status = "Every player needs it's own color";
             } else {
                 canStart = true;
                 status = "Classic game can be started";
             }
-        } else if (lobby.getGameType().equals("FFA")) {
+        } else if (lobby.getGameType().equals(GameType.FFA)) {
             if (teamsList.contains(0)) {
                 status = "Every players need it's own phone";
             } else if (teamsList.contains(2) || teamsList.contains(3)) {
@@ -112,7 +121,7 @@ public class LobbyServiceImpl implements LobbyService {
                 canStart = true;
                 status = "FFA game can be started";
             }
-        } else if (lobby.getGameType().equals("TEAMS")) {
+        } else if (lobby.getGameType().equals(GameType.TEAMS)) {
             if (teamsList.contains(0) || teamsList.contains(1)) {
                 status = "Every team needs at least 2 players ";
             } else if (teamsList.contains(3)) {
@@ -131,11 +140,11 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public ResponseEntity<?> setGameType(Long id, String gameType) {
+    public ResponseEntity<?> setGameType(Long id, GameType gameType) {
 
         ErrorResponse errorResponse = new ErrorResponse();
 
-        if (!gameType.equals("CLASSIC") && !gameType.equals("FFA") && !gameType.equals("TEAMS")) {
+        if (!gameType.equals(GameType.CLASSIC) && !gameType.equals(GameType.FFA) && !gameType.equals(GameType.TEAMS)) {
             errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
             return ResponseEntity.status(400).body(errorResponse);
         }
@@ -172,7 +181,54 @@ public class LobbyServiceImpl implements LobbyService {
         return ResponseEntity.ok(createResponseObject(lobby));
     }
 
+    @Override
+    public ResponseEntity<?> startGame(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
 
+        if (optionalLobby.isEmpty()) {
+            errorResponse.addError("404", "Lobby with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Lobby lobby = optionalLobby.get();
+
+        Optional<Game> optionalGame = gameRepository.findById(lobby.getGameId());
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404", "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+
+        if (!lobby.getCanStart()) {
+            errorResponse.addError("404", "Game with ID: " + id + " cannot be started right now.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByGameId(game.getId());
+
+        for (Color color : Color.values()) {
+            loop:
+            for (Player player : players) {
+                if (player.getColor().equals(color) && player.getPhone()) {
+                    game.getTeams().add(color);
+                    game.getCaptains().add(player.getId());
+                    game.getScores().add(0);
+                    break;
+                }
+            }
+        }
+
+        game.setGameType(lobby.getGameType());
+        game.setStarted(true);
+
+        gameRepository.save(game);
+
+        return ResponseEntity.ok(createResponseObject(players));
+
+    }
 
 
     public LobbyResponse createResponseObject(Lobby lobby) {
@@ -181,12 +237,37 @@ public class LobbyServiceImpl implements LobbyService {
             lobby.getGameId(),
             lobby.getCanStart(),
             lobby.getStatus(),
-            lobby.getGameType(),
+            lobby.getGameType().toString(),
             lobby.getPoints()
         );
 
         return lobbyResponse;
     }
+
+    public PlayerResponse createResponseObject (Player player) {
+        return (
+            new PlayerResponse (
+                    player.getId(),
+                    player.getName(),
+                    player.getColor().toString(),
+                    player.getPhone(),
+                    player.getGame().getId()
+            )
+        );
+    }
+
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
+        Set<PlayerResponse> playerResponseList = new HashSet<>();
+
+        for (Player player : players) {
+            PlayerResponse playerResponse = createResponseObject(player);
+            playerResponseList.add(playerResponse);
+        }
+
+        return playerResponseList;
+    }
+
+
 }
 
 

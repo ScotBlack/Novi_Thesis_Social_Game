@@ -1,6 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.EColors;
+import com.socialgame.alpha.domain.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
@@ -68,8 +68,8 @@ public class PlayerServiceImpl implements PlayerService{
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-    public String togglePlayerColor(String color) {
-        String[] colors = EColors.colors();
+    public Color togglePlayerColor(Color color) {
+        Color[] colors = Color.values();
 
         for (int i = 0; i < colors.length; i++) {
             if (color.equals(colors[i]) && i < 7) {
@@ -81,7 +81,7 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public ResponseEntity<?> newPlayer(NewPlayerRequest newPlayerRequest) {
+    public ResponseEntity<?> joinGame(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
@@ -107,7 +107,7 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         player.setName(newPlayerRequest.getName());
-        player.setColor(EColors.colors()[newPlayerColor(game)]);
+        player.setColor(Color.values()[newPlayerColor(game)]);
         player.setPhone(newPlayerRequest.getPhone().equals("true"));
         player.setGame(game);
         game.addPlayer(player);
@@ -131,21 +131,15 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     public PlayerResponse createResponseObject (Player player) {
-        long teamId = -1;
-        if (player.getTeam()!= null) {
-            teamId = player.getTeam().getId();
-        }
-        PlayerResponse playerResponse =
-                new PlayerResponse (
-                        player.getId(),
-                        player.getName(),
-                        player.getColor(),
-                        player.getPhone(),
-                        player.getGame().getId(),
-                        teamId
-                        );
-
-        return playerResponse;
+        return (
+            new PlayerResponse (
+                player.getId(),
+                player.getName(),
+                player.getColor().toString(),
+                player.getPhone(),
+                player.getGame().getId()
+            )
+        );
     }
 
 

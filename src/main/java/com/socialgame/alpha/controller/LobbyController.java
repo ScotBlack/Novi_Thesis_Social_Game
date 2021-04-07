@@ -1,5 +1,6 @@
 package com.socialgame.alpha.controller;
 
+import com.socialgame.alpha.domain.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.service.LobbyService;
@@ -23,13 +24,18 @@ public class LobbyController {
         return lobbyService.createGame(createGameRequest);
     }
 
+    @GetMapping("/{id}/players")
+    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
+        return lobbyService.getPlayers(id);
+    }
+
     @GetMapping("/{id}/status")
     public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
         return lobbyService.lobbyStatusUpdate(id);
     }
 
     @GetMapping(path="/{id}/setGameType/{gameType}")
-    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType")String gameType) {
+    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType") GameType gameType) {
         return lobbyService.setGameType(id, gameType);
     }
 
@@ -38,5 +44,8 @@ public class LobbyController {
         return lobbyService.setPoints(id, points);
     }
 
-
+    @GetMapping(path="/{id}/start")
+    public ResponseEntity<?> startGame(@PathVariable("id") Long id) {
+        return lobbyService.startGame(id);
+    }
 }
