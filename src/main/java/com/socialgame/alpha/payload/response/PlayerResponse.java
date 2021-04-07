@@ -36,7 +36,7 @@ public class PlayerResponse {
     public Long getGameId() { return gameId; }
     public void setGameId(Long gameId) { this.gameId = gameId; }
 
-//    public Long getTeamId() { return teamId; }
-//    public void setTeamId(Long teamId) { this.teamId = teamId; }
+    public Long getTeamId() { return teamId; }
+    public void setTeamId(Long teamId) { this.teamId = teamId; }
 }
 

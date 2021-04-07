@@ -30,9 +30,6 @@ public class Lobby {
     @Value("false")
     private Boolean canStart;
 
-    @OneToMany (mappedBy="game")
-    private Set<Player> players;
-
     public Lobby() {
     }
 
@@ -42,14 +39,11 @@ public class Lobby {
         this.points = 100;
         this.status = "Need more players.";
         this.canStart = false;
-        this.players = new HashSet<>();
-        this.players.add(player);
     }
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -57,7 +51,6 @@ public class Lobby {
     public Long getGameId() {
         return gameId;
     }
-
     public void setGameId(Long gameId) {
         this.gameId = gameId;
     }
@@ -65,7 +58,6 @@ public class Lobby {
     public String getGameType() {
         return gameType;
     }
-
     public void setGameType(String gameType) {
         this.gameType = gameType;
     }
@@ -73,7 +65,6 @@ public class Lobby {
     public int getPoints() {
         return points;
     }
-
     public void setPoints(int points) {
         this.points = points;
     }
@@ -81,7 +72,6 @@ public class Lobby {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -89,16 +79,7 @@ public class Lobby {
     public Boolean getCanStart() {
         return canStart;
     }
-
     public void setCanStart(Boolean canStart) {
         this.canStart = canStart;
-    }
-
-    public Set<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Set<Player> players) {
-        this.players = players;
     }
 }

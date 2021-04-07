@@ -1,23 +1,18 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.EColors;
-import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
+import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LobbyServiceImpl implements LobbyService {
@@ -25,6 +20,7 @@ public class LobbyServiceImpl implements LobbyService {
     private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private TeamRepository teamRepository;
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
@@ -34,6 +30,9 @@ public class LobbyServiceImpl implements LobbyService {
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
+
+    @Autowired
+    public void setTeamRepository(TeamRepository teamRepository) {this.teamRepository = teamRepository;}
 
 
     @Override
@@ -50,6 +49,21 @@ public class LobbyServiceImpl implements LobbyService {
         lobbyRepository.save(lobby);
 
         return ResponseEntity.ok(createResponseObject(lobby));
+    }
+
+    @Override // must be at GameService
+    public ResponseEntity<?> getPlayers(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByGameId(id);
+
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
     @Override
@@ -172,7 +186,70 @@ public class LobbyServiceImpl implements LobbyService {
         return ResponseEntity.ok(createResponseObject(lobby));
     }
 
+    @Override
+    public ResponseEntity<?> startGame(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
 
+        if (optionalLobby.isEmpty()) {
+            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Lobby lobby = optionalLobby.get();
+
+        Optional<Game> optionalGame = gameRepository.findById(lobby.getGameId());
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+
+        Game game = optionalGame.get();
+
+        if (!lobby.getCanStart()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " cannot be started right now.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+
+//        List<Player> players = playerRepository.findPlayersByGameId(game.getId());
+//        String[] colors = EColors.colors();
+//        Set<Team> teams = new HashSet<>();
+//
+//
+//        // create Set of Players for every color/team
+//        for (String c : colors) {
+//            Set<Player> teamPlayers = new HashSet<>();
+//
+////            loop:
+//            for (Player p : players) {
+//                if (teamPlayers.isEmpty() && p.getColor().equals(c) && p.getPhone()) {
+//                    teamPlayers.add(p);
+//
+////                    break;
+//                }
+//            }
+//            for (Player p : players) {
+//                if (p.getColor().equals(c) && !teamPlayers.contains(p)) {
+//                    teamPlayers.add(p);
+//                }
+//            }
+//
+//            if (!teamPlayers.isEmpty()) {
+//                teams.add(new Team(c, teamPlayers, game));
+//            }
+//        }
+//
+//        for (Team t : teams) {
+//            teamRepository.save(t);
+//        }
+//
+//        game.setTeams(teams);
+//        gameRepository.save(game);
+
+        return ResponseEntity.ok(createResponseObject());
+    }
 
 
     public LobbyResponse createResponseObject(Lobby lobby) {
@@ -187,6 +264,43 @@ public class LobbyServiceImpl implements LobbyService {
 
         return lobbyResponse;
     }
+
+    public LobbyResponse createResponseObject (Long gameId, Boolean canStart, String status, Game game) {
+        LobbyResponse lobbyResponse = new LobbyResponse(gameId, gameId, canStart, status, game.getGameType(), game.getPoints()); // bugged due to Lobby Id
+
+        return lobbyResponse;
+    }
+
+    public PlayerResponse createResponseObject (Player player) {
+        long teamId = -1;
+        if (player.getTeam()!= null) {
+            teamId = player.getTeam().getId();
+        }
+        PlayerResponse playerResponse =
+                new PlayerResponse (
+                        player.getId(),
+                        player.getName(),
+                        player.getColor(),
+                        player.getPhone(),
+                        player.getGame().getId(),
+                        teamId
+                );
+
+        return playerResponse;
+    }
+
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
+        Set<PlayerResponse> playerResponseList = new HashSet<>();
+
+        for (Player player : players) {
+            PlayerResponse playerResponse = createResponseObject(player);
+            playerResponseList.add(playerResponse);
+        }
+
+        return playerResponseList;
+    }
+
+
 }
 
 

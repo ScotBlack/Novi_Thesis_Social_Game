@@ -5,8 +5,10 @@ import org.springframework.http.ResponseEntity;
 
 public interface LobbyService {
     ResponseEntity<?> createGame(CreateGameRequest createGameRequest);
+    public ResponseEntity<?> getPlayers(Long id);
     ResponseEntity<?> lobbyStatusUpdate(Long id);
     ResponseEntity<?> setGameType(Long id, String gameType);
     ResponseEntity<?> setPoints(Long id, int points);
+    public ResponseEntity<?> startGame(Long id);
 
 }

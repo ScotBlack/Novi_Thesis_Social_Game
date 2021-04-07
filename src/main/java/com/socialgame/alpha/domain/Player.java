@@ -23,10 +23,6 @@ public class Player {
     @JoinColumn(name="game_id")
     private Game game;
 
-    @ManyToOne
-    @JoinColumn(name="team_id")
-    private Team team;
-
     public Player() {
     }
 
@@ -56,6 +52,4 @@ public class Player {
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
 
-    public Team getTeam() { return team; }
-    public void setTeam(Team team) { this.team = team; }
 }
