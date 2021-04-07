@@ -5,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance
 public abstract class MiniGame {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
