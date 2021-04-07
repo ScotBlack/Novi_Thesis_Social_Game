@@ -19,11 +19,22 @@ public class Game {
     @Column
     private int points;
     @Column
-    private Boolean canStart;
+    private Boolean started;
 
     @OneToMany (mappedBy="game")
     private Set<Player> players;
 
+    @Column
+    @ElementCollection
+    private Set<Color> teams;
+
+    @Column
+    @ElementCollection
+    private Set<Long> captains;
+
+    @Column
+    @ElementCollection
+    private List<Integer> scores;
 
     public Game() {
     }
@@ -31,7 +42,7 @@ public class Game {
     public Game(String gameType) {
         this.gameType = gameType;
         this.points = 100;
-        this.canStart = false;
+        this.started = false;
         this.players = new HashSet<Player>();
     }
 
@@ -44,11 +55,40 @@ public class Game {
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }
 
-    public Boolean getCanStart() { return canStart; }
-    public void setCanStart(Boolean canStart) { this.canStart = canStart; }
+    public Boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
 
     public Set<Player> getPlayers() { return players; }
     public void setPlayers(Set<Player> players) { this.players = players; }
+
+    public Set<Color> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Set<Color> teams) {
+        this.teams = teams;
+    }
+
+    public Set<Long> getCaptains() {
+        return captains;
+    }
+
+    public void setCaptains(Set<Long> captains) {
+        this.captains = captains;
+    }
+
+    public List<Integer> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<Integer> scores) {
+        this.scores = scores;
+    }
 
     public void addPlayer (Player player) {
         this.players.add(player);
