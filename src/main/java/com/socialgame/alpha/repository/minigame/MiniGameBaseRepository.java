@@ -9,7 +9,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface MiniGameBaseRepository <R extends MiniGame> extends JpaRepository<R, Long> {
 
-    @Query("select q from #{#question} as q where u.email = ?1 ")
-    R findQuestionById(Long Id);
+//    @Query("select q from #{#question} as q where u.email = ?1 ")
+//    R findQuestionById(Long Id);
 
 }

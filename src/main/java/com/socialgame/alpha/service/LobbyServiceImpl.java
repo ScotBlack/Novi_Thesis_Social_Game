@@ -147,7 +147,7 @@ public class LobbyServiceImpl implements LobbyService {
         lobby.setGameType(gameType);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(createResponseObject(lobby));
+        return ResponseEntity.ok(lobbyStatusUpdate(lobby.getId()));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class LobbyServiceImpl implements LobbyService {
         lobby.setPoints(points);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(createResponseObject(lobby));
+        return ResponseEntity.ok(lobbyStatusUpdate(lobby.getId()));
     }
 
     @Override
