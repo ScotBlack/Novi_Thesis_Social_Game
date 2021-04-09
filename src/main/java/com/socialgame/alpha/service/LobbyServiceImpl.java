@@ -210,7 +210,7 @@ public class LobbyServiceImpl implements LobbyService {
 
         game.setGameType(lobby.getGameType());
         game.setStarted(true);
-        game.setCurrentMiniGameId(1L);
+//        game.setCurrentMiniGameId(1L);
 
         gameRepository.save(game);
 

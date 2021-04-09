@@ -13,7 +13,9 @@ public class PlayerAnswerRequest {
     @NotNull
     private Long gameId;
 
-    private MiniGameType miniGameType;
+    private Long playerId;
+
+    private MiniGameType miniGameType; //maybe not necessary
 
     public String getAnswer() { return answer; }
     public void setAnswer(String answer) { this.answer = answer; }

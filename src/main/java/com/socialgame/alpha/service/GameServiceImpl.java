@@ -4,6 +4,7 @@ import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.response.ErrorResponse;
+import com.socialgame.alpha.payload.response.TeamScoreResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -26,6 +27,10 @@ public class GameServiceImpl implements GameService {
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
+    @Override
+    public ResponseEntity<?> findAllGames() {
+        return ResponseEntity.ok(gameRepository.findAll());
+    }
 
     @Override
     public ResponseEntity<?> getTeams(Long id) {
@@ -39,12 +44,39 @@ public class GameServiceImpl implements GameService {
 
         Set<Color> teams = optionalGame.get().getTeams();
 
-        return ResponseEntity.ok(teams);
+        return ResponseEntity.ok(teams); // needs response object
     }
 
-    @Override
-    public ResponseEntity<?> findAllGames() {
-        return ResponseEntity.ok(gameRepository.findAll());
+    // getPlayersFromTeam(Long Id, Color color/team)
+
+    public ResponseEntity<?> getScore(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+
+        if (!game.getStarted()) {
+            errorResponse.addError("403" , "Game with ID: " + id + " has not yet started.");
+            return ResponseEntity.status(403).body(errorResponse);
+        }
+
+        return ResponseEntity.ok(createResponseObject(game));
+    }
+
+    public ResponseEntity<?> nextMiniGame(Long id) {
+        // select miniGameType
+
+        // select random miniGame of miniGameType
+            // consider AgeSetting
+
+        // set competing players
+
+        return ResponseEntity.ok("in progress");
     }
 
     @Override
@@ -60,6 +92,28 @@ public class GameServiceImpl implements GameService {
         List<Player> players = playerRepository.findPlayersByGameId(id);
 
         return ResponseEntity.ok(createResponseObject(players));
+    }
+
+    public Set<TeamScoreResponse> createResponseObject (Game game) {
+        Set<TeamScoreResponse> highScores = new HashSet<>();
+
+        Set<Color> teams = game.getTeams();
+
+        for (Color color : teams) {
+            TeamScoreResponse team = new TeamScoreResponse(color.toString());
+
+
+            for (Player p : game.getPlayers()) {
+                if (p.getColor().equals(color)) {
+                    team.addMembers(p.getName());
+                }
+                if (game.getCaptains().contains(p.getId())) {
+                    team.setPoints(p.getPoints());
+                }
+            }
+            highScores.add(team);
+        }
+        return highScores;
     }
 
     public PlayerResponse createResponseObject (Player player) {
@@ -86,4 +140,7 @@ public class GameServiceImpl implements GameService {
 
         return playerResponseList;
     }
+
+
+
 }

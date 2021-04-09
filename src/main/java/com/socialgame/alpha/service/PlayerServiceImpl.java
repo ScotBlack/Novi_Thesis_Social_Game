@@ -153,9 +153,9 @@ public class PlayerServiceImpl implements PlayerService{
 
         Question miniGame = optionalMiniGame.get();
 
-        if (playerAnswerRequest.getAnswer().equals(miniGame.getAnswer())){
-
-        }
+//        if (playerAnswerRequest.getAnswer().equals(miniGame.getAnswer())){
+//
+//        }
 
         return ResponseEntity.ok("bla");
     }
