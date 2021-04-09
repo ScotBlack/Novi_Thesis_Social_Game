@@ -74,23 +74,22 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         Player player = optionalPlayer.get();
-        player.setColor(togglePlayerColor(player.getColor()));
+        Color[] colors = Color.values();
+
+        Color currentColor = player.getColor();
+        Color newColor = Color.RED;
+
+        for (int i = 0; i < colors.length; i++) {
+            if (currentColor.equals(colors[i]) && i < colors.length - 1) {
+                newColor = colors[i + 1];
+            }
+        }
+
+        player.setColor(newColor);
         playerRepository.save(player);
 
         return ResponseEntity.ok(createResponseObject(player));
     }
-
-    public Color togglePlayerColor(Color color) {
-        Color[] colors = Color.values();
-
-        for (int i = 0; i < colors.length; i++) {
-            if (color.equals(colors[i]) && i < 7) {
-                return colors[i + 1];
-            }
-        }
-        return colors[0];
-    }
-
 
     @Override
     public ResponseEntity<?> joinGame(NewPlayerRequest newPlayerRequest) {
@@ -158,9 +157,7 @@ public class PlayerServiceImpl implements PlayerService{
 
         }
 
-
         return ResponseEntity.ok("bla");
-
     }
 
 
