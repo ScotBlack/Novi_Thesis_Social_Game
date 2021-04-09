@@ -17,20 +17,32 @@ public class GameController {
     @Autowired
     public void setGameService(GameService gameService) { this.gameService = gameService;}
 
-    @GetMapping(path="/teams/{id}")
-    public ResponseEntity<?> findAllGames(@PathVariable("id") Long id) {
-        return gameService.getTeams(id);
-    }
-
     @GetMapping(path="/games")
     public ResponseEntity<?> findAllGames() {
         return gameService.findAllGames();
+    }
+
+    @GetMapping(path="/{id}/teams")
+    public ResponseEntity<?> getTeams(@PathVariable("id") Long id) {
+        return gameService.getTeams(id);
     }
 
     @GetMapping(path="/{id}/players")
     public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
         return gameService.getPlayers(id);
     }
+
+    @GetMapping(path="/{id}/score")
+    public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
+        return gameService.getScore(id);
+    }
+
+    @GetMapping(path="/{id}/nextMiniGame")
+    public ResponseEntity<?> nextMiniGame(@PathVariable("id") Long id) {
+        return gameService.nextMiniGame(id);
+    }
+
+
 }
 
 
