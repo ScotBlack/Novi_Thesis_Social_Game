@@ -3,11 +3,15 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.enums.MiniGameType;
+import com.socialgame.alpha.domain.minigame.MiniGame;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.TeamScoreResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
+import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,12 +24,16 @@ public class GameServiceImpl implements GameService {
 
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
 
     @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
+
+    @Autowired
+    public void setQuestionRepository(QuestionRepository questionRepository) {this.questionRepository = questionRepository;}
 
     @Override
     public ResponseEntity<?> findAllGames() {
@@ -69,14 +77,46 @@ public class GameServiceImpl implements GameService {
     }
 
     public ResponseEntity<?> nextMiniGame(Long id) {
-        // select miniGameType
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+
+        int i = (int) Math.round(Math.random() * MiniGameType.values().length);
+//        MiniGame miniGame;
+
+        switch (MiniGameType.values()[i]) {
+            case QUESTION:
+                List<Question> questions = questionRepository.findAll();
+                int y = (int) Math.round(Math.random() * questions.size());
+                Question question = questions.get(y);
+                return nextQuestion(question, game);
+        }
+
 
         // select random miniGame of miniGameType
             // consider AgeSetting
 
         // set competing players
 
-        return ResponseEntity.ok("in progress");
+        return ResponseEntity.ok("miniGame.getQuestion()");
+    }
+
+    public ResponseEntity<?> nextQuestion(Question miniGame, Game game) {
+        miniGame.setCompetingPlayers(game.getCaptains());
+
+        String[] answers = {miniGame.getCorrectAnswer() + miniGame.getWrongAnswers()};
+        Set<String> randAnswers = new HashSet<>();
+
+        for (int i = 0; i < 4; i++) {
+            int x = (int) Math.round(Math.random() * 4);
+            randAnswers.add(answers[x]);
+        }
     }
 
     @Override
