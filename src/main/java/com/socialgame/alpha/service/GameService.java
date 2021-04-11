@@ -7,5 +7,4 @@ public interface GameService {
     public ResponseEntity<?> getTeams(Long id);
     public ResponseEntity<?> getPlayers(Long id);
     public ResponseEntity<?> getScore(Long id);
-    public ResponseEntity<?> nextMiniGame(Long id);
 }

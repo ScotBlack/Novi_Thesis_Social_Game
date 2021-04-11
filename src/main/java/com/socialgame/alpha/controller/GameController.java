@@ -32,16 +32,12 @@ public class GameController {
         return gameService.getPlayers(id);
     }
 
+    // getPlayersFromTeam(Long Id, Color color/team)
+
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
         return gameService.getScore(id);
     }
-
-    @GetMapping(path="/{id}/nextMiniGame")
-    public ResponseEntity<?> nextMiniGame(@PathVariable("id") Long id) {
-        return gameService.nextMiniGame(id);
-    }
-
 
 }
 

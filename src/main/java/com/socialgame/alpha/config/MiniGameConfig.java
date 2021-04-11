@@ -21,10 +21,10 @@ public class MiniGameConfig {
     @Bean
     CommandLineRunner commandLineRunner(MiniGameRepository miniGameRepository) {
         return args -> {
-            HashSet<String> answers = new HashSet<>();
-            answers.add("wrong A");
-            answers.add("wrong B");
-            answers.add("wrong C");
+           String[] answers = new String[3];
+            answers[0] ="wrong A";
+            answers[1] = "wrong B";
+            answers[2] = "wrong C";
 
             Question one = new Question(MiniGameType.QUESTION, "What color is a Banana", AgeSetting.FAMILY, "Yellow", answers, "Biology" );
             Question two = new Question(MiniGameType.QUESTION,"Capital of Peru", AgeSetting.FAMILY, "Lima", answers, "Geography" );

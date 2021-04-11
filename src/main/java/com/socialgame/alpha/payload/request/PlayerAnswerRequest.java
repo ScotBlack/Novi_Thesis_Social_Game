@@ -7,22 +7,29 @@ import javax.validation.constraints.NotNull;
 
 public class PlayerAnswerRequest {
 
-    @NotBlank(message = "Answer is required")
-    private String answer;
-
     @NotNull
     private Long gameId;
 
+    @NotNull
     private Long playerId;
 
-    private MiniGameType miniGameType; //maybe not necessary
+    private MiniGameType miniGameType;
 
-    public String getAnswer() { return answer; }
-    public void setAnswer(String answer) { this.answer = answer; }
+    @NotBlank(message = "Answer is required")
+    private String answer;
+
 
     public Long getGameId() { return gameId; }
     public void setGameId(Long gameId) { this.gameId = gameId; }
 
+    public Long getPlayerId() { return playerId; }
+    public void setPlayerId(Long player_id) { this.playerId = player_id; }
+
     public MiniGameType getMiniGameType() { return miniGameType; }
     public void setMiniGameType(MiniGameType miniGameType) { this.miniGameType = miniGameType; }
+
+    public String getAnswer() { return answer; }
+    public void setAnswer(String answer) { this.answer = answer; }
+
+
 }

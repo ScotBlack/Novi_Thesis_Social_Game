@@ -55,8 +55,24 @@ public class GameServiceImpl implements GameService {
         return ResponseEntity.ok(teams); // needs response object
     }
 
+    @Override
+    public ResponseEntity<?> getPlayers(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByGameId(id);
+
+        return ResponseEntity.ok(createResponseObject(players));
+    }
+
     // getPlayersFromTeam(Long Id, Color color/team)
 
+    @Override
     public ResponseEntity<?> getScore(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Game> optionalGame = gameRepository.findById(id);
@@ -76,63 +92,6 @@ public class GameServiceImpl implements GameService {
         return ResponseEntity.ok(createResponseObject(game));
     }
 
-    public ResponseEntity<?> nextMiniGame(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
-
-        int i = (int) Math.round(Math.random() * MiniGameType.values().length);
-//        MiniGame miniGame;
-
-        switch (MiniGameType.values()[i]) {
-            case QUESTION:
-                List<Question> questions = questionRepository.findAll();
-                int y = (int) Math.round(Math.random() * questions.size());
-                Question question = questions.get(y);
-                return nextQuestion(question, game);
-        }
-
-
-        // select random miniGame of miniGameType
-            // consider AgeSetting
-
-        // set competing players
-
-        return ResponseEntity.ok("miniGame.getQuestion()");
-    }
-
-    public ResponseEntity<?> nextQuestion(Question miniGame, Game game) {
-        miniGame.setCompetingPlayers(game.getCaptains());
-
-        String[] answers = {miniGame.getCorrectAnswer() + miniGame.getWrongAnswers()};
-        Set<String> randAnswers = new HashSet<>();
-
-        for (int i = 0; i < 4; i++) {
-            int x = (int) Math.round(Math.random() * 4);
-            randAnswers.add(answers[x]);
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> getPlayers(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByGameId(id);
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
 
     public Set<TeamScoreResponse> createResponseObject (Game game) {
         Set<TeamScoreResponse> highScores = new HashSet<>();
@@ -159,13 +118,13 @@ public class GameServiceImpl implements GameService {
     public PlayerResponse createResponseObject (Player player) {
 
         PlayerResponse playerResponse =
-                new PlayerResponse (
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone(),
-                        player.getGame().getId()
-                );
+            new PlayerResponse (
+                player.getId(),
+                player.getName(),
+                player.getColor().toString(),
+                player.getPhone(),
+                player.getGame().getId()
+            );
 
         return playerResponse;
     }
