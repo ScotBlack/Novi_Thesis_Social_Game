@@ -46,6 +46,8 @@ public class MiniGameServiceImpl implements MiniGameService {
 
         Game game = optionalGame.get();
 
+        // selects miniGameType, but since there is only one MiniGameType currently
+
 //        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
 
 //        if (i > 4 || i < 0) {
@@ -59,6 +61,7 @@ public class MiniGameServiceImpl implements MiniGameService {
                 List<Question> questions = questionRepository.findAll();
                 int y = (int) Math.round(Math.random() * (questions.size() -1));
                 Question question = questions.get(y);
+//                return ResponseEntity.status(200).body("got here");
                 return ResponseEntity.status(200).body(nextQuestion(question, game));
             case DARE:
                 List<Question> questions2 = questionRepository.findAll();
@@ -75,41 +78,32 @@ public class MiniGameServiceImpl implements MiniGameService {
                 return ResponseEntity.status(200).body("got to default");
 
         }
-
-
-        // select random miniGame of miniGameType
-        // consider AgeSetting
-
-        // set competing players
-
-//        return ResponseEntity.status(200).body(MiniGameType.values()[i -1]);
     }
 
     public ResponseEntity<?> nextQuestion(Question miniGame, Game game) {
-        miniGame.setCompetingPlayers(game.getCaptains());
-        game.setCurrentMiniGameId(miniGame.getId());
+        game.setCurrentMiniGame(miniGame);
 
-        String[] answers = {miniGame.getCorrectAnswer() + miniGame.getWrongAnswers()};
+        String[] answers = new String [miniGame.getAllAnswers().size()];
+        miniGame.getAllAnswers().toArray(answers);
+
         List<String> answerList = Arrays.asList(answers);
         Collections.shuffle(answerList);
         answerList.toArray(answers);
 
+        gameRepository.save(game);
 
-//        Integer[] intArray = { 1, 2, 3, 4, 5, 6, 7 };
-//        List<Integer> intList = Arrays.asList(intArray);
-//        Collections.shuffle(intList);
-//        intList.toArray(intArray);
-
-        return ResponseEntity.ok(createResponseObject(game.getId(), miniGame, answers));
+        return ResponseEntity.ok(createResponseObject(game, miniGame, answers));
     }
 
-    public QuestionResponse createResponseObject (Long game_id, Question miniGame, String[] answerList) {
-     QuestionResponse questionResponse =
+    public QuestionResponse createResponseObject (Game game, Question miniGame, String[] answerList) {
+
+
+        QuestionResponse questionResponse =
          new QuestionResponse(
-             game_id,
+             game.getId(),
              miniGame.getMiniGameType(),
              miniGame.getId(),
-             miniGame.getCompetingPlayers(),
+             game.getCaptains(),
              miniGame.getQuestion(),
              answerList
              );

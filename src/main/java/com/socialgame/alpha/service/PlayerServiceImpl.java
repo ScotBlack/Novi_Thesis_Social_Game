@@ -9,6 +9,7 @@ import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
 import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
+import com.socialgame.alpha.payload.response.PlayerAnswerResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -140,25 +141,61 @@ public class PlayerServiceImpl implements PlayerService{
     public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        if (playerAnswerRequest.getMiniGameType().equals(MiniGameType.QUESTION)) {
+       Optional<Game> optionalGame = gameRepository.findById(playerAnswerRequest.getGameId());
 
-        }
+       if (optionalGame.isEmpty()) {
+           errorResponse.addError("404", "Game with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
+           return ResponseEntity.status(404).body(errorResponse);
+       }
 
-        Optional<Question> optionalMiniGame = questionRepository.findById(playerAnswerRequest.getGameId());
+       Game game = optionalGame.get();
 
-        if (optionalMiniGame.isEmpty()) {
-            errorResponse.addError("404" , "MiniGame with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
 
-        Question miniGame = optionalMiniGame.get();
+       Optional<Player> optionalPlayer = playerRepository.findById(playerAnswerRequest.getPlayerId());
 
-//        if (playerAnswerRequest.getAnswer().equals(miniGame.getAnswer())){
-//
-//        }
+       if (optionalPlayer.isEmpty()) {
+           errorResponse.addError("404", "Player with ID: " + playerAnswerRequest.getPlayerId() + " does not exist.");
+           return ResponseEntity.status(404).body(errorResponse);
+       }
 
-        return ResponseEntity.ok("bla");
+       Player player = optionalPlayer.get();
+
+       if (!game.getCaptains().contains(player.getId())) {
+           errorResponse.addError("403", "Player with ID: " + playerAnswerRequest.getPlayerId() + " is not competing in this Mini Game.");
+           return ResponseEntity.status(403).body(errorResponse);
+       }
+
+       Boolean answer;
+
+       switch (game.getCurrentMiniGame().getMiniGameType()) {
+           case QUESTION:
+               Question question = (Question) game.getCurrentMiniGame();
+               if (question.getCorrectAnswer().equals(playerAnswerRequest.getAnswer())) {
+                   player.setPoints(player.getPoints() + question.getPoints());
+                   answer = true;
+               } else {
+                   answer = false;
+               }
+               break;
+           case DARE:
+           case BEST_ANSWER:
+           case RANKING:
+           case GUESS_WORD:
+               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
+               break;
+       }
+
+
+
+
+       return ResponseEntity.status(403).body(errorResponse);
     }
+
+    public PlayerAnswerResponse createResponseEntity (Long gameId, Long playerId, ) {
+
+    }
+
+
 
 
     public PlayerResponse createResponseObject (Player player) {

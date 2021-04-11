@@ -23,10 +23,6 @@ public abstract class MiniGame {
     private String question;
 
     @Column
-    @ElementCollection
-    private Set<Long> competingPlayers;
-
-    @Column
     private int points;
 
     @Column
@@ -38,7 +34,6 @@ public abstract class MiniGame {
     public MiniGame(MiniGameType miniGameType, String question, int points, AgeSetting ageSetting) {
         this.miniGameType = miniGameType;
         this.question = question;
-        this.competingPlayers = new HashSet<>();
         this.points = points;
         this.ageSetting = ageSetting;
     }
@@ -51,9 +46,6 @@ public abstract class MiniGame {
 
     public String getQuestion() { return question; }
     public void setQuestion(String question) { this.question = question; }
-
-    public Set<Long> getCompetingPlayers() { return competingPlayers; }
-    public void setCompetingPlayers(Set<Long> competingPlayers) { this.competingPlayers = competingPlayers; }
 
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }
