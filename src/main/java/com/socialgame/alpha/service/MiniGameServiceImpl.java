@@ -1,10 +1,14 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
+import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.MiniGame;
 import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.response.ErrorResponse;
+import com.socialgame.alpha.payload.response.TeamScoreResponse;
+import com.socialgame.alpha.payload.response.minigame.QuestionResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
@@ -12,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MiniGameServiceImpl implements MiniGameService {
@@ -102,4 +103,27 @@ public class MiniGameServiceImpl implements MiniGameService {
 
         return ResponseEntity.ok("hola");
     }
+
+    public QuestionResponse createResponseObject (Game game) {
+        Set<TeamScoreResponse> highScores = new HashSet<>();
+
+        Set<Color> teams = game.getTeams();
+
+        for (Color color : teams) {
+            TeamScoreResponse team = new TeamScoreResponse(color.toString());
+
+
+            for (Player p : game.getPlayers()) {
+                if (p.getColor().equals(color)) {
+                    team.addMembers(p.getName());
+                }
+                if (game.getCaptains().contains(p.getId())) {
+                    team.setPoints(p.getPoints());
+                }
+            }
+            highScores.add(team);
+        }
+        return highScores;
+    }
+
 }
