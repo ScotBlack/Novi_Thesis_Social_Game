@@ -1,11 +1,9 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.enums.MiniGameType;
-import com.socialgame.alpha.domain.minigame.MiniGame;
-import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.TeamScoreResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
@@ -50,27 +48,10 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Set<Color> teams = optionalGame.get().getTeams();
+        Set<Team> teams = optionalGame.get().getTeams();
 
         return ResponseEntity.ok(teams); // needs response object
     }
-
-    @Override
-    public ResponseEntity<?> getPlayers(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByGameId(id);
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
-
-    // getPlayersFromTeam(Long Id, Color color/team)
 
     @Override
     public ResponseEntity<?> getScore(Long id) {
@@ -96,49 +77,25 @@ public class GameServiceImpl implements GameService {
     public Set<TeamScoreResponse> createResponseObject (Game game) {
         Set<TeamScoreResponse> highScores = new HashSet<>();
 
-        Set<Color> teams = game.getTeams();
+        Set<Team> teams = game.getTeams();
 
-        for (Color color : teams) {
-            TeamScoreResponse team = new TeamScoreResponse(color.toString());
+        for (Team team: teams) {
 
+            TeamScoreResponse teamResponse =
+                new TeamScoreResponse(
+                    team.getName().toString(),
+                    team.getPoints(),
+                    team.getPlayers().keySet()
+                );
 
-            for (Player p : game.getPlayers()) {
-                if (p.getColor().equals(color)) {
-                    team.addMembers(p.getName());
-                }
-                if (game.getCaptains().contains(p.getId())) {
-                    team.setPoints(p.getPoints());
-                }
-            }
-            highScores.add(team);
+            highScores.add(teamResponse);
         }
         return highScores;
     }
 
-    public PlayerResponse createResponseObject (Player player) {
 
-        PlayerResponse playerResponse =
-            new PlayerResponse (
-                player.getId(),
-                player.getName(),
-                player.getColor().toString(),
-                player.getPhone(),
-                player.getGame().getId()
-            );
 
-        return playerResponse;
-    }
 
-    public Set<PlayerResponse> createResponseObject (List<Player> players) {
-        Set<PlayerResponse> playerResponseList = new HashSet<>();
-
-        for (Player player : players) {
-            PlayerResponse playerResponse = createResponseObject(player);
-            playerResponseList.add(playerResponse);
-        }
-
-        return playerResponseList;
-    }
 
 
 

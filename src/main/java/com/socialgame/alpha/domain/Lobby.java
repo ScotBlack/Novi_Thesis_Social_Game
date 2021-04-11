@@ -1,11 +1,16 @@
 package com.socialgame.alpha.domain;
 
+import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
+@Table(name = "lobby")
 public class Lobby {
 
     @Id
@@ -21,9 +26,13 @@ public class Lobby {
     @Value("50")
     private int points;
 
+    @OneToMany (mappedBy = "lobby")
+    private Set<Player> players;
+
     @Column
     @Value("Need more players.")
     private String status;
+
     @Column
     @Value("false")
     private Boolean canStart;
@@ -31,10 +40,10 @@ public class Lobby {
     public Lobby() {
     }
 
-    public Lobby(Long gameId) {
-        this.gameId = gameId;
+    public Lobby(GameType gameType) {
         this.gameType = GameType.FFA;
         this.points = 100;
+        this.players = new HashSet<>();
         this.status = "Need more players.";
         this.canStart = false;
     }
@@ -67,6 +76,16 @@ public class Lobby {
         this.points = points;
     }
 
+    public Set<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
+    }
+
+
+
     public String getStatus() {
         return status;
     }
@@ -80,4 +99,5 @@ public class Lobby {
     public void setCanStart(Boolean canStart) {
         this.canStart = canStart;
     }
+
 }

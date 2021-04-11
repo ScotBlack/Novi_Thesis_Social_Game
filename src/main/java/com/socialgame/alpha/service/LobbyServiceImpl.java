@@ -36,17 +36,36 @@ public class LobbyServiceImpl implements LobbyService {
     @Override
     public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
 
-        Game game = new Game(GameType.FFA);
-        Player player = new Player(createGameRequest.getName(), Color.RED, true, game);
-
-        gameRepository.save(game);
-
-        Lobby lobby = new Lobby(game.getId());
-
-        playerRepository.save(player);
+        Lobby lobby = new Lobby(GameType.FFA);
         lobbyRepository.save(lobby);
 
+        Player player = new Player(createGameRequest.getName(), Color.RED, true, lobby);
+        playerRepository.save(player);
+
+        Game game = new Game(GameType.FFA);
+        gameRepository.save(game);
+
+        lobby.setGameId(game.getId());
+        lobbyRepository.save(lobby);
+
+
+
         return ResponseEntity.ok(createResponseObject(lobby));
+    }
+
+    @Override
+    public ResponseEntity<?> getPlayers(Long id) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findById(id);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        List<Player> players = playerRepository.findPlayersByLobbyId(id);
+
+        return ResponseEntity.ok(createResponseObject(players));
     }
 
     @Override
@@ -61,7 +80,7 @@ public class LobbyServiceImpl implements LobbyService {
 
         Lobby lobby = optionalLobby.get();
 
-        List<Player> players = playerRepository.findPlayersByGameId(lobby.getGameId());
+        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getGameId());
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
@@ -194,17 +213,19 @@ public class LobbyServiceImpl implements LobbyService {
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        List<Player> players = playerRepository.findPlayersByGameId(game.getId());
+        List<Player> players = playerRepository.findPlayersByLobbyId(game.getId());
 
         for (Color color : Color.values()) {
-            loop:
+            Team team = new Team(game, color);
+
             for (Player player : players) {
-                if (player.getColor().equals(color) && player.getPhone()) {
-                    game.getTeams().add(color);
-                    game.getCaptains().add(player.getId());
-                    game.getScores().add(0);
-                    break;
+                if (player.getColor().equals(color)) {
+                    team.getPlayers().put(player.getName(),0);
                 }
+            }
+
+            if (!team.getPlayers().isEmpty()) {
+                game.getTeams().add(team);
             }
         }
 
@@ -231,16 +252,19 @@ public class LobbyServiceImpl implements LobbyService {
         return lobbyResponse;
     }
 
+
     public PlayerResponse createResponseObject (Player player) {
-        return (
-            new PlayerResponse (
-                    player.getId(),
-                    player.getName(),
-                    player.getColor().toString(),
-                    player.getPhone(),
-                    player.getGame().getId()
-            )
-        );
+
+        PlayerResponse playerResponse =
+                new PlayerResponse (
+                        player.getId(),
+                        player.getName(),
+                        player.getColor().toString(),
+                        player.getPhone(),
+                        player.getLobby().getId()
+                );
+
+        return playerResponse;
     }
 
     public Set<PlayerResponse> createResponseObject (List<Player> players) {

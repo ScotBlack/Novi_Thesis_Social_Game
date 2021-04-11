@@ -1,9 +1,7 @@
 package com.socialgame.alpha.domain;
 
-import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.domain.minigame.MiniGame;
-import org.springframework.context.annotation.Lazy;
 
 
 import javax.persistence.*;
@@ -24,20 +22,23 @@ public class Game {
     @Column
     private Boolean started;
 
-    @OneToMany (mappedBy="game")
-    private Set<Player> players;
+    @OneToMany (mappedBy = "game")
+    private Set<Team> teams;
 
-    @Column
-    @ElementCollection
-    private Set<Color> teams;
-
-    @Column
-    @ElementCollection
-    private Set<Long> captains;
-
-    @Column
-    @ElementCollection
-    private List<Integer> scores;
+//    @OneToMany (mappedBy="game")
+//    private Set<Player> players;
+////
+//    @Column
+//    @ElementCollection
+//    private Set<Color> teams;
+//
+//    @Column
+//    @ElementCollection
+//    private Set<Long> captains;
+//
+//    @Column
+//    @ElementCollection
+//    private List<Integer> scores;
 
     @ManyToOne
     private MiniGame currentMiniGame;
@@ -49,10 +50,11 @@ public class Game {
         this.gameType = gameType;
         this.points = 100;
         this.started = false;
-        this.players = new HashSet<>();
         this.teams = new HashSet<>();
-        this.captains = new HashSet<>();
-        this.scores = new ArrayList<>();
+
+//        this.players = new HashSet<>();
+//        this.captains = new HashSet<>();
+//        this.scores = new ArrayList<>();
     }
 
     public Long getId() {
@@ -83,32 +85,11 @@ public class Game {
         this.started = started;
     }
 
-    public Set<Player> getPlayers() {
-        return players;
-    }
-    public void setPlayers(Set<Player> players) {
-        this.players = players;
-    }
-
-    public Set<Color> getTeams() {
+    public Set<Team> getTeams() {
         return teams;
     }
-    public void setTeams(Set<Color> teams) {
+    public void setTeams(Set<Team> teams) {
         this.teams = teams;
-    }
-
-    public Set<Long> getCaptains() {
-        return captains;
-    }
-    public void setCaptains(Set<Long> captains) {
-        this.captains = captains;
-    }
-
-    public List<Integer> getScores() {
-        return scores;
-    }
-    public void setScores(List<Integer> scores) {
-        this.scores = scores;
     }
 
     public MiniGame getCurrentMiniGame() {
@@ -118,8 +99,5 @@ public class Game {
         this.currentMiniGame = currentMiniGame;
     }
 
-    public void addPlayer (Player player) {
-        this.players.add(player);
-    }
 }
 

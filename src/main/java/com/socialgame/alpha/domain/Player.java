@@ -18,22 +18,19 @@ public class Player {
     private Color color;
     @Column
     private Boolean phone;
-    @Column
-    private int points;
 
     @ManyToOne
-    @JoinColumn(name="game_id")
-    private Game game;
+//    @JoinColumn(name="lobby_id")
+    private Lobby lobby;
 
     public Player() {
     }
 
-    public Player(String name, Color color, Boolean phone, Game game) {
+    public Player(String name, Color color, Boolean phone, Lobby lobby) {
         this.name = name;
         this.color = color;
         this.phone = phone;
-        this.points = 0;
-        this.game = game;
+        this.lobby = lobby;
     }
 
     public Long getId() { return id; }
@@ -48,10 +45,11 @@ public class Player {
     public Boolean getPhone() { return phone; }
     public void setPhone(Boolean phone) { this.phone = phone; }
 
-    public int getPoints() { return points; }
-    public void setPoints(int points) { this.points = points; }
-
-    public Game getGame() { return game; }
-    public void setGame(Game game) { this.game = game; }
+    public Lobby getLobby() {
+        return lobby;
+    }
+    public void setLobby(Lobby lobby) {
+        this.lobby = lobby;
+    }
 
 }

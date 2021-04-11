@@ -9,9 +9,12 @@ public class TeamScoreResponse {
     private int points;
     private Set<String> members;
 
-    public TeamScoreResponse(String team) {
+
+    public TeamScoreResponse(String team, int points, Set<String> members) {
         this.team = team;
-        this.members = new HashSet<>();
+        this.points = points;
+//        this.members = new HashSet<>();
+        this.members = members;
     }
 
     public String getTeam() { return team; }
