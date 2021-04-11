@@ -46,21 +46,20 @@ public class MiniGameServiceImpl implements MiniGameService {
 
         Game game = optionalGame.get();
 
-        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
+//        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
 
+//        if (i > 4 || i < 0) {
+//            return ResponseEntity.status(200).body("out of bounds");
+//        }
 
-        if (i > 4 || i < 0) {
-            return ResponseEntity.status(200).body("out of bounds");
-        }
-        MiniGame miniGame;
+        int i = 0;
 
         switch (MiniGameType.values()[i]) {
             case QUESTION:
                 List<Question> questions = questionRepository.findAll();
                 int y = (int) Math.round(Math.random() * (questions.size() -1));
                 Question question = questions.get(y);
-                return ResponseEntity.status(200).body("got here + "+ y);
-//                return nextQuestion(question, game);
+                return ResponseEntity.status(200).body(nextQuestion(question, game));
             case DARE:
                 List<Question> questions2 = questionRepository.findAll();
                 int z = (int) Math.round(Math.random() * (questions2.size() -1));
@@ -88,6 +87,7 @@ public class MiniGameServiceImpl implements MiniGameService {
 
     public ResponseEntity<?> nextQuestion(Question miniGame, Game game) {
         miniGame.setCompetingPlayers(game.getCaptains());
+        game.setCurrentMiniGameId(miniGame.getId());
 
         String[] answers = {miniGame.getCorrectAnswer() + miniGame.getWrongAnswers()};
         List<String> answerList = Arrays.asList(answers);
@@ -100,30 +100,21 @@ public class MiniGameServiceImpl implements MiniGameService {
 //        Collections.shuffle(intList);
 //        intList.toArray(intArray);
 
-
-        return ResponseEntity.ok("hola");
+        return ResponseEntity.ok(createResponseObject(game.getId(), miniGame, answers));
     }
 
-    public QuestionResponse createResponseObject (Game game) {
-        Set<TeamScoreResponse> highScores = new HashSet<>();
+    public QuestionResponse createResponseObject (Long game_id, Question miniGame, String[] answerList) {
+     QuestionResponse questionResponse =
+         new QuestionResponse(
+             game_id,
+             miniGame.getMiniGameType(),
+             miniGame.getId(),
+             miniGame.getCompetingPlayers(),
+             miniGame.getQuestion(),
+             answerList
+             );
 
-        Set<Color> teams = game.getTeams();
-
-        for (Color color : teams) {
-            TeamScoreResponse team = new TeamScoreResponse(color.toString());
-
-
-            for (Player p : game.getPlayers()) {
-                if (p.getColor().equals(color)) {
-                    team.addMembers(p.getName());
-                }
-                if (game.getCaptains().contains(p.getId())) {
-                    team.setPoints(p.getPoints());
-                }
-            }
-            highScores.add(team);
-        }
-        return highScores;
+        return questionResponse;
     }
 
 }

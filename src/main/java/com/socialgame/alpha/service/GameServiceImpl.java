@@ -118,13 +118,13 @@ public class GameServiceImpl implements GameService {
     public PlayerResponse createResponseObject (Player player) {
 
         PlayerResponse playerResponse =
-                new PlayerResponse (
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone(),
-                        player.getGame().getId()
-                );
+            new PlayerResponse (
+                player.getId(),
+                player.getName(),
+                player.getColor().toString(),
+                player.getPhone(),
+                player.getGame().getId()
+            );
 
         return playerResponse;
     }
