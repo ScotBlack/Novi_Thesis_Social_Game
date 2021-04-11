@@ -17,7 +17,7 @@ public interface PlayerService {
 
     ResponseEntity<?> joinGame(NewPlayerRequest newPlayerRequest);
     ResponseEntity<?> toggleColor(Long id);
-    ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest);
+//    ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest);
 
 
 //    PlayerResponse createResponseObject (Player player);

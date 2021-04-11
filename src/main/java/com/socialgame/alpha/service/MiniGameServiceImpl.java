@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.MiniGame;
@@ -97,13 +98,18 @@ public class MiniGameServiceImpl implements MiniGameService {
 
     public QuestionResponse createResponseObject (Game game, Question miniGame, String[] answerList) {
 
+        Set<Long> teamIds = new HashSet<>();
+
+        for (Team team : game.getTeams()) {
+            teamIds.add(team.getId());
+        }
 
         QuestionResponse questionResponse =
          new QuestionResponse(
              game.getId(),
              miniGame.getMiniGameType(),
              miniGame.getId(),
-             game.getCaptains(),
+             teamIds,
              miniGame.getQuestion(),
              answerList
              );

@@ -48,11 +48,11 @@ public class PlayerController {
     public ResponseEntity<?> toggleColor (@PathVariable("id") Long id)  {
         return playerService.toggleColor(id);
     }
-
-    @PostMapping(path="/answer")
-    public ResponseEntity<?> playerAnswer(@Valid @RequestBody PlayerAnswerRequest playerAnswerRequest) {
-        return playerService.playerAnswer(playerAnswerRequest);
-    }
+//
+//    @PostMapping(path="/answer")
+//    public ResponseEntity<?> playerAnswer(@Valid @RequestBody PlayerAnswerRequest playerAnswerRequest) {
+//        return playerService.playerAnswer(playerAnswerRequest);
+//    }
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

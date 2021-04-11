@@ -27,13 +27,6 @@ public class GameController {
         return gameService.getTeams(id);
     }
 
-    @GetMapping(path="/{id}/players")
-    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
-        return gameService.getPlayers(id);
-    }
-
-    // getPlayersFromTeam(Long Id, Color color/team)
-
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
         return gameService.getScore(id);

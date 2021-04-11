@@ -13,7 +13,7 @@ public class NewPlayerRequest {
     private String phone;
 
     @NotNull
-    private Long gameId;
+    private Long lobbyId;
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -21,6 +21,11 @@ public class NewPlayerRequest {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public Long getGameId() { return gameId; }
-    public void setGameId(Long gameId) { this.gameId = gameId; }
+    public Long getLobbyId() {
+        return lobbyId;
+    }
+
+    public void setLobbyId(Long lobbyId) {
+        this.lobbyId = lobbyId;
+    }
 }

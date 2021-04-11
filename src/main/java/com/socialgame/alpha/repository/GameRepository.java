@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
 
-    @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
-    Player findPlayerByNameAndGameId(@Param("gameId") Long gameId,
-                                     @Param("name") String name);
+//    @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
+//    Player findPlayerByNameAndGameId(@Param("gameId") Long gameId,
+//                                     @Param("name") String name);
 
 }

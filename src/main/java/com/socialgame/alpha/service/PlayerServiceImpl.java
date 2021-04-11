@@ -1,5 +1,6 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
@@ -12,6 +13,7 @@ import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerAnswerResponse;
 import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
+import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.minigame.MiniGameRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
@@ -25,21 +27,20 @@ import java.util.*;
 public class PlayerServiceImpl implements PlayerService{
 
     private PlayerRepository playerRepository;
+    private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
-    private MiniGameRepository miniGameRepository;
-    private QuestionRepository questionRepository;
+
+
 
     @Autowired
-    public void setPlayerRepository(PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
+    public void setPlayerRepository (PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
+
+    @Autowired
+    public void setLobbyRepository (LobbyRepository lobbyRepository) { this.lobbyRepository = lobbyRepository;}
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
-    @Autowired
-    public void setMiniGameRepository(MiniGameRepository miniGameRepository) { this.miniGameRepository = miniGameRepository;}
-
-    @Autowired
-    public void setQuestionRepository(QuestionRepository questionRepository) { this.questionRepository = questionRepository;}
 
     @Override
     public ResponseEntity<?> findAllPlayers() {
@@ -97,16 +98,18 @@ public class PlayerServiceImpl implements PlayerService{
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
+
+        Optional<Lobby> optionalLobby = lobbyRepository.findById(newPlayerRequest.getLobbyId());
         // check if game exist
-        if (gameRepository.findById(newPlayerRequest.getGameId()).isEmpty()) {
-            errorResponse.addError("404", "Game with ID: " + newPlayerRequest.getGameId() + " does not exist.");
+        if (optionalLobby.isEmpty()) {
+            errorResponse.addError("404", "Lobby with ID: " + newPlayerRequest.getLobbyId() + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Game game = gameRepository.findById(newPlayerRequest.getGameId()).get();
+        Lobby lobby = optionalLobby.get();
 
         // check if game has player with same name:
-        if (playerRepository.findPlayerByNameAndGameId(game.getId(), newPlayerRequest.getName()) != null) {
+        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
             errorResponse.addError("409", "Name already exists in game.");
         }
 
@@ -119,7 +122,7 @@ public class PlayerServiceImpl implements PlayerService{
         }
 
         int c = 0;
-        for (int i = 0; i < game.getPlayers().size(); i++) {
+        for (int i = 0; i < lobby.getPlayers().size(); i++) {
             c++;
             if (c == 8) {
                 c = 0;
@@ -129,71 +132,73 @@ public class PlayerServiceImpl implements PlayerService{
         player.setName(newPlayerRequest.getName());
         player.setColor(Color.values()[c]);
         player.setPhone(newPlayerRequest.getPhone().equals("true"));
-        player.setGame(game);
-        game.addPlayer(player);
+        lobby.getPlayers().add(player);
+
+//        player.setGame(game);
+//        game.addPlayer(player);
 
         playerRepository.save(player);
-        gameRepository.save(game);
+        lobbyRepository.save(lobby);
 
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-    public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
-
-       Optional<Game> optionalGame = gameRepository.findById(playerAnswerRequest.getGameId());
-
-       if (optionalGame.isEmpty()) {
-           errorResponse.addError("404", "Game with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
-           return ResponseEntity.status(404).body(errorResponse);
-       }
-
-       Game game = optionalGame.get();
-
-
-       Optional<Player> optionalPlayer = playerRepository.findById(playerAnswerRequest.getPlayerId());
-
-       if (optionalPlayer.isEmpty()) {
-           errorResponse.addError("404", "Player with ID: " + playerAnswerRequest.getPlayerId() + " does not exist.");
-           return ResponseEntity.status(404).body(errorResponse);
-       }
-
-       Player player = optionalPlayer.get();
-
-       if (!game.getCaptains().contains(player.getId())) {
-           errorResponse.addError("403", "Player with ID: " + playerAnswerRequest.getPlayerId() + " is not competing in this Mini Game.");
-           return ResponseEntity.status(403).body(errorResponse);
-       }
-
-       Boolean answer;
-
-       switch (game.getCurrentMiniGame().getMiniGameType()) {
-           case QUESTION:
-               Question question = (Question) game.getCurrentMiniGame();
-               if (question.getCorrectAnswer().equals(playerAnswerRequest.getAnswer())) {
-                   player.setPoints(player.getPoints() + question.getPoints());
-                   answer = true;
-               } else {
-                   answer = false;
-               }
-               break;
-           case DARE:
-           case BEST_ANSWER:
-           case RANKING:
-           case GUESS_WORD:
-               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
-               break;
-       }
-
-
-
-
-       return ResponseEntity.status(403).body(errorResponse);
-    }
-
-    public PlayerAnswerResponse createResponseEntity (Long gameId, Long playerId, ) {
-
-    }
+//    public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//
+//       Optional<Game> optionalGame = gameRepository.findById(playerAnswerRequest.getGameId());
+//
+//       if (optionalGame.isEmpty()) {
+//           errorResponse.addError("404", "Game with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
+//           return ResponseEntity.status(404).body(errorResponse);
+//       }
+//
+//       Game game = optionalGame.get();
+//
+//
+//       Optional<Player> optionalPlayer = playerRepository.findById(playerAnswerRequest.getPlayerId());
+//
+//       if (optionalPlayer.isEmpty()) {
+//           errorResponse.addError("404", "Player with ID: " + playerAnswerRequest.getPlayerId() + " does not exist.");
+//           return ResponseEntity.status(404).body(errorResponse);
+//       }
+//
+//       Player player = optionalPlayer.get();
+//
+//       if (!game.getCaptains().contains(player.getId())) {
+//           errorResponse.addError("403", "Player with ID: " + playerAnswerRequest.getPlayerId() + " is not competing in this Mini Game.");
+//           return ResponseEntity.status(403).body(errorResponse);
+//       }
+//
+//       Boolean answer;
+//
+//       switch (game.getCurrentMiniGame().getMiniGameType()) {
+//           case QUESTION:
+//               Question question = (Question) game.getCurrentMiniGame();
+//               if (question.getCorrectAnswer().equals(playerAnswerRequest.getAnswer())) {
+//                   player.setPoints(player.getPoints() + question.getPoints());
+//                   answer = true;
+//               } else {
+//                   answer = false;
+//               }
+//               break;
+//           case DARE:
+//           case BEST_ANSWER:
+//           case RANKING:
+//           case GUESS_WORD:
+//               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
+//               break;
+//       }
+//
+//
+//
+//
+//       return ResponseEntity.status(403).body(errorResponse);
+//    }
+//
+//    public PlayerAnswerResponse createResponseEntity (Long gameId, Long playerId, ) {
+//
+//    }
 
 
 
@@ -205,7 +210,7 @@ public class PlayerServiceImpl implements PlayerService{
                 player.getName(),
                 player.getColor().toString(),
                 player.getPhone(),
-                player.getGame().getId()
+                player.getLobby().getId()
             )
         );
     }

@@ -23,6 +23,12 @@ public class LobbyController {
         return lobbyService.createGame(createGameRequest);
     }
 
+    @GetMapping("/{id}/players")
+    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
+        return lobbyService.getPlayers(id);
+    }
+
+
     @GetMapping("/{id}/status")
     public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
         return lobbyService.lobbyStatusUpdate(id);
