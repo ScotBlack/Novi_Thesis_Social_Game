@@ -25,21 +25,6 @@ public class Game {
     @OneToMany (mappedBy = "game")
     private Set<Team> teams;
 
-//    @OneToMany (mappedBy="game")
-//    private Set<Player> players;
-////
-//    @Column
-//    @ElementCollection
-//    private Set<Color> teams;
-//
-//    @Column
-//    @ElementCollection
-//    private Set<Long> captains;
-//
-//    @Column
-//    @ElementCollection
-//    private List<Integer> scores;
-
     @ManyToOne
     private MiniGame currentMiniGame;
 
@@ -51,10 +36,6 @@ public class Game {
         this.points = 100;
         this.started = false;
         this.teams = new HashSet<>();
-
-//        this.players = new HashSet<>();
-//        this.captains = new HashSet<>();
-//        this.scores = new ArrayList<>();
     }
 
     public Long getId() {

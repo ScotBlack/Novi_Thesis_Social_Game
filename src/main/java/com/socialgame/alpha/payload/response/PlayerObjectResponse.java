@@ -1,6 +1,6 @@
 package com.socialgame.alpha.payload.response;
 
-public class PlayerResponse {
+public class PlayerObjectResponse {
 
     private Long id;
     private String name;
@@ -8,7 +8,7 @@ public class PlayerResponse {
     private Boolean phone;
     private Long lobbyId;
 
-    public PlayerResponse(Long id, String name, String color, Boolean phone, Long lobbyId) {
+    public PlayerObjectResponse(Long id, String name, String color, Boolean phone, Long lobbyId) {
         this.id = id;
         this.name = name;
         this.color = color;

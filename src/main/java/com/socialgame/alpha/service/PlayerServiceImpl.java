@@ -2,21 +2,13 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.enums.Color;
-import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.enums.MiniGameType;
-import com.socialgame.alpha.domain.minigame.MiniGame;
-import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
-import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
-import com.socialgame.alpha.payload.response.PlayerAnswerResponse;
-import com.socialgame.alpha.payload.response.PlayerResponse;
+import com.socialgame.alpha.payload.response.PlayerObjectResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.minigame.MiniGameRepository;
-import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,8 +21,6 @@ public class PlayerServiceImpl implements PlayerService{
     private PlayerRepository playerRepository;
     private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
-
-
 
     @Autowired
     public void setPlayerRepository (PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
@@ -109,19 +99,19 @@ public class PlayerServiceImpl implements PlayerService{
         Lobby lobby = optionalLobby.get();
 
 
-//        // check if game has player with same name:
-////        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
-////            errorResponse.addError("409", "Name already exists in game.");
-////        }
-//
-//        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
-//            errorResponse.addError("406", "Phone must be either true or false");
-//        }
-//
-//        if (errorResponse.getErrors().size() > 0) {
-//            return ResponseEntity.status(400).body(errorResponse);
-//        }
-//
+        // check if game has player with same name:
+        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
+            errorResponse.addError("409", "Name already exists in game.");
+        }
+
+        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
+            errorResponse.addError("406", "Phone must be either true or false");
+        }
+
+        if (errorResponse.getErrors().size() > 0) {
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
         int c = 0;
         for (int i = 0; i < lobby.getPlayers().size(); i++) {
             c++;
@@ -202,9 +192,9 @@ public class PlayerServiceImpl implements PlayerService{
 
 
 
-    public PlayerResponse createResponseObject (Player player) {
+    public PlayerObjectResponse createResponseObject (Player player) {
         return (
-            new PlayerResponse (
+            new PlayerObjectResponse(
                 player.getId(),
                 player.getName(),
                 player.getColor().toString(),
@@ -214,15 +204,14 @@ public class PlayerServiceImpl implements PlayerService{
         );
     }
 
-
-    public Set<PlayerResponse> createResponseObject (List<Player> players) {
-        Set<PlayerResponse> playerResponseList = new HashSet<>();
+    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
+        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
 
         for (Player player : players) {
-            PlayerResponse playerResponse = createResponseObject(player);
-            playerResponseList.add(playerResponse);
+            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
+            playerObjectResponseList.add(playerObjectResponse);
         }
 
-        return playerResponseList;
+        return playerObjectResponseList;
     }
 }

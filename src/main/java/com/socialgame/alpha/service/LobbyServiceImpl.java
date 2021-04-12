@@ -6,7 +6,7 @@ import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
-import com.socialgame.alpha.payload.response.PlayerResponse;
+import com.socialgame.alpha.payload.response.PlayerObjectResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -273,10 +273,10 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
 
-    public PlayerResponse createResponseObject (Player player) {
+    public PlayerObjectResponse createResponseObject (Player player) {
 
-        PlayerResponse playerResponse =
-                new PlayerResponse (
+        PlayerObjectResponse playerObjectResponse =
+                new PlayerObjectResponse(
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
@@ -284,18 +284,18 @@ public class LobbyServiceImpl implements LobbyService {
                         player.getLobby().getId()
                 );
 
-        return playerResponse;
+        return playerObjectResponse;
     }
 
-    public Set<PlayerResponse> createResponseObject (List<Player> players) {
-        Set<PlayerResponse> playerResponseList = new HashSet<>();
+    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
+        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
 
         for (Player player : players) {
-            PlayerResponse playerResponse = createResponseObject(player);
-            playerResponseList.add(playerResponse);
+            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
+            playerObjectResponseList.add(playerObjectResponse);
         }
 
-        return playerResponseList;
+        return playerObjectResponseList;
     }
 }
 
