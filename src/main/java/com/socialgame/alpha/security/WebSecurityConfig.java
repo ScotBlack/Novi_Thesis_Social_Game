@@ -23,6 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/lobby/**").permitAll()
                 .antMatchers("/game/**").permitAll()
                 .antMatchers("/minigame/**").permitAll()
+                .antMatchers("/team/**").permitAll()
                 .anyRequest().authenticated();
 
 //        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

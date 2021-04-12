@@ -3,9 +3,13 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Team;
 
+import com.socialgame.alpha.domain.minigame.MiniGame;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.request.TeamAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 
+import com.socialgame.alpha.payload.response.minigame.QuestionResponse;
+import com.socialgame.alpha.payload.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.TeamRepository;
 
@@ -40,44 +44,40 @@ public class TeamServiceImpl implements TeamService {
 
        Game game = optionalGame.get();
 
-//       if (game.g)
+        Optional<Team> optionalTeam = teamRepository.findById(teamAnswerRequest.getTeamId());
 
+        if (optionalTeam.isEmpty()) {
+            errorResponse.addError("404", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
 
-       Optional<Team> optionalTeam = teamRepository.findById(teamAnswerRequest.getTeamId());
+        Team team = optionalTeam.get();
 
-       if (optionalTeam.isEmpty()) {
-           errorResponse.addError("404", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not exist.");
-           return ResponseEntity.status(404).body(errorResponse);
+        // check if team is in game??
+
+       if (!game.getCurrentCompetingTeams().contains(team)) {
+           errorResponse.addError("403", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not compete in this Mini Game.");
        }
 
-       Team team = optionalTeam.get();
+       // check if team already answer the question, so they cant get double triple score
 
-
-
-//       if (!game.getCaptains().contains(player.getId())) {
-//           errorResponse.addError("403", "Player with ID: " + teamAnswerRequest.getTeamId() + " is not competing in this Mini Game.");
-//           return ResponseEntity.status(403).body(errorResponse);
-//       }
-//
-//       Boolean answer;
-//
-//       switch (game.getCurrentMiniGame().getMiniGameType()) {
-//           case QUESTION:
-//               Question question = (Question) game.getCurrentMiniGame();
-//               if (question.getCorrectAnswer().equals(teamAnswerRequest.getAnswer())) {
-//                   player.setPoints(player.getPoints() + question.getPoints());
-//                   answer = true;
-//               } else {
-//                   answer = false;
-//               }
-//               break;
-//           case DARE:
-//           case BEST_ANSWER:
-//           case RANKING:
-//           case GUESS_WORD:
-//               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
-//               break;
-//       }
+       switch (game.getCurrentMiniGame().getMiniGameType()) {
+           case QUESTION:
+               Question question = (Question) game.getCurrentMiniGame();
+               if (question.getCorrectAnswer().equals(teamAnswerRequest.getAnswer())) {
+                   team.setPoints(team.getPoints() + question.getPoints());
+                   teamRepository.save(team);
+                   return ResponseEntity.ok(createResponseObject(team, question, teamAnswerRequest.getAnswer(),true));
+               } else {
+                   return ResponseEntity.ok(createResponseObject(team, question,teamAnswerRequest.getAnswer(), false));
+               }
+           case DARE:
+           case BEST_ANSWER:
+           case RANKING:
+           case GUESS_WORD:
+               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
+               break;
+       }
 
 
 
@@ -85,5 +85,18 @@ public class TeamServiceImpl implements TeamService {
        return ResponseEntity.status(403).body(errorResponse);
     }
 
+    public TeamAnswerResponse createResponseObject (Team team, MiniGame minigame, String answer, Boolean answerCorrect) {
 
+        TeamAnswerResponse response =
+            new TeamAnswerResponse (
+                team.getId(),
+                minigame.getQuestion(),
+                answer,
+                answerCorrect,
+                minigame.getPoints(),
+                team.getPoints()
+            );
+
+        return response;
+    }
 }

@@ -262,7 +262,7 @@ public class LobbyServiceImpl implements LobbyService {
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
             lobby.getId(),
-            lobby.getId(),
+            lobby.getGame().getId(),
             lobby.getCanStart(),
             lobby.getStatus(),
             lobby.getGame().getGameType().toString(),

@@ -87,11 +87,11 @@ public class MiniGameServiceImpl implements MiniGameService {
         }
 
         // remove previous competing players
+        game.setCurrentCompetingTeams(new HashSet<>());
 
         for (Team team : game.getTeams()) {
             game.getCurrentCompetingTeams().add(team);
         }
-
 
         Question question = questions.get(i);
 
