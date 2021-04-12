@@ -8,7 +8,6 @@ public class ErrorResponse {
 
     public ErrorResponse() { this.errors = new HashMap<>(); }
 
-
     public Map<String, String> getErrors() { return errors; }
 
     public void addError (String errorType, String errorMessage) {errors.put(errorType, errorMessage);}

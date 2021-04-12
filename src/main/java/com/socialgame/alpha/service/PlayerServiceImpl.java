@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class PlayerServiceImpl implements PlayerService{
+public class PlayerServiceImpl implements PlayerService {
 
     private PlayerRepository playerRepository;
     private LobbyRepository lobbyRepository;
@@ -98,6 +98,7 @@ public class PlayerServiceImpl implements PlayerService{
 
         Lobby lobby = optionalLobby.get();
 
+        //check if game has started yet or not
 
         // check if game has player with same name:
         if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
@@ -131,65 +132,6 @@ public class PlayerServiceImpl implements PlayerService{
 
         return ResponseEntity.ok(createResponseObject(player));
     }
-
-//    public ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest) {
-//        ErrorResponse errorResponse = new ErrorResponse();
-//
-//       Optional<Game> optionalGame = gameRepository.findById(playerAnswerRequest.getGameId());
-//
-//       if (optionalGame.isEmpty()) {
-//           errorResponse.addError("404", "Game with ID: " + playerAnswerRequest.getGameId() + " does not exist.");
-//           return ResponseEntity.status(404).body(errorResponse);
-//       }
-//
-//       Game game = optionalGame.get();
-//
-//
-//       Optional<Player> optionalPlayer = playerRepository.findById(playerAnswerRequest.getPlayerId());
-//
-//       if (optionalPlayer.isEmpty()) {
-//           errorResponse.addError("404", "Player with ID: " + playerAnswerRequest.getPlayerId() + " does not exist.");
-//           return ResponseEntity.status(404).body(errorResponse);
-//       }
-//
-//       Player player = optionalPlayer.get();
-//
-//       if (!game.getCaptains().contains(player.getId())) {
-//           errorResponse.addError("403", "Player with ID: " + playerAnswerRequest.getPlayerId() + " is not competing in this Mini Game.");
-//           return ResponseEntity.status(403).body(errorResponse);
-//       }
-//
-//       Boolean answer;
-//
-//       switch (game.getCurrentMiniGame().getMiniGameType()) {
-//           case QUESTION:
-//               Question question = (Question) game.getCurrentMiniGame();
-//               if (question.getCorrectAnswer().equals(playerAnswerRequest.getAnswer())) {
-//                   player.setPoints(player.getPoints() + question.getPoints());
-//                   answer = true;
-//               } else {
-//                   answer = false;
-//               }
-//               break;
-//           case DARE:
-//           case BEST_ANSWER:
-//           case RANKING:
-//           case GUESS_WORD:
-//               errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
-//               break;
-//       }
-//
-//
-//
-//
-//       return ResponseEntity.status(403).body(errorResponse);
-//    }
-//
-//    public PlayerAnswerResponse createResponseEntity (Long gameId, Long playerId, ) {
-//
-//    }
-
-
 
 
     public PlayerObjectResponse createResponseObject (Player player) {

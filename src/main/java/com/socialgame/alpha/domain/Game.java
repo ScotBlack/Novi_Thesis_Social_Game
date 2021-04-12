@@ -28,6 +28,9 @@ public class Game {
     @ManyToOne
     private MiniGame currentMiniGame;
 
+    @OneToMany
+    private Set<Team> currentCompetingTeams;
+
     public Game() {
     }
 
@@ -36,6 +39,7 @@ public class Game {
         this.points = 100;
         this.started = false;
         this.teams = new HashSet<>();
+        this.currentCompetingTeams = new HashSet<>();
     }
 
     public Long getId() {
@@ -80,5 +84,12 @@ public class Game {
         this.currentMiniGame = currentMiniGame;
     }
 
+    public Set<Team> getCurrentCompetingTeams() {
+        return currentCompetingTeams;
+    }
+
+    public void setCurrentCompetingTeams(Set<Team> currentCompetingTeams) {
+        this.currentCompetingTeams = currentCompetingTeams;
+    }
 }
 

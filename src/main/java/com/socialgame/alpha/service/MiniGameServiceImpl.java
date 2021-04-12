@@ -86,9 +86,14 @@ public class MiniGameServiceImpl implements MiniGameService {
             return ResponseEntity.status(400).body("Question index out of bounds");
         }
 
+        // remove previous competing players
+
+        for (Team team : game.getTeams()) {
+            game.getCurrentCompetingTeams().add(team);
+        }
+
+
         Question question = questions.get(i);
-
-
 
         String[] answers = new String [question.getAllAnswers().size()];
         question.getAllAnswers().toArray(answers);
@@ -107,7 +112,7 @@ public class MiniGameServiceImpl implements MiniGameService {
 
         Set<Long> teamIds = new HashSet<>();
 
-        for (Team team : game.getTeams()) {
+        for (Team team : game.getCurrentCompetingTeams()) {
             teamIds.add(team.getId());
         }
 

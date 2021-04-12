@@ -5,13 +5,13 @@ import com.socialgame.alpha.domain.enums.MiniGameType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class PlayerAnswerRequest {
+public class TeamAnswerRequest {
 
     @NotNull
     private Long gameId;
 
     @NotNull
-    private Long playerId;
+    private Long teamId;
 
     private MiniGameType miniGameType;
 
@@ -22,8 +22,8 @@ public class PlayerAnswerRequest {
     public Long getGameId() { return gameId; }
     public void setGameId(Long gameId) { this.gameId = gameId; }
 
-    public Long getPlayerId() { return playerId; }
-    public void setPlayerId(Long player_id) { this.playerId = player_id; }
+    public Long getTeamId() { return teamId; }
+    public void setTeamId(Long teamId) { this.teamId = teamId; }
 
     public MiniGameType getMiniGameType() { return miniGameType; }
     public void setMiniGameType(MiniGameType miniGameType) { this.miniGameType = miniGameType; }
