@@ -15,17 +15,12 @@ public class NewPlayerRequest {
     @NotNull
     private Long lobbyId;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getPhone() {return phone;}
+    public void setPhone(String phone) {this.phone = phone;}
 
-    public Long getLobbyId() {
-        return lobbyId;
-    }
-
-    public void setLobbyId(Long lobbyId) {
-        this.lobbyId = lobbyId;
-    }
+    public Long getLobbyId() {return lobbyId;}
+    public void setLobbyId(Long lobbyId) {this.lobbyId = lobbyId;}
 }

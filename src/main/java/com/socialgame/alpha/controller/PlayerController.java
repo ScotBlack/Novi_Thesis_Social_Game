@@ -40,8 +40,8 @@ public class PlayerController {
 
     // actual player controls
     @PostMapping(path ="/join")
-    public ResponseEntity<?> joinGame(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
-        return playerService.joinGame(newPlayerRequest);
+    public ResponseEntity<?> joinLobby(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
+        return playerService.joinLobby(newPlayerRequest);
     }
 
     @GetMapping(path="/toggle/{id}")

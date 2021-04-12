@@ -94,7 +94,7 @@ public class PlayerServiceImpl implements PlayerService{
     }
 
     @Override
-    public ResponseEntity<?> joinGame(NewPlayerRequest newPlayerRequest) {
+    public ResponseEntity<?> joinLobby(NewPlayerRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 
@@ -108,19 +108,20 @@ public class PlayerServiceImpl implements PlayerService{
 
         Lobby lobby = optionalLobby.get();
 
-        // check if game has player with same name:
-        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
-            errorResponse.addError("409", "Name already exists in game.");
-        }
 
-        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
-            errorResponse.addError("406", "Phone must be either true or false");
-        }
-
-        if (errorResponse.getErrors().size() > 0) {
-            return ResponseEntity.status(400).body(errorResponse);
-        }
-
+//        // check if game has player with same name:
+////        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
+////            errorResponse.addError("409", "Name already exists in game.");
+////        }
+//
+//        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
+//            errorResponse.addError("406", "Phone must be either true or false");
+//        }
+//
+//        if (errorResponse.getErrors().size() > 0) {
+//            return ResponseEntity.status(400).body(errorResponse);
+//        }
+//
         int c = 0;
         for (int i = 0; i < lobby.getPlayers().size(); i++) {
             c++;
@@ -132,10 +133,8 @@ public class PlayerServiceImpl implements PlayerService{
         player.setName(newPlayerRequest.getName());
         player.setColor(Color.values()[c]);
         player.setPhone(newPlayerRequest.getPhone().equals("true"));
+        player.setLobby(lobby);
         lobby.getPlayers().add(player);
-
-//        player.setGame(game);
-//        game.addPlayer(player);
 
         playerRepository.save(player);
         lobbyRepository.save(lobby);
