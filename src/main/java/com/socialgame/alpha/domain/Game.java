@@ -25,23 +25,11 @@ public class Game {
     @OneToMany (mappedBy = "game")
     private Set<Team> teams;
 
-//    @OneToMany (mappedBy="game")
-//    private Set<Player> players;
-////
-//    @Column
-//    @ElementCollection
-//    private Set<Color> teams;
-//
-//    @Column
-//    @ElementCollection
-//    private Set<Long> captains;
-//
-//    @Column
-//    @ElementCollection
-//    private List<Integer> scores;
-
     @ManyToOne
     private MiniGame currentMiniGame;
+
+    @OneToMany
+    private Set<Team> currentCompetingTeams;
 
     public Game() {
     }
@@ -51,10 +39,7 @@ public class Game {
         this.points = 100;
         this.started = false;
         this.teams = new HashSet<>();
-
-//        this.players = new HashSet<>();
-//        this.captains = new HashSet<>();
-//        this.scores = new ArrayList<>();
+        this.currentCompetingTeams = new HashSet<>();
     }
 
     public Long getId() {
@@ -99,5 +84,12 @@ public class Game {
         this.currentMiniGame = currentMiniGame;
     }
 
+    public Set<Team> getCurrentCompetingTeams() {
+        return currentCompetingTeams;
+    }
+
+    public void setCurrentCompetingTeams(Set<Team> currentCompetingTeams) {
+        this.currentCompetingTeams = currentCompetingTeams;
+    }
 }
 

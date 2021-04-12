@@ -1,11 +1,7 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.payload.request.NewPlayerRequest;
-import com.socialgame.alpha.payload.request.PlayerAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
-import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,20 +36,14 @@ public class PlayerController {
 
     // actual player controls
     @PostMapping(path ="/join")
-    public ResponseEntity<?> joinGame(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
-        return playerService.joinGame(newPlayerRequest);
+    public ResponseEntity<?> joinLobby(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
+        return playerService.joinLobby(newPlayerRequest);
     }
 
     @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> toggleColor (@PathVariable("id") Long id)  {
         return playerService.toggleColor(id);
     }
-//
-//    @PostMapping(path="/answer")
-//    public ResponseEntity<?> playerAnswer(@Valid @RequestBody PlayerAnswerRequest playerAnswerRequest) {
-//        return playerService.playerAnswer(playerAnswerRequest);
-//    }
-
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

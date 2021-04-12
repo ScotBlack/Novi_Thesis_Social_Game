@@ -20,17 +20,16 @@ public class Player {
     private Boolean phone;
 
     @ManyToOne
-//    @JoinColumn(name="lobby_id")
+    @JoinColumn(name="lobby_id")
     private Lobby lobby;
 
     public Player() {
     }
 
-    public Player(String name, Color color, Boolean phone, Lobby lobby) {
+    public Player(String name, Color color, Boolean phone) {
         this.name = name;
         this.color = color;
         this.phone = phone;
-        this.lobby = lobby;
     }
 
     public Long getId() { return id; }

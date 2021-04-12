@@ -10,21 +10,15 @@ import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Table(name = "lobby")
+//@Table(name = "lobby")
 public class Lobby {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
-    private Long gameId;
-
-    @Column
-    private GameType gameType;
-    @Column
-    @Value("50")
-    private int points;
+    @OneToOne
+    private Game game;
 
     @OneToMany (mappedBy = "lobby")
     private Set<Player> players;
@@ -40,64 +34,26 @@ public class Lobby {
     public Lobby() {
     }
 
-    public Lobby(GameType gameType) {
-        this.gameType = GameType.FFA;
-        this.points = 100;
+    public Lobby(Player player) {
         this.players = new HashSet<>();
+        this.players.add(player);
         this.status = "Need more players.";
         this.canStart = false;
     }
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
 
-    public Long getGameId() {
-        return gameId;
-    }
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
-    }
+    public Game getGame() {return game;}
+    public void setGame(Game game) {this.game = game;}
 
-    public GameType getGameType() {
-        return gameType;
-    }
-    public void setGameType(GameType gameType) {
-        this.gameType = gameType;
-    }
+    public Set<Player> getPlayers() {return players;}
+    public void setPlayers(Set<Player> players) {this.players = players;}
 
-    public int getPoints() {
-        return points;
-    }
-    public void setPoints(int points) {
-        this.points = points;
-    }
+    public String getStatus() {return status;}
+    public void setStatus(String status) {this.status = status;}
 
-    public Set<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Set<Player> players) {
-        this.players = players;
-    }
-
-
-
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Boolean getCanStart() {
-        return canStart;
-    }
-    public void setCanStart(Boolean canStart) {
-        this.canStart = canStart;
-    }
+    public Boolean getCanStart() {return canStart;}
+    public void setCanStart(Boolean canStart) {this.canStart = canStart;}
 
 }

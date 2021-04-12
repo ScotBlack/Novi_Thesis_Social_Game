@@ -1,12 +1,9 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Team;
-import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.TeamScoreResponse;
-import com.socialgame.alpha.payload.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;

@@ -48,7 +48,6 @@ public class MiniGameServiceImpl implements MiniGameService {
         Game game = optionalGame.get();
 
         // selects miniGameType, but since there is only one MiniGameType currently
-
 //        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
 
 //        if (i > 4 || i < 0) {
@@ -59,11 +58,8 @@ public class MiniGameServiceImpl implements MiniGameService {
 
         switch (MiniGameType.values()[i]) {
             case QUESTION:
-                List<Question> questions = questionRepository.findAll();
-                int y = (int) Math.round(Math.random() * (questions.size() -1));
-                Question question = questions.get(y);
-//                return ResponseEntity.status(200).body("got here");
-                return ResponseEntity.status(200).body(nextQuestion(question, game));
+
+                return ResponseEntity.status(200).body(nextQuestion(game));
             case DARE:
                 List<Question> questions2 = questionRepository.findAll();
                 int z = (int) Math.round(Math.random() * (questions2.size() -1));
@@ -81,26 +77,42 @@ public class MiniGameServiceImpl implements MiniGameService {
         }
     }
 
-    public ResponseEntity<?> nextQuestion(Question miniGame, Game game) {
-        game.setCurrentMiniGame(miniGame);
+    public ResponseEntity<?> nextQuestion(Game game) {
+        List<Question> questions = questionRepository.findAll();
 
-        String[] answers = new String [miniGame.getAllAnswers().size()];
-        miniGame.getAllAnswers().toArray(answers);
+        int i = (int) Math.round(Math.random() * (questions.size() -1));
+
+        if (i > (questions.size() - 1) || i < 0) {
+            return ResponseEntity.status(400).body("Question index out of bounds");
+        }
+
+        // remove previous competing players
+
+        for (Team team : game.getTeams()) {
+            game.getCurrentCompetingTeams().add(team);
+        }
+
+
+        Question question = questions.get(i);
+
+        String[] answers = new String [question.getAllAnswers().size()];
+        question.getAllAnswers().toArray(answers);
 
         List<String> answerList = Arrays.asList(answers);
         Collections.shuffle(answerList);
         answerList.toArray(answers);
 
+        game.setCurrentMiniGame(question);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(createResponseObject(game, miniGame, answers));
+        return ResponseEntity.ok(createResponseObject(game, question, answers));
     }
 
     public QuestionResponse createResponseObject (Game game, Question miniGame, String[] answerList) {
 
         Set<Long> teamIds = new HashSet<>();
 
-        for (Team team : game.getTeams()) {
+        for (Team team : game.getCurrentCompetingTeams()) {
             teamIds.add(team.getId());
         }
 
