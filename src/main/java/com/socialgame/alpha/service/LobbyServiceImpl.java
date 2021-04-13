@@ -7,6 +7,7 @@ import com.socialgame.alpha.payload.request.CreateGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.LobbyResponse;
 import com.socialgame.alpha.payload.response.PlayerObjectResponse;
+import com.socialgame.alpha.payload.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -256,8 +257,29 @@ public class LobbyServiceImpl implements LobbyService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(createResponseObject(players));
+        //respond team objects
+
+        return ResponseEntity.ok(createResponseObject(game.getTeams()));
     }
+
+    public Set<TeamResponse> createResponseObject(Set<Team> teams) {
+        Set<TeamResponse> teamsRes = new HashSet<>();
+
+        for (Team team : teams) {
+            TeamResponse response =
+                new TeamResponse(
+                    team.getId(),
+                    team.getGame().getId(),
+                    team.getName().toString(),
+                    team.getPlayers().keySet(),
+                    team.getPoints()
+                );
+            teamsRes.add(response);
+        }
+
+        return teamsRes;
+    }
+
 
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
@@ -297,6 +319,10 @@ public class LobbyServiceImpl implements LobbyService {
 
         return playerObjectResponseList;
     }
+
+
+
+
 }
 
 

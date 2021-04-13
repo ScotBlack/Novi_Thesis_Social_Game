@@ -15,9 +15,9 @@ import java.util.List;
 public class UserController {
 
     private static final List<User> users = Arrays.asList(
-        new User(1L, "Piet"),
-        new User(2L, "Jozef"),
-        new User (3L, "Anna Smith")
+        new User(51L, "Piet"),
+        new User(52L, "Jozef"),
+        new User (53L, "Anna Smith")
     );
 
 
