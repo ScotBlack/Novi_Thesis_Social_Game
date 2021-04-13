@@ -10,23 +10,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity( prePostEnabled = true )
+//@EnableGlobalMethodSecurity( prePostEnabled = true )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/player/**").permitAll()
-                .antMatchers("/lobby/**").permitAll()
-                .antMatchers("/game/**").permitAll()
-                .antMatchers("/minigame/**").permitAll()
-                .antMatchers("/team/**").permitAll()
-                .anyRequest().authenticated();
+        http
+            .authorizeRequests()
+            .antMatchers("/", "index").permitAll()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .httpBasic();
 
-//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.cors().and().csrf().disable()
+////                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+//                .antMatchers("/player/**").permitAll()
+//                .antMatchers("/lobby/**").permitAll()
+//                .antMatchers("/game/**").permitAll()
+//                .antMatchers("/minigame/**").permitAll()
+//                .antMatchers("/team/**").permitAll()
+//                .antMatchers("/api/**").permitAll()
+//                .anyRequest().authenticated();
+//
+////        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//    }
 
 }
