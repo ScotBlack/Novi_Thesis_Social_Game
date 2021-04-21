@@ -112,6 +112,7 @@ public class GuestServiceImpl implements GuestService {
         playerRepository.save(player);
         lobbyRepository.save(lobby);
 
+        // should return players list ??
         return ResponseEntity.ok(createResponseObject(player));
     }
 

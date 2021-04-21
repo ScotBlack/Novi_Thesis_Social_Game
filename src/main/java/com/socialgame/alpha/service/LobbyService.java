@@ -8,8 +8,8 @@ public interface LobbyService {
 //    ResponseEntity<?> createGame(CreateGameRequest createGameRequest);
     ResponseEntity<?> getPlayers(Long id);
     ResponseEntity<?> lobbyStatusUpdate(Long id);
-    ResponseEntity<?> setGameType(Long id, GameType gameType);
-    ResponseEntity<?> setPoints(Long id, int points);
-    ResponseEntity<?> startGame(Long id);
+//    ResponseEntity<?> setGameType(Long id, GameType gameType);
+//    ResponseEntity<?> setPoints(Long id, int points);
+//    ResponseEntity<?> startGame(Long id);
 
 }

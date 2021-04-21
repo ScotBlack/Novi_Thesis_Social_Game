@@ -36,18 +36,18 @@ public class LobbyController {
         return lobbyService.lobbyStatusUpdate(id);
     }
 
-    @GetMapping(path="/{id}/setGameType/{gameType}")
-    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType") GameType gameType) {
-        return lobbyService.setGameType(id, gameType);
-    }
-
-    @GetMapping(path="/{id}/setPoints/{points}")
-    public ResponseEntity<?> setPoints(@PathVariable("id") Long id, @PathVariable("points")int points) {
-        return lobbyService.setPoints(id, points);
-    }
-
-    @GetMapping(path="/{id}/start")
-    public ResponseEntity<?> startGame(@PathVariable("id") Long id) {
-        return lobbyService.startGame(id);
-    }
+//    @GetMapping(path="/{id}/setGameType/{gameType}")
+//    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType") GameType gameType) {
+//        return lobbyService.setGameType(id, gameType);
+//    }
+//
+//    @GetMapping(path="/{id}/setPoints/{points}")
+//    public ResponseEntity<?> setPoints(@PathVariable("id") Long id, @PathVariable("points")int points) {
+//        return lobbyService.setPoints(id, points);
+//    }
+//
+//    @GetMapping(path="/{id}/start")
+//    public ResponseEntity<?> startGame(@PathVariable("id") Long id) {
+//        return lobbyService.startGame(id);
+//    }
 }
