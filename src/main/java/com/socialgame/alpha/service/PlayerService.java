@@ -8,7 +8,7 @@ public interface PlayerService {
     ResponseEntity<?> findAllPlayers();
     ResponseEntity<?> findPlayerByID(Long id);
 
-    ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest);
+//    ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest);
     ResponseEntity<?> toggleColor(Long id);
 //    ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest);
 

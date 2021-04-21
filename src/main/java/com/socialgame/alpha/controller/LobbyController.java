@@ -20,10 +20,10 @@ public class LobbyController {
 
 
     // added
-    @PostMapping("create")
-    public ResponseEntity<?> createGame (@Valid @RequestBody CreateGameRequest createGameRequest) {
-        return lobbyService.createGame(createGameRequest);
-    }
+//    @PostMapping("create")
+//    public ResponseEntity<?> createGame (@Valid @RequestBody CreateGameRequest createGameRequest) {
+//        return lobbyService.createGame(createGameRequest);
+//    }
 
     @GetMapping("/{id}/players")
     public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {

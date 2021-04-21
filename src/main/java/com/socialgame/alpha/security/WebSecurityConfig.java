@@ -109,7 +109,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                     .authorizeRequests()
-                    .antMatchers("/api/auth/**").permitAll()
+                    .antMatchers("/api/**").permitAll()
                     .antMatchers("/player/**").permitAll()
                     .antMatchers("/lobby/**").permitAll()
                     .antMatchers("/game/**").permitAll()

@@ -41,31 +41,31 @@ public class LobbyServiceImpl implements LobbyService {
 
 
 
-    @Override
-    public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
-
-
-
-        Player player = new Player(createGameRequest.getName(), Color.RED, true);
-        playerRepository.save(player);
-
-        Lobby lobby = new Lobby(player);
-        lobbyRepository.save(lobby);
-
-        Game game = new Game(GameType.FFA);
-        gameRepository.save(game);
-
-        player.setLobby(lobby);
-        playerRepository.save(player);
-
-        lobby.setGame(game);
-        lobby.getPlayers().add(player);
-        lobbyRepository.save(lobby);
-
-
-
-        return ResponseEntity.ok(createResponseObject(lobby));
-    }
+//    @Override
+//    public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
+//
+//
+//
+//        Player player = new Player(createGameRequest.getName(), Color.RED, true);
+//        playerRepository.save(player);
+//
+//        Lobby lobby = new Lobby(player);
+//        lobbyRepository.save(lobby);
+//
+//        Game game = new Game(GameType.FFA);
+//        gameRepository.save(game);
+//
+//        player.setLobby(lobby);
+//        playerRepository.save(player);
+//
+//        lobby.setGame(game);
+//        lobby.getPlayers().add(player);
+//        lobbyRepository.save(lobby);
+//
+//
+//
+//        return ResponseEntity.ok(createResponseObject(lobby));
+//    }
 
     @Override
     public ResponseEntity<?> getPlayers(Long id) {
@@ -319,8 +319,6 @@ public class LobbyServiceImpl implements LobbyService {
 
         return playerObjectResponseList;
     }
-
-
 
 
 }

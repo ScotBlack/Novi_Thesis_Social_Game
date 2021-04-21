@@ -83,55 +83,55 @@ public class PlayerServiceImpl implements PlayerService {
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-    @Override
-    public ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Player player = new Player();
-
-
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(newPlayerRequest.getLobbyId());
-        // check if game exist
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404", "Lobby with ID: " + newPlayerRequest.getLobbyId() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        //check if game has started yet or not
-
-        // check if game has player with same name:
-        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
-            errorResponse.addError("409", "Name already exists in game.");
-        }
-
-        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
-            errorResponse.addError("406", "Phone must be either true or false");
-        }
-
-        if (errorResponse.getErrors().size() > 0) {
-            return ResponseEntity.status(400).body(errorResponse);
-        }
-
-        int c = 0;
-        for (int i = 0; i < lobby.getPlayers().size(); i++) {
-            c++;
-            if (c == 8) {
-                c = 0;
-            }
-        }
-
-        player.setName(newPlayerRequest.getName());
-        player.setColor(Color.values()[c]);
-        player.setPhone(newPlayerRequest.getPhone().equals("true"));
-        player.setLobby(lobby);
-        lobby.getPlayers().add(player);
-
-        playerRepository.save(player);
-        lobbyRepository.save(lobby);
-
-        return ResponseEntity.ok(createResponseObject(player));
-    }
+//    @Override
+//    public ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        Player player = new Player();
+//
+//
+//        Optional<Lobby> optionalLobby = lobbyRepository.findById(newPlayerRequest.getLobbyId());
+//        // check if game exist
+//        if (optionalLobby.isEmpty()) {
+//            errorResponse.addError("404", "Lobby with ID: " + newPlayerRequest.getLobbyId() + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        Lobby lobby = optionalLobby.get();
+//
+//        //check if game has started yet or not
+//
+//        // check if game has player with same name:
+//        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
+//            errorResponse.addError("409", "Name already exists in game.");
+//        }
+//
+//        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
+//            errorResponse.addError("406", "Phone must be either true or false");
+//        }
+//
+//        if (errorResponse.getErrors().size() > 0) {
+//            return ResponseEntity.status(400).body(errorResponse);
+//        }
+//
+//        int c = 0;
+//        for (int i = 0; i < lobby.getPlayers().size(); i++) {
+//            c++;
+//            if (c == 8) {
+//                c = 0;
+//            }
+//        }
+//
+//        player.setName(newPlayerRequest.getName());
+//        player.setColor(Color.values()[c]);
+//        player.setPhone(newPlayerRequest.getPhone().equals("true"));
+//        player.setLobby(lobby);
+//        lobby.getPlayers().add(player);
+//
+//        playerRepository.save(player);
+//        lobbyRepository.save(lobby);
+//
+//        return ResponseEntity.ok(createResponseObject(player));
+//    }
 
 
     public PlayerObjectResponse createResponseObject (Player player) {

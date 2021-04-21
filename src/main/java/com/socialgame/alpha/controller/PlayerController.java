@@ -35,10 +35,10 @@ public class PlayerController {
     }
 
     // actual player controls
-    @PostMapping(path ="/join")
-    public ResponseEntity<?> joinLobby(@Valid @RequestBody JoinGameRequest newPlayerRequest) {
-        return playerService.joinLobby(newPlayerRequest);
-    }
+//    @PostMapping(path ="/join")
+//    public ResponseEntity<?> joinLobby(@Valid @RequestBody JoinGameRequest newPlayerRequest) {
+//        return playerService.joinLobby(newPlayerRequest);
+//    }
 
     @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> toggleColor (@PathVariable("id") Long id)  {
