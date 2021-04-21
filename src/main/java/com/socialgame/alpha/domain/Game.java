@@ -3,7 +3,6 @@ package com.socialgame.alpha.domain;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.domain.minigame.MiniGame;
 
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -30,6 +29,9 @@ public class Game {
 
     @OneToMany
     private Set<Team> currentCompetingTeams;
+
+    // teams that have answered or sth (so cant get mutliple points per question)
+    // also it can check if all teams have answered, to continue
 
     public Game() {
     }

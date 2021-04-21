@@ -1,14 +1,21 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Lobby;
+import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
+import com.socialgame.alpha.domain.minigame.MiniGame;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.payload.request.JoinGameRequest;
+import com.socialgame.alpha.payload.request.TeamAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerObjectResponse;
+import com.socialgame.alpha.payload.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
+import com.socialgame.alpha.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,44 +26,25 @@ import java.util.*;
 public class PlayerServiceImpl implements PlayerService {
 
     private PlayerRepository playerRepository;
-    private LobbyRepository lobbyRepository;
+    private TeamRepository teamRepository;
     private GameRepository gameRepository;
+
 
     @Autowired
     public void setPlayerRepository (PlayerRepository playerRepository) { this.playerRepository = playerRepository;}
 
     @Autowired
-    public void setLobbyRepository (LobbyRepository lobbyRepository) { this.lobbyRepository = lobbyRepository;}
+    public void setTeamRepository(TeamRepository teamRepository) { this.teamRepository = teamRepository;}
 
     @Autowired
     public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
 
     @Override
-    public ResponseEntity<?> findAllPlayers() {
-        List<Player> players = playerRepository.findAll();
+    public ResponseEntity<?> togglePlayerColor(Long id)  {
 
-        return ResponseEntity.ok(createResponseObject(players));
-    }
+        // need to check if same player as who clicked button (with token)
 
-
-    @Override
-    public ResponseEntity<?> findPlayerByID(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
-
-        if (optionalPlayer.isEmpty()) {
-            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Player player = optionalPlayer.get();
-        return ResponseEntity.ok(createResponseObject(player));
-    }
-
-
-    @Override
-    public ResponseEntity<?> toggleColor(Long id)  {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
@@ -83,77 +71,86 @@ public class PlayerServiceImpl implements PlayerService {
         return ResponseEntity.ok(createResponseObject(player));
     }
 
-//    @Override
-//    public ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest) {
-//        ErrorResponse errorResponse = new ErrorResponse();
-//        Player player = new Player();
-//
-//
-//        Optional<Lobby> optionalLobby = lobbyRepository.findById(newPlayerRequest.getLobbyId());
-//        // check if game exist
-//        if (optionalLobby.isEmpty()) {
-//            errorResponse.addError("404", "Lobby with ID: " + newPlayerRequest.getLobbyId() + " does not exist.");
-//            return ResponseEntity.status(404).body(errorResponse);
-//        }
-//
-//        Lobby lobby = optionalLobby.get();
-//
-//        //check if game has started yet or not
-//
-//        // check if game has player with same name:
-//        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), newPlayerRequest.getName()) != null) {
-//            errorResponse.addError("409", "Name already exists in game.");
-//        }
-//
-//        if(!newPlayerRequest.getPhone().equals("true")&&!newPlayerRequest.getPhone().equals("false")) {
-//            errorResponse.addError("406", "Phone must be either true or false");
-//        }
-//
-//        if (errorResponse.getErrors().size() > 0) {
-//            return ResponseEntity.status(400).body(errorResponse);
-//        }
-//
-//        int c = 0;
-//        for (int i = 0; i < lobby.getPlayers().size(); i++) {
-//            c++;
-//            if (c == 8) {
-//                c = 0;
-//            }
-//        }
-//
-//        player.setName(newPlayerRequest.getName());
-//        player.setColor(Color.values()[c]);
-//        player.setPhone(newPlayerRequest.getPhone().equals("true"));
-//        player.setLobby(lobby);
-//        lobby.getPlayers().add(player);
-//
-//        playerRepository.save(player);
-//        lobbyRepository.save(lobby);
-//
-//        return ResponseEntity.ok(createResponseObject(player));
-//    }
+    @Override
+    public ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest) {
 
+        // if curentMiniGame is null, then create ErrorResponse
+
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        Optional<Game> optionalGame = gameRepository.findById(teamAnswerRequest.getGameId());
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404", "Game with ID: " + teamAnswerRequest.getGameId() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Game game = optionalGame.get();
+
+        Optional<Team> optionalTeam = teamRepository.findById(teamAnswerRequest.getTeamId());
+
+        if (optionalTeam.isEmpty()) {
+            errorResponse.addError("404", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Team team = optionalTeam.get();
+
+        // check if team is in game??
+
+        if (!game.getCurrentCompetingTeams().contains(team)) {
+            errorResponse.addError("403", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not compete in this Mini Game.");
+        }
+
+        // check if team already answer the question, so they cant get double triple score
+
+        // check if scoreGoal is met
+
+        switch (game.getCurrentMiniGame().getMiniGameType()) {
+            case QUESTION:
+                Question question = (Question) game.getCurrentMiniGame();
+                if (question.getCorrectAnswer().equals(teamAnswerRequest.getAnswer())) {
+                    team.setPoints(team.getPoints() + question.getPoints());
+                    teamRepository.save(team);
+                    return ResponseEntity.ok(createResponseObject(team, question, teamAnswerRequest.getAnswer(),true));
+                } else {
+                    return ResponseEntity.ok(createResponseObject(team, question,teamAnswerRequest.getAnswer(), false));
+                }
+            case DARE:
+            case BEST_ANSWER:
+            case RANKING:
+            case GUESS_WORD:
+                errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
+                break;
+        }
+
+        return ResponseEntity.status(403).body(errorResponse);
+    }
 
     public PlayerObjectResponse createResponseObject (Player player) {
         return (
-            new PlayerObjectResponse(
-                player.getId(),
-                player.getName(),
-                player.getColor().toString(),
-                player.getPhone(),
-                player.getLobby().getId()
-            )
+                new PlayerObjectResponse(
+                        player.getId(),
+                        player.getName(),
+                        player.getColor().toString(),
+                        player.getPhone(),
+                        player.getLobby().getId()
+                )
         );
     }
 
-    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
-        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
+    public TeamAnswerResponse createResponseObject (Team team, MiniGame minigame, String answer, Boolean answerCorrect) {
 
-        for (Player player : players) {
-            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
-            playerObjectResponseList.add(playerObjectResponse);
-        }
+        TeamAnswerResponse response =
+                new TeamAnswerResponse (
+                        team.getId(),
+                        minigame.getQuestion(),
+                        answer,
+                        answerCorrect,
+                        minigame.getPoints(),
+                        team.getPoints()
+                );
 
-        return playerObjectResponseList;
+        return response;
     }
 }

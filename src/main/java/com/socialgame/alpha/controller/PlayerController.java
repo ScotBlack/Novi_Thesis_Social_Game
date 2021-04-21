@@ -1,6 +1,7 @@
 package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.payload.request.JoinGameRequest;
+import com.socialgame.alpha.payload.request.TeamAnswerRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/player")
+@RequestMapping("/api/player")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -22,27 +23,15 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
-    // needs other place?
-    @GetMapping(path="/players")
-    public ResponseEntity<?> findAllPlayers () {
-        return playerService.findAllPlayers();
-    }
-
-    // needs other place?
-    @GetMapping(path="/{id}")
-    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
-        return playerService.findPlayerByID(id);
-    }
-
-    // actual player controls
-//    @PostMapping(path ="/join")
-//    public ResponseEntity<?> joinLobby(@Valid @RequestBody JoinGameRequest newPlayerRequest) {
-//        return playerService.joinLobby(newPlayerRequest);
-//    }
-
+    // need to add something that also checks gameid
     @GetMapping(path="/toggle/{id}")
-    public ResponseEntity<?> toggleColor (@PathVariable("id") Long id)  {
-        return playerService.toggleColor(id);
+    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
+        return playerService.togglePlayerColor(id);
+    }
+
+    @PostMapping(path="/answer")
+    public ResponseEntity<?> teamAnswer(@Valid @RequestBody TeamAnswerRequest teamAnswerRequest) {
+        return playerService.teamAnswer(teamAnswerRequest);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
