@@ -1,9 +1,8 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.JoinGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +24,11 @@ public class PlayerServiceImplTest {
     @Mock
     private PlayerRepository playerRepository;
 
-    private NewPlayerRequest newPlayerRequest;
+    private JoinGameRequest newPlayerRequest;
 
     @BeforeEach
     void setUp() {
-        newPlayerRequest = new NewPlayerRequest();
+        newPlayerRequest = new JoinGameRequest();
         newPlayerRequest.setName("Scot");
         newPlayerRequest.setPhone("true");
     }

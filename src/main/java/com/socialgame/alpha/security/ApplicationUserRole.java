@@ -7,7 +7,7 @@ import java.util.Set;
 import static com.socialgame.alpha.security.ApplicationUserPermission.*;
 
 public enum ApplicationUserRole {
-    ADMIN(Sets.newHashSet(GAME_WRITE, GAME_WRITE, TEAM_WRITE, TEAM_READ, PLAYER_WRITE, PLAYER_READ)),
+    ADMIN(Sets.newHashSet(GAME_WRITE, GAME_READ, TEAM_WRITE, TEAM_READ, PLAYER_WRITE, PLAYER_READ)),
     HOST(Sets.newHashSet()),
     CAPTAIN(Sets.newHashSet()),
     PLAYER(Sets.newHashSet());

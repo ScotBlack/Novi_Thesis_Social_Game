@@ -1,6 +1,6 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.JoinGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class PlayerController {
 
     // actual player controls
     @PostMapping(path ="/join")
-    public ResponseEntity<?> joinLobby(@Valid @RequestBody NewPlayerRequest newPlayerRequest) {
+    public ResponseEntity<?> joinLobby(@Valid @RequestBody JoinGameRequest newPlayerRequest) {
         return playerService.joinLobby(newPlayerRequest);
     }
 

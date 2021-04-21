@@ -3,7 +3,7 @@ package com.socialgame.alpha.payload.request;
 
 import javax.validation.constraints.*;
 
-public class NewPlayerRequest {
+public class JoinGameRequest {
 
     @NotBlank(message = "Name is required")
     private String name;

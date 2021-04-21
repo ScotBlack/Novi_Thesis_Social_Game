@@ -3,7 +3,7 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.JoinGameRequest;
 import com.socialgame.alpha.payload.response.ErrorResponse;
 import com.socialgame.alpha.payload.response.PlayerObjectResponse;
 import com.socialgame.alpha.repository.GameRepository;
@@ -84,7 +84,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public ResponseEntity<?> joinLobby(NewPlayerRequest newPlayerRequest) {
+    public ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
         Player player = new Player();
 

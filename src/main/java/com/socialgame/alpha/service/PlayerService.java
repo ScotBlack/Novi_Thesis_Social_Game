@@ -1,6 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.payload.request.NewPlayerRequest;
+import com.socialgame.alpha.payload.request.JoinGameRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface PlayerService {
@@ -8,7 +8,7 @@ public interface PlayerService {
     ResponseEntity<?> findAllPlayers();
     ResponseEntity<?> findPlayerByID(Long id);
 
-    ResponseEntity<?> joinLobby(NewPlayerRequest newPlayerRequest);
+    ResponseEntity<?> joinLobby(JoinGameRequest newPlayerRequest);
     ResponseEntity<?> toggleColor(Long id);
 //    ResponseEntity<?> playerAnswer(PlayerAnswerRequest playerAnswerRequest);
 

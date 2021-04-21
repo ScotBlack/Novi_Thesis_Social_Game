@@ -50,7 +50,7 @@ public class GameServiceImpl implements GameService {
 
         return ResponseEntity.ok(createResponseObject(teams)); // needs response object
     }
-
+ 
     @Override
     public ResponseEntity<?> getScore(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
