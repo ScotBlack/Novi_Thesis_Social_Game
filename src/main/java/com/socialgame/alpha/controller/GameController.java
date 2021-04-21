@@ -22,16 +22,26 @@ public class GameController {
         return gameService.findAllGames();
     }
 
+    @GetMapping("/lobbyStatus/{id}")
+    public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
+        return gameService.lobbyStatusUpdate(id);
+    }
+
+    @GetMapping("/{id}/players")
+    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
+        return gameService.getPlayers(id);
+    }
+
     @GetMapping(path="/{id}/teams")
     public ResponseEntity<?> getTeams(@PathVariable("id") Long id) {
         return gameService.getTeams(id);
     }
 
+    // redundant, same as getTeams()
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
         return gameService.getScore(id);
     }
-
 }
 
 

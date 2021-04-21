@@ -67,106 +67,106 @@ public class LobbyServiceImpl implements LobbyService {
 //        return ResponseEntity.ok(createResponseObject(lobby));
 //    }
 
-    @Override
-    public ResponseEntity<?> getPlayers(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
-
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByLobbyId(id);
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
-
-    @Override
-    public ResponseEntity<?> lobbyStatusUpdate(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
-
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
-
-        Optional<Game> optionalGame = gameRepository.findById(lobby.getGame().getId());
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
-
-        // make list of players & phones per color
-        List<Integer> teamsList = new ArrayList<>();
-
-        for (Color color : Color.values()) {
-            int playerNum = 0;
-            int phoneNum = 0;
-
-            for (Player p : players) {
-                if (p.getColor().equals(color)) {
-                    playerNum++;
-                    if (p.getPhone()) {
-                        phoneNum++;
-                    }
-                }
-            }
-            if (playerNum == 1 && phoneNum == 0) { // 1 player / 0 phone = classic
-                teamsList.add(0);
-            } else if (playerNum == 1 && phoneNum == 1) { // 1 player / 1 phone = ffa
-                teamsList.add(1);
-            } else if (playerNum > 1 && phoneNum > 0) { // 2+ players / 1+ phones = team
-                teamsList.add(2);
-            } else if (playerNum > 1 && phoneNum == 0) { // 2+ players / 0 phones = team (without phone)
-                teamsList.add(3);
-            }
-        }
-        boolean canStart = false;
-        String status = null;
-        if (teamsList.size() == 1) {
-            status = "Need at least 2 teams or players";
-        } else if (game.getGameType().equals(GameType.CLASSIC)) {
-            if (teamsList.contains(2) || teamsList.contains(3)) {
-                status = "Every player needs it's own color";
-            } else {
-                canStart = true;
-                status = "Classic game can be started";
-            }
-        } else if (game.getGameType().equals(GameType.FFA)) {
-            if (teamsList.contains(0)) {
-                status = "Every players need it's own phone";
-            } else if (teamsList.contains(2) || teamsList.contains(3)) {
-                status = "Every players need it's own color";
-            } else {
-                canStart = true;
-                status = "FFA game can be started";
-            }
-        } else if (game.getGameType().equals(GameType.TEAMS)) {
-            if (teamsList.contains(0) || teamsList.contains(1)) {
-                status = "Every team needs at least 2 players ";
-            } else if (teamsList.contains(3)) {
-                status = "Every team needs at least 1 player with phone ";
-            } else {
-                canStart = true;
-                status = "Team game can be started";
-            }
-        }
-
-        lobby.setCanStart(canStart);
-        lobby.setStatus(status);
-        lobbyRepository.save(lobby);
-
-        return ResponseEntity.ok(createResponseObject(lobby));
-    }
+//    @Override
+//    public ResponseEntity<?> getPlayers(Long id) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
+//
+//        if (optionalLobby.isEmpty()) {
+//            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        List<Player> players = playerRepository.findPlayersByLobbyId(id);
+//
+//        return ResponseEntity.ok(createResponseObject(players));
+//    }
+//
+//    @Override
+//    public ResponseEntity<?> lobbyStatusUpdate(Long id) {
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
+//
+//        if (optionalLobby.isEmpty()) {
+//            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        Lobby lobby = optionalLobby.get();
+//
+//        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
+//
+//        Optional<Game> optionalGame = gameRepository.findById(lobby.getGame().getId());
+//
+//        if (optionalGame.isEmpty()) {
+//            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        Game game = optionalGame.get();
+//
+//        // make list of players & phones per color
+//        List<Integer> teamsList = new ArrayList<>();
+//
+//        for (Color color : Color.values()) {
+//            int playerNum = 0;
+//            int phoneNum = 0;
+//
+//            for (Player p : players) {
+//                if (p.getColor().equals(color)) {
+//                    playerNum++;
+//                    if (p.getPhone()) {
+//                        phoneNum++;
+//                    }
+//                }
+//            }
+//            if (playerNum == 1 && phoneNum == 0) { // 1 player / 0 phone = classic
+//                teamsList.add(0);
+//            } else if (playerNum == 1 && phoneNum == 1) { // 1 player / 1 phone = ffa
+//                teamsList.add(1);
+//            } else if (playerNum > 1 && phoneNum > 0) { // 2+ players / 1+ phones = team
+//                teamsList.add(2);
+//            } else if (playerNum > 1 && phoneNum == 0) { // 2+ players / 0 phones = team (without phone)
+//                teamsList.add(3);
+//            }
+//        }
+//        boolean canStart = false;
+//        String status = null;
+//        if (teamsList.size() == 1) {
+//            status = "Need at least 2 teams or players";
+//        } else if (game.getGameType().equals(GameType.CLASSIC)) {
+//            if (teamsList.contains(2) || teamsList.contains(3)) {
+//                status = "Every player needs it's own color";
+//            } else {
+//                canStart = true;
+//                status = "Classic game can be started";
+//            }
+//        } else if (game.getGameType().equals(GameType.FFA)) {
+//            if (teamsList.contains(0)) {
+//                status = "Every players need it's own phone";
+//            } else if (teamsList.contains(2) || teamsList.contains(3)) {
+//                status = "Every players need it's own color";
+//            } else {
+//                canStart = true;
+//                status = "FFA game can be started";
+//            }
+//        } else if (game.getGameType().equals(GameType.TEAMS)) {
+//            if (teamsList.contains(0) || teamsList.contains(1)) {
+//                status = "Every team needs at least 2 players ";
+//            } else if (teamsList.contains(3)) {
+//                status = "Every team needs at least 1 player with phone ";
+//            } else {
+//                canStart = true;
+//                status = "Team game can be started";
+//            }
+//        }
+//
+//        lobby.setCanStart(canStart);
+//        lobby.setStatus(status);
+//        lobbyRepository.save(lobby);
+//
+//        return ResponseEntity.ok(createResponseObject(lobby));
+//    }
 
 //    @Override
 //    public ResponseEntity<?> setGameType(Long id, GameType gameType) {
@@ -281,44 +281,44 @@ public class LobbyServiceImpl implements LobbyService {
 //    }
 
 
-    public LobbyResponse createResponseObject(Lobby lobby) {
-        LobbyResponse lobbyResponse = new LobbyResponse (
-            lobby.getId(),
-            lobby.getGame().getId(),
-            lobby.getCanStart(),
-            lobby.getStatus(),
-            lobby.getGame().getGameType().toString(),
-            lobby.getGame().getPoints()
-        );
+//    public LobbyResponse createResponseObject(Lobby lobby) {
+//        LobbyResponse lobbyResponse = new LobbyResponse (
+//            lobby.getId(),
+//            lobby.getGame().getId(),
+//            lobby.getCanStart(),
+//            lobby.getStatus(),
+//            lobby.getGame().getGameType().toString(),
+//            lobby.getGame().getPoints()
+//        );
+//
+//        return lobbyResponse;
+//    }
 
-        return lobbyResponse;
-    }
 
-
-    public PlayerObjectResponse createResponseObject (Player player) {
-
-        PlayerObjectResponse playerObjectResponse =
-                new PlayerObjectResponse(
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone(),
-                        player.getLobby().getId()
-                );
-
-        return playerObjectResponse;
-    }
-
-    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
-        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
-
-        for (Player player : players) {
-            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
-            playerObjectResponseList.add(playerObjectResponse);
-        }
-
-        return playerObjectResponseList;
-    }
+//    public PlayerObjectResponse createResponseObject (Player player) {
+//
+//        PlayerObjectResponse playerObjectResponse =
+//                new PlayerObjectResponse(
+//                        player.getId(),
+//                        player.getName(),
+//                        player.getColor().toString(),
+//                        player.getPhone(),
+//                        player.getLobby().getId()
+//                );
+//
+//        return playerObjectResponse;
+//    }
+//
+//    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
+//        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
+//
+//        for (Player player : players) {
+//            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
+//            playerObjectResponseList.add(playerObjectResponse);
+//        }
+//
+//        return playerObjectResponseList;
+//    }
 
 
 }
