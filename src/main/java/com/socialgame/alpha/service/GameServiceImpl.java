@@ -3,7 +3,7 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.payload.response.ErrorResponse;
-import com.socialgame.alpha.payload.response.TeamScoreResponse;
+import com.socialgame.alpha.payload.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
@@ -45,11 +45,12 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Set<Team> teams = optionalGame.get().getTeams();
+        Game game = optionalGame.get();
+        Set<Team> teams = game.getTeams();
 
-        return ResponseEntity.ok(teams); // needs response object
+        return ResponseEntity.ok(createResponseObject(teams)); // needs response object
     }
-
+ 
     @Override
     public ResponseEntity<?> getScore(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -67,27 +68,26 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        return ResponseEntity.ok(createResponseObject(game));
+        return ResponseEntity.ok(createResponseObject(game.getTeams()));
     }
 
 
-    public Set<TeamScoreResponse> createResponseObject (Game game) {
-        Set<TeamScoreResponse> highScores = new HashSet<>();
+    public Set<TeamResponse> createResponseObject (Set<Team> teams) {
+        Set<TeamResponse> teamsRes = new HashSet<>();
 
-        Set<Team> teams = game.getTeams();
-
-        for (Team team: teams) {
-
-            TeamScoreResponse teamResponse =
-                new TeamScoreResponse(
-                    team.getName().toString(),
-                    team.getPoints(),
-                    team.getPlayers().keySet()
-                );
-
-            highScores.add(teamResponse);
+        for (Team team : teams) {
+            TeamResponse response =
+                    new TeamResponse(
+                            team.getId(),
+                            team.getGame().getId(),
+                            team.getName().toString(),
+                            team.getPlayers().keySet(),
+                            team.getPoints()
+                    );
+            teamsRes.add(response);
         }
-        return highScores;
+
+        return teamsRes;
     }
 
 

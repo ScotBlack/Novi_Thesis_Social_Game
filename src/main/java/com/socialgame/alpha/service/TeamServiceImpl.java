@@ -79,9 +79,6 @@ public class TeamServiceImpl implements TeamService {
                break;
        }
 
-
-
-
        return ResponseEntity.status(403).body(errorResponse);
     }
 
