@@ -73,6 +73,9 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest) {
+
+        // if curentMiniGame is null, then create ErrorResponse
+
         ErrorResponse errorResponse = new ErrorResponse();
 
         Optional<Game> optionalGame = gameRepository.findById(teamAnswerRequest.getGameId());
@@ -100,6 +103,8 @@ public class PlayerServiceImpl implements PlayerService {
         }
 
         // check if team already answer the question, so they cant get double triple score
+
+        // check if scoreGoal is met
 
         switch (game.getCurrentMiniGame().getMiniGameType()) {
             case QUESTION:

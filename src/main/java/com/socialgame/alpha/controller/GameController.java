@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/api/game")
 public class GameController {
 
     private GameService gameService;
@@ -19,6 +19,11 @@ public class GameController {
 
     // requests unrelated to a game, but whole database
         // useless request (for game at least)
+
+    // get all games()
+
+    // all are not in postman
+
     @GetMapping(path="/games")
     public ResponseEntity<?> findAllGames() {
         return gameService.findAllGames();
@@ -52,6 +57,7 @@ public class GameController {
     }
 
     // redundant, same as getTeams()
+    // not in postman
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
         return gameService.getScore(id);
@@ -61,6 +67,8 @@ public class GameController {
     public ResponseEntity<?> nextMiniGame(@PathVariable("id") Long id) {
         return gameService.nextMiniGame(id);
     }
+
+    // need miniGameResult()
 }
 
 

@@ -234,7 +234,7 @@ public class GameServiceImpl implements GameService {
         switch (MiniGameType.values()[i]) {
             case QUESTION:
 
-                return ResponseEntity.status(200).body(nextQuestion(game));
+                return nextQuestion(game);
             case DARE:
                 List<Question> questions2 = questionRepository.findAll();
                 int z = (int) Math.round(Math.random() * (questions2.size() -1));

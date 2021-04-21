@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/player")
+@RequestMapping("/api/player")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -23,6 +23,7 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
+    // need to add something that also checks gameid
     @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
         return playerService.togglePlayerColor(id);
