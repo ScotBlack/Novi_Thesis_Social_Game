@@ -19,7 +19,7 @@ import java.util.Optional;
 public class PlayerServiceImplTest {
 
     @InjectMocks
-    private final PlayerService playerService = new PlayerServiceImpl();
+    private final GameService gameService = new GameServiceImpl();
 
     @Mock
     private PlayerRepository playerRepository;
@@ -41,7 +41,7 @@ public class PlayerServiceImplTest {
 
 
         // Act
-        ResponseEntity<?> responseEntity = playerService.findPlayerByID(id);
+        ResponseEntity<?> responseEntity = gameService.findPlayerByID(id);
 
         //Assert
         Assertions.assertEquals(404, responseEntity.getStatusCodeValue());

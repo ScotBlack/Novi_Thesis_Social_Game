@@ -17,11 +17,25 @@ public class GameController {
     @Autowired
     public void setGameService(GameService gameService) { this.gameService = gameService;}
 
+    // requests unrelated to a game, but whole database
+        // useless request (for game at least)
     @GetMapping(path="/games")
     public ResponseEntity<?> findAllGames() {
         return gameService.findAllGames();
     }
 
+    @GetMapping(path="/players")
+    public ResponseEntity<?> findAllPlayers () {
+        return gameService.findAllPlayers();
+    }
+
+    @GetMapping(path="/{id}")
+    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
+        return gameService.findPlayerByID(id);
+    }
+
+
+    // requests related to particular game
     @GetMapping("/lobbyStatus/{id}")
     public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
         return gameService.lobbyStatusUpdate(id);
@@ -41,6 +55,11 @@ public class GameController {
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
         return gameService.getScore(id);
+    }
+
+    @GetMapping(path="/{id}/nextMiniGame")
+    public ResponseEntity<?> nextMiniGame(@PathVariable("id") Long id) {
+        return gameService.nextMiniGame(id);
     }
 }
 
