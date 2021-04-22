@@ -50,5 +50,4 @@ public class Player {
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
     }
-
 }

@@ -89,7 +89,6 @@ public class Game {
     public Set<Team> getCurrentCompetingTeams() {
         return currentCompetingTeams;
     }
-
     public void setCurrentCompetingTeams(Set<Team> currentCompetingTeams) {
         this.currentCompetingTeams = currentCompetingTeams;
     }

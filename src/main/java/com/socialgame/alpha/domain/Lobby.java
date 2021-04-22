@@ -55,5 +55,4 @@ public class Lobby {
 
     public Boolean getCanStart() {return canStart;}
     public void setCanStart(Boolean canStart) {this.canStart = canStart;}
-
 }

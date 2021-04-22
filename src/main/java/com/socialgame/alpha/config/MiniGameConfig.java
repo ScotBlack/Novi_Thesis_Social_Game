@@ -11,12 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Configuration
 public class MiniGameConfig {
-
-
-
 
     @Bean
     CommandLineRunner commandLineRunner(MiniGameRepository miniGameRepository) {
@@ -36,6 +32,5 @@ public class MiniGameConfig {
             miniGameRepository.save(three);
             miniGameRepository.save(four);
         };
-
     }
 }

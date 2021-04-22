@@ -36,7 +36,6 @@ public class Team {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -44,7 +43,6 @@ public class Team {
     public Game getGame() {
         return game;
     }
-
     public void setGame(Game game) {
         this.game = game;
     }
@@ -52,7 +50,6 @@ public class Team {
     public Color getName() {
         return name;
     }
-
     public void setName(Color name) {
         this.name = name;
     }
@@ -60,7 +57,6 @@ public class Team {
     public Map<String, Integer> getPlayers() {
         return players;
     }
-
     public void setPlayers(Map<String, Integer> players) {
         this.players = players;
     }
@@ -68,7 +64,6 @@ public class Team {
     public int getPoints() {
         return points;
     }
-
     public void setPoints(int points) {
         this.points = points;
     }
