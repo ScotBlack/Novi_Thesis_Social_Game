@@ -1,0 +1,6 @@
+
+
+INSERT INTO role(name) VALUES('ADMIN');
+INSERT INTO role(name) VALUES('HOST');
+INSERT INTO role(name) VALUES('CAPTAIN');
+INSERT INTO role(name) VALUES('PLAYER');
