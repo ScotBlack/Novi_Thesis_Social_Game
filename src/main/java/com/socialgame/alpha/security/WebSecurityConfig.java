@@ -21,6 +21,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.socialgame.alpha.domain.enums.Roles.*;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity( prePostEnabled = true )
@@ -31,19 +33,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("admin")
                 .password("admin")
-                .roles("ADMIN")
+                .roles(ADMIN.name())
                 .and()
-                .withUser("ian")
-                .password("ian1")
-                .roles("HOST")
+                .withUser("host")
+                .password("host")
+                .roles(HOST.name())
                 .and()
-                .withUser("ben")
-                .password("ben1")
-                .roles(Roles.CAPTAIN.name())
+                .withUser("capt")
+                .password("capt")
+                .roles(CAPTAIN.name())
                 .and()
-                .withUser("afi")
-                .password("afi1")
-                .roles("PLAYER");
+                .withUser("player")
+                .password("player")
+                .roles(PLAYER.name());
     }
 
     @Bean
@@ -56,9 +58,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
             .authorizeRequests()
                 .antMatchers("/api/guest").permitAll()
-                .antMatchers("/api/host/**").hasRole("HOST")
-                .antMatchers("/api/game/**").hasRole("HOST")
-                .antMatchers("/api/player/**").hasAnyRole("PLAYER", "HOST")
+                .antMatchers("/api/host/**").hasRole(HOST.name())
+                .antMatchers("/api/game/**").hasRole(HOST.name())
+                .antMatchers("/api/player/**").hasAnyRole(PLAYER.name(), HOST.name())
                 .and()
                 .httpBasic()
                 .and()
