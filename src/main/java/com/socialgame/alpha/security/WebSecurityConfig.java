@@ -57,39 +57,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeRequests()
+                .antMatchers("static/**").permitAll()
                 .antMatchers("/api/guest").permitAll()
                 .antMatchers("/api/host/**").hasRole(HOST.name())
                 .antMatchers("/api/game/**").hasRole(HOST.name())
-                .antMatchers("/api/player/**").hasAnyRole(PLAYER.name(), HOST.name())
-                .and()
+                .antMatchers("/api/player/**").hasAnyRole(PLAYER.name(), CAPTAIN.name(), HOST.name())
+            .and()
                 .httpBasic()
-                .and()
+            .and()
                 .formLogin()
-                .and()
+            .and()
                 .logout().permitAll();
     }
-
-    //    @Bean
-//    public PasswordEncoder passwordEncoder () {
-//        return new BCryptPasswordEncoder(10);
-//    }
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.cors().and().csrf().disable()
-////                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .authorizeRequests()
-//                .antMatchers("/api/**").hasRole("ADMIN")
-//                .antMatchers("/player/**").permitAll()
-//                .antMatchers("/lobby/**").permitAll()
-//                .antMatchers("/game/**").permitAll()
-//                .antMatchers("/minigame/**").permitAll()
-//                .antMatchers("/team/**").permitAll()
-//                .anyRequest().authenticated();
-//
-////        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//    }
 }
 
 
