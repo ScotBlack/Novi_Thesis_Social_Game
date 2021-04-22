@@ -30,4 +30,6 @@ public class GuestController {
     public ResponseEntity<?> joinGame(@Valid @RequestBody JoinGameRequest joinGameRequest) {
         return guestService.joinGame(joinGameRequest);
     }
+
+
 }

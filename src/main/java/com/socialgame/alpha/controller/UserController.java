@@ -19,7 +19,6 @@ public class UserController {
         new User(53L, "Anna Smith")
     );
 
-
     @GetMapping(path="/{userId}")
     public User getUser(@PathVariable("userId") Long userId) {
         return USERS.stream()
