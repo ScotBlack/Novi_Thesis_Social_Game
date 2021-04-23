@@ -15,28 +15,52 @@ import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
 
+    private static final long serialVersionUID = 1L;
+    private Long userId;
     private String username;
+    private String password;
+    private boolean active;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl() {
+    public UserDetailsImpl(User user) {
+        List<GrantedAuthority> authorities = user.getRoles()
+            .stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .collect(Collectors.toList());
+
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.active = user.isActive();
+        this.authorities = authorities;
     }
 
-    public UserDetailsImpl(String username) {
-        this.username = username;
-    }
+//    public static UserDetailsImpl build(User user) {
+//        List<GrantedAuthority> authorities = user.getRoles().stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+//                .collect(Collectors.toList());
+//
+//        return new UserDetailsImpl(
+//                user.getUserId(),
+//                user.getUsername(),
+//                user.getPassword(),
+//                user.isActive(),
+//                authorities);
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority(ERole.ADMIN.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return "pass";
+        return authorities;
     }
 
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -56,8 +80,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
+}
+
+
     //    private static final long serialVersionUID = 1L;
 //    private final Long id;
 //    private final String username;
@@ -139,4 +166,4 @@ public class UserDetailsImpl implements UserDetails {
 //    public int hashCode() {
 //        return Objects.hash(id, username, password, authorities);
 //    }
-}
+
