@@ -11,18 +11,18 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class AppUserDetailsService implements UserDetailsService {
 
     UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) { this.userRepository = userRepository;}
+    public AppUserDetailsService(UserRepository userRepository) { this.userRepository = userRepository;}
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername (String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found: " + username));
-        return UserDetailsImpl.build(user);
+        return AppUserDetails.build(user);
     }
 }

@@ -20,31 +20,38 @@ import static com.socialgame.alpha.domain.enums.ERole.*;
 @EnableGlobalMethodSecurity( prePostEnabled = true )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Qualifier("userDetailsServiceImpl")
+
     @Autowired
+    @Qualifier("appUserDetailsService")
     UserDetailsService userDetailsService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("admin")
-                .roles(ADMIN.name())
-                .and()
-                .withUser("host")
-                .password("host")
-                .roles(HOST.name())
-                .and()
-                .withUser("capt")
-                .password("capt")
-                .roles(CAPTAIN.name())
-                .and()
-                .withUser("player")
-                .password("player")
-                .roles(PLAYER.name());
+        auth.userDetailsService(userDetailsService);
     }
+
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+//
+//        auth.inMemoryAuthentication()
+//                .withUser("admin")
+//                .password("admin")
+//                .roles(ADMIN.name())
+//                .and()
+//                .withUser("host")
+//                .password("host")
+//                .roles(HOST.name())
+//                .and()
+//                .withUser("capt")
+//                .password("capt")
+//                .roles(CAPTAIN.name())
+//                .and()
+//                .withUser("player")
+//                .password("player")
+//                .roles(PLAYER.name());
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,19 +61,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("static/**").permitAll()
                 .antMatchers("/api/guest").permitAll()
                 .antMatchers("/api/host/**").hasRole(HOST.name())
                 .antMatchers("/api/game/**").hasRole(HOST.name())
                 .antMatchers("/api/player/**").hasAnyRole(PLAYER.name(), CAPTAIN.name(), HOST.name())
-            .and()
+                .and()
                 .httpBasic()
-            .and()
+                .and()
                 .formLogin()
-            .and()
+                .and()
                 .logout().permitAll();
     }
+}
+
 
     //    @Bean
 //    public PasswordEncoder passwordEncoder () {
@@ -89,6 +98,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //
 ////        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //    }
-}
+
 
 

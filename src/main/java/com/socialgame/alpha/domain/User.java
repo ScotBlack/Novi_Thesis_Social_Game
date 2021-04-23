@@ -25,6 +25,9 @@ public class User {
     private String username;
     private String password;
 
+//    @OneToOne
+//    private Player player;
+
     @ManyToMany
     @JoinTable (name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

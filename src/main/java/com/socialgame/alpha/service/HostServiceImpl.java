@@ -161,6 +161,10 @@ public class HostServiceImpl implements HostService {
         gameRepository.save(game);
 
         //respond team objects
+        // User set Team
+        // Give users Captain roles/ remove player role?
+        // sth to fix
+        // delete redundant player objects
 
         return ResponseEntity.ok(createResponseObject(game.getTeams()));
     }
