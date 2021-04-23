@@ -1,6 +1,5 @@
-package com.socialgame.alpha.payload.response;
+package com.socialgame.alpha.dto.response;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class TeamResponse {

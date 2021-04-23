@@ -1,19 +1,16 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.minigame.MiniGame;
 import com.socialgame.alpha.domain.minigame.Question;
-import com.socialgame.alpha.payload.request.JoinGameRequest;
-import com.socialgame.alpha.payload.request.TeamAnswerRequest;
-import com.socialgame.alpha.payload.response.ErrorResponse;
-import com.socialgame.alpha.payload.response.PlayerObjectResponse;
-import com.socialgame.alpha.payload.response.minigame.TeamAnswerResponse;
+import com.socialgame.alpha.dto.request.TeamAnswerRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
-import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;

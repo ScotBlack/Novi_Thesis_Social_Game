@@ -1,7 +1,7 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.payload.request.CreateGameRequest;
-import com.socialgame.alpha.payload.request.JoinGameRequest;
+import com.socialgame.alpha.dto.request.CreateGameRequest;
+import com.socialgame.alpha.dto.request.JoinGameRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface GuestService {
