@@ -38,7 +38,7 @@ public class User {
 
     }
 
-    public User(Long userId, String userName) {
+    public User(String userName) {
         this.userId = userId;
         this.username = userName;
     }
