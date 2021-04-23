@@ -22,27 +22,31 @@ public class UserDetailsImpl implements UserDetails {
     private boolean active;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long userId, String username, String password, boolean active,
-                           Collection<? extends GrantedAuthority> authorities) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.active = active;
+    public UserDetailsImpl(User user) {
+        List<GrantedAuthority> authorities = user.getRoles()
+            .stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .collect(Collectors.toList());
+
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.active = user.isActive();
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
-
-        return new UserDetailsImpl(
-                user.getUserId(),
-                user.getUsername(),
-                user.getPassword(),
-                user.isActive(),
-                authorities);
-    }
+//    public static UserDetailsImpl build(User user) {
+//        List<GrantedAuthority> authorities = user.getRoles().stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+//                .collect(Collectors.toList());
+//
+//        return new UserDetailsImpl(
+//                user.getUserId(),
+//                user.getUsername(),
+//                user.getPassword(),
+//                user.isActive(),
+//                authorities);
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
