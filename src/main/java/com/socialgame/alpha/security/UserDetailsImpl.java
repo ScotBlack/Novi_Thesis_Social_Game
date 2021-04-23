@@ -31,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build (User user) {
+    public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
@@ -50,13 +50,13 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return "pass";
+    public String getUsername() {
+        return username;
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -76,8 +76,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
+}
+
 
     //    private static final long serialVersionUID = 1L;
 //    private final Long id;
@@ -160,4 +162,4 @@ public class UserDetailsImpl implements UserDetails {
 //    public int hashCode() {
 //        return Objects.hash(id, username, password, authorities);
 //    }
-}
+

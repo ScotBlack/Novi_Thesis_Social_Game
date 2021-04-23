@@ -99,6 +99,7 @@ public class GameServiceImpl implements GameService {
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
 
+        // see if i can turn this into .stream().map() etc
         for (Color color : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
