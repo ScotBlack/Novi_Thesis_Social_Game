@@ -15,18 +15,38 @@ import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
 
+    private static final long serialVersionUID = 1L;
+    private Long userId;
     private String username;
+    private String password;
+    private boolean active;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl() {
+    public UserDetailsImpl(Long userId, String username, String password, boolean active,
+                           Collection<? extends GrantedAuthority> authorities) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.active = active;
+        this.authorities = authorities;
     }
 
-    public UserDetailsImpl(String username) {
-        this.username = username;
+    public static UserDetailsImpl build (User user) {
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
+
+        return new UserDetailsImpl(
+                user.getUserId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.isActive(),
+                authorities);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority(ERole.ADMIN.name()));
+        return authorities;
     }
 
     @Override
@@ -58,6 +78,7 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
     //    private static final long serialVersionUID = 1L;
 //    private final Long id;
 //    private final String username;

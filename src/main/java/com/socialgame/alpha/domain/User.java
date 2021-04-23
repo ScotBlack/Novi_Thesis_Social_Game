@@ -4,12 +4,14 @@ import com.socialgame.alpha.domain.enums.ERole;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
 public class User {
 
+    // test if  standard gen.AUTO works as well
     @Id
     @GeneratedValue(
             strategy= GenerationType.AUTO,
@@ -24,6 +26,7 @@ public class User {
 
     private String username;
     private String password;
+    private Boolean active;
 
 //    @OneToOne
 //    private Player player;
@@ -35,13 +38,14 @@ public class User {
     private Set<Role> roles;
 
     public User() {
-
     }
 
-    public User(String userName) {
-        this.userId = userId;
+    public User(String userName, String password) {
         this.username = userName;
+        this.password = password;
+//        this.roles = new HashSet<>();
     }
+
 
     public Long getUserId() {
         return userId;
@@ -62,6 +66,11 @@ public class User {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Set<Role> getRoles() {
