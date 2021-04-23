@@ -1,8 +1,7 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.payload.request.JoinGameRequest;
-import com.socialgame.alpha.payload.request.TeamAnswerRequest;
-import com.socialgame.alpha.payload.response.ErrorResponse;
+import com.socialgame.alpha.dto.request.TeamAnswerRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

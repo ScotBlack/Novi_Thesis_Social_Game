@@ -1,4 +1,4 @@
-package com.socialgame.alpha.payload.request;
+package com.socialgame.alpha.dto.request;
 
 
 import javax.validation.constraints.*;

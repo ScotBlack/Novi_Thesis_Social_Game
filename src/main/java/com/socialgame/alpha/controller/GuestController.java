@@ -1,7 +1,7 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.payload.request.CreateGameRequest;
-import com.socialgame.alpha.payload.request.JoinGameRequest;
+import com.socialgame.alpha.dto.request.CreateGameRequest;
+import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.service.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

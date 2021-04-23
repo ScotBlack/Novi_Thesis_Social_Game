@@ -1,4 +1,4 @@
-package com.socialgame.alpha.payload.response;
+package com.socialgame.alpha.dto.response;
 
 public class LobbyResponse {
     private Long id;

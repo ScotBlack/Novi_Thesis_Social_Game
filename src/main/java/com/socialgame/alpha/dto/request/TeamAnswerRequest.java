@@ -1,4 +1,4 @@
-package com.socialgame.alpha.payload.request;
+package com.socialgame.alpha.dto.request;
 
 import com.socialgame.alpha.domain.enums.MiniGameType;
 

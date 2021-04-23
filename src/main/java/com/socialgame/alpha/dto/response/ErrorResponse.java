@@ -1,4 +1,4 @@
-package com.socialgame.alpha.payload.response;
+package com.socialgame.alpha.dto.response;
 
 import java.util.HashMap;
 import java.util.Map;

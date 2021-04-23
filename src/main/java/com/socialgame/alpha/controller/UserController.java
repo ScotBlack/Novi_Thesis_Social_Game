@@ -13,17 +13,17 @@ import java.util.List;
 @RequestMapping("api/account")
 public class UserController {
 
-    private static final List<User> USERS = Arrays.asList(
-        new User(51L, "Piet"),
-        new User(52L, "Jozef"),
-        new User(53L, "Anna Smith")
-    );
-
-    @GetMapping(path="/{userId}")
-    public User getUser(@PathVariable("userId") Long userId) {
-        return USERS.stream()
-                .filter(user -> userId.equals(user.getUserId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("User " + userId + " does not exist"));
-    }
+//    private static final List<User> USERS = Arrays.asList(
+//        new User(51L, "Piet"),
+//        new User(52L, "Jozef"),
+//        new User(53L, "Anna Smith")
+//    );
+//
+//    @GetMapping(path="/{userId}")
+//    public User getUser(@PathVariable("userId") Long userId) {
+//        return USERS.stream()
+//                .filter(user -> userId.equals(user.getUserId()))
+//                .findFirst()
+//                .orElseThrow(() -> new IllegalStateException("User " + userId + " does not exist"));
+//    }
 }

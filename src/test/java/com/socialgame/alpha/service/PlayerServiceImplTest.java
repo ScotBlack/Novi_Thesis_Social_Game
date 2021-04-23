@@ -1,7 +1,7 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.payload.request.JoinGameRequest;
-import com.socialgame.alpha.payload.response.ErrorResponse;
+import com.socialgame.alpha.dto.request.JoinGameRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.repository.PlayerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

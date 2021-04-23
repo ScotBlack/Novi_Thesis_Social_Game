@@ -6,9 +6,9 @@ import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
-import com.socialgame.alpha.payload.response.ErrorResponse;
-import com.socialgame.alpha.payload.response.PlayerObjectResponse;
-import com.socialgame.alpha.payload.response.TeamResponse;
+import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -161,6 +161,10 @@ public class HostServiceImpl implements HostService {
         gameRepository.save(game);
 
         //respond team objects
+        // User set Team
+        // Give users Captain roles/ remove player role?
+        // sth to fix
+        // delete redundant player objects
 
         return ResponseEntity.ok(createResponseObject(game.getTeams()));
     }

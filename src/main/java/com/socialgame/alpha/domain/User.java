@@ -25,6 +25,9 @@ public class User {
     private String username;
     private String password;
 
+//    @OneToOne
+//    private Player player;
+
     @ManyToMany
     @JoinTable (name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -35,7 +38,7 @@ public class User {
 
     }
 
-    public User(Long userId, String userName) {
+    public User(String userName) {
         this.userId = userId;
         this.username = userName;
     }
