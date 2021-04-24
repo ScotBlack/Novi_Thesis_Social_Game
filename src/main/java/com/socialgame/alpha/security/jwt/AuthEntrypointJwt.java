@@ -16,8 +16,8 @@ import java.io.IOException;
  * AuthenticationException is thrown.
  */
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
-    private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+public class AuthEntrypointJwt implements AuthenticationEntryPoint {
+    private static final Logger logger = LoggerFactory.getLogger(AuthEntrypointJwt.class);
 
     /**
      * HttpServletResponse.SC_UNAUTHORIZED is the 401 Status code. It indicates that the request requires HTTP
