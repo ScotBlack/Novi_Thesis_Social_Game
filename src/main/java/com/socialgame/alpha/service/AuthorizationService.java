@@ -1,12 +1,14 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.User;
+import com.socialgame.alpha.domain.enums.ERole;
 import com.socialgame.alpha.dto.request.LoginRequest;
 import com.socialgame.alpha.dto.request.SignupRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.repository.RoleRepository;
 import com.socialgame.alpha.repository.UserRepository;
 import com.socialgame.alpha.security.UserDetailsImpl;
+import com.socialgame.alpha.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ public class AuthorizationService {
     private RoleRepository roleRepository;
     private AuthenticationManager authenticationManager;
     private PasswordEncoder encoder;
+    private JwtUtils jwtUtils;
 
 
 
@@ -50,12 +54,18 @@ public class AuthorizationService {
         this.encoder = passwordEncoder;
     }
 
+    @Autowired
+    public void setJwtUtils(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
+
     public ResponseEntity<?> authenticateUser(@Valid LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                         loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
@@ -79,6 +89,9 @@ public class AuthorizationService {
                 encoder.encode(signUpRequest.getPassword()));
 
         //set roles? auto is Player? or Host?
+
+        user.setRoles(new HashSet<>());
+        user.getRoles().add(roleRepository.findByName(ERole.HOST).get());
 
         userRepository.save(user);
 
