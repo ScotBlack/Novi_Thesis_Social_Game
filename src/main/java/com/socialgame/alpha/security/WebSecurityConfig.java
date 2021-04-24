@@ -1,5 +1,7 @@
 package com.socialgame.alpha.security;
 
+import com.socialgame.alpha.security.jwt.AuthEntrypointJwt;
+import com.socialgame.alpha.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +28,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     @Qualifier("userDetailsServiceImpl")
     UserDetailsService userDetailsService;
+
+
+    @Autowired
+    private AuthEntrypointJwt unauthorizedHandler;
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
