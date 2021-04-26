@@ -19,6 +19,7 @@ import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,6 +46,7 @@ public class GameServiceImpl implements GameService {
 
     // whole database
     @Override
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> findAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
     }
