@@ -39,8 +39,9 @@ public class Game {
     public Game() {
     }
 
-    public Game(GameType gameType) {
-        this.gameType = gameType;
+    public Game(String gameIdString) {
+        this.gameIdString = gameIdString;
+        this.gameType = GameType.FFA;
         this.points = 100;
         this.started = false;
         this.teams = new HashSet<>();
@@ -53,6 +54,9 @@ public class Game {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getGameIdString() { return gameIdString; }
+    public void setGameIdString(String gameIdString) { this.gameIdString = gameIdString; }
 
     public GameType getGameType() {
         return gameType;

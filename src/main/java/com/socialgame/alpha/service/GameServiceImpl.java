@@ -46,7 +46,6 @@ public class GameServiceImpl implements GameService {
 
     // whole database
     @Override
-    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> findAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
     }
@@ -310,8 +309,7 @@ public class GameServiceImpl implements GameService {
 
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
-                lobby.getId(),
-                lobby.getGame().getId(),
+                lobby.getGameIdString(),
                 lobby.getCanStart(),
                 lobby.getStatus(),
                 lobby.getGame().getGameType().toString(),

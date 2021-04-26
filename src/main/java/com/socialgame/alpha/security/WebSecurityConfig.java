@@ -1,11 +1,14 @@
 package com.socialgame.alpha.security;
 
+import com.socialgame.alpha.domain.enums.ERole;
+import com.socialgame.alpha.repository.RoleRepository;
 import com.socialgame.alpha.security.jwt.AuthEntryPointJwt;
 import com.socialgame.alpha.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -24,14 +27,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true
-)
+//@EnableGlobalMethodSecurity(
+//        prePostEnabled = true
+//)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Qualifier("userDetailsServiceImpl")
     @Autowired
     UserDetailsService userDetailsService;
+
+    RoleRepository roleRepository;
+
+    @Autowired
+    public void setRoleRepository (RoleRepository roleRepository) {this.roleRepository = roleRepository;}
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
@@ -62,8 +70,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/api/game/**").hasRole(ERole.HOST.name())
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
