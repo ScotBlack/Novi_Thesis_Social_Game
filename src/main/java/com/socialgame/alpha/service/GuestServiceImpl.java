@@ -44,25 +44,25 @@ public class GuestServiceImpl implements GuestService {
     }
 
 
-    @Override
+//    @Override
     public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
-        Player player = new Player(createGameRequest.getName(), Color.RED, true);
-        playerRepository.save(player);
-
-        Lobby lobby = new Lobby(player);
-        lobbyRepository.save(lobby);
-
-        Game game = new Game(GameType.FFA);
-        gameRepository.save(game);
-
-        player.setLobby(lobby);
-        playerRepository.save(player);
-
-        lobby.setGame(game);
-        lobby.getPlayers().add(player);
-        lobbyRepository.save(lobby);
-
-        return ResponseEntity.ok(createResponseObject(lobby));
+//        Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
+//        playerRepository.save(player);
+//
+//        Lobby lobby = new Lobby(player);
+//        lobbyRepository.save(lobby);
+//
+//        Game game = new Game(GameType.FFA);
+//        gameRepository.save(game);
+//
+//        player.setLobby(lobby);
+//        playerRepository.save(player);
+//
+//        lobby.setGame(game);
+//        lobby.getPlayers().add(player);
+//        lobbyRepository.save(lobby);
+//
+        return ResponseEntity.ok("ruined");
     }
 
     @Override
@@ -117,18 +117,18 @@ public class GuestServiceImpl implements GuestService {
     }
 
 
-    public LobbyResponse createResponseObject(Lobby lobby) {
-        LobbyResponse lobbyResponse = new LobbyResponse(
-                lobby.getId(),
-                lobby.getGame().getId(),
-                lobby.getCanStart(),
-                lobby.getStatus(),
-                lobby.getGame().getGameType().toString(),
-                lobby.getGame().getPoints()
-        );
-
-        return lobbyResponse;
-    }
+//    public LobbyResponse createResponseObject(Lobby lobby) {
+//        LobbyResponse lobbyResponse = new LobbyResponse(
+//                lobby.getId(),
+//                lobby.getGame().getId(),
+//                lobby.getCanStart(),
+//                lobby.getStatus(),
+//                lobby.getGame().getGameType().toString(),
+//                lobby.getGame().getPoints()
+//        );
+//
+//        return lobbyResponse;
+//    }
 
     public PlayerObjectResponse createResponseObject (Player player) {
 

@@ -11,7 +11,6 @@ import java.util.Set;
 @Table(name = "app_user")
 public class User {
 
-    // test if  standard gen.AUTO works as well
     @Id
     @GeneratedValue(
             strategy= GenerationType.AUTO,
@@ -22,14 +21,10 @@ public class User {
             strategy = "native"
     )
     @Column(columnDefinition = "serial")
-    private Long userId;
-
+    private long id;
     private String username;
+//    private String email;
     private String password;
-    private Boolean active;
-
-//    @OneToOne
-//    private Player player;
 
     @ManyToMany
     @JoinTable (name = "user_role",
@@ -38,25 +33,27 @@ public class User {
     private Set<Role> roles;
 
     public User() {
+
     }
 
-    public User(String userName, String password) {
-        this.username = userName;
+    public User(String username, String password) {
+        this.username = username;
+
         this.password = password;
-//        this.roles = new HashSet<>();
     }
 
-
-    public Long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
-    public void setUserId(Long userId) {
-        this.userId = userId;
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -64,18 +61,15 @@ public class User {
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public Set<Role> getRoles() {
         return roles;
     }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

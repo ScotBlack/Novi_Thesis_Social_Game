@@ -1,27 +1,27 @@
 package com.socialgame.alpha.dto.response;
 
 public class LobbyResponse {
-    private Long id;
-    private Long gameId;
+    private String gameIdString;
     private Boolean canStart;
     private String status;
     private String gameType;
     private int points;
 
-    public LobbyResponse(Long id, Long gameId, Boolean canStart, String status, String gameType, int points) {
-        this.id = id;
-        this.gameId = gameId;
+    public LobbyResponse(String gameIdString, Boolean canStart, String status, String gameType, int points) {
+        this.gameIdString = gameIdString;
         this.canStart = canStart;
         this.status = status;
         this.gameType = gameType;
         this.points = points;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getGameIdString() {
+        return gameIdString;
+    }
 
-    public Long getGameId() { return gameId; }
-    public void setGameId(Long gameId) { this.gameId = gameId; }
+    public void setGameIdString(String gameIdString) {
+        this.gameIdString = gameIdString;
+    }
 
     public Boolean getCanStart() { return canStart; }
     public void setCanStart(Boolean canStart) { this.canStart = canStart; }

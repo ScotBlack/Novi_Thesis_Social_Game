@@ -60,6 +60,7 @@ public class GameServiceImpl implements GameService {
 
     // could be used for ingame I guess
     @Override
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> findPlayerByID(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
@@ -310,8 +311,7 @@ public class GameServiceImpl implements GameService {
 
     public LobbyResponse createResponseObject(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (
-                lobby.getId(),
-                lobby.getGame().getId(),
+                lobby.getGameIdString(),
                 lobby.getCanStart(),
                 lobby.getStatus(),
                 lobby.getGame().getGameType().toString(),

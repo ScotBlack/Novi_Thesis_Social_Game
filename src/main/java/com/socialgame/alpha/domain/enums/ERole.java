@@ -1,8 +1,10 @@
 package com.socialgame.alpha.domain.enums;
 
 public enum ERole {
-    ADMIN,
-    HOST,
-    CAPTAIN,
-    PLAYER
+    ROLE_USER,
+    ROLE_MODERATOR,
+    ROLE_ADMIN,
+  HOST,
+    ROLE_CAPTAIN,
+    ROLE_PLAYER
 }
