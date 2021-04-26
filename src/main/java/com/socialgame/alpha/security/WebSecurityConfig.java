@@ -27,9 +27,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(
-//        prePostEnabled = true
-//)
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true
+)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Qualifier("userDetailsServiceImpl")
@@ -71,9 +71,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/game/**").hasRole(ERole.HOST.name())
+                .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/api/game**").hasRole(ERole.HOST.name())
                 .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();
+
+        // If a user try to access a resource without having enough permissions
+        http.exceptionHandling().accessDeniedPage("/login");
+
+        // Apply JWT
+//        http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
