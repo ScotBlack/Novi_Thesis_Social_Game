@@ -71,7 +71,7 @@ public class AuthorizationService {
      * @param signUpRequest de payload signup-request met gebruikersnaam en wachtwoord.
      * @return een HTTP response met daarin een succesbericht.
      */
-    public ResponseEntity<MessageResponse> registerUser(@Valid SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid SignupRequest signUpRequest) {
         if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
             return ResponseEntity
                     .badRequest()
@@ -121,7 +121,7 @@ public class AuthorizationService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(authenticateUser(signUpRequest.getUsername(), signUpRequest.getPassword()));
     }
 
     /**
@@ -136,11 +136,11 @@ public class AuthorizationService {
      * @param loginRequest De payload met username en password.
      * @return een HTTP-response met daarin de JWT-token.
      */
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> authenticateUser(String username, String password) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                        loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(username,
+                        password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);

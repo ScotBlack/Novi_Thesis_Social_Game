@@ -26,14 +26,14 @@ public class AuthController {
 
     @Autowired
     AuthorizationService authorizationService;
-
-    @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        return authorizationService.authenticateUser(loginRequest);
-    }
+//
+//    @PostMapping("/signin")
+//    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
+//        return authorizationService.authenticateUser(loginRequest);
+//    }
 
     @PostMapping("/signup")
-    public ResponseEntity<MessageResponse> registerUser(@RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
         return authorizationService.registerUser(signUpRequest);
     }
 
