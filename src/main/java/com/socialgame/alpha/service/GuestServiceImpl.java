@@ -46,7 +46,7 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public ResponseEntity<?> createGame(CreateGameRequest createGameRequest) {
-        Player player = new Player(createGameRequest.getName(), Color.RED, true);
+        Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
 
         Lobby lobby = new Lobby(player);

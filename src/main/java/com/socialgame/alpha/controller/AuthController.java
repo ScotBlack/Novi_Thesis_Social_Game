@@ -1,5 +1,6 @@
 package com.socialgame.alpha.controller;
 
+import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.LoginRequest;
 import com.socialgame.alpha.dto.request.SignupRequest;
 import com.socialgame.alpha.dto.response.JwtResponse;
@@ -35,6 +36,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
         return authorizationService.registerUser(signUpRequest);
+    }
+
+    @PostMapping("/creategame")
+    public ResponseEntity<?> createGame(@RequestBody CreateGameRequest createGameRequest) {
+        return authorizationService.createGame(createGameRequest);
     }
 
 }

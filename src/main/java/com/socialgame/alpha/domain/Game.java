@@ -15,6 +15,9 @@ public class Game {
     private Long id;
 
     @Column
+    private String gameIdString;
+
+    @Column
     private GameType gameType;
     @Column
     private int points;

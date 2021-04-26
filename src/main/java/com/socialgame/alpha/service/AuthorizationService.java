@@ -1,14 +1,17 @@
 package com.socialgame.alpha.service;
 
+import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Role;
 import com.socialgame.alpha.domain.User;
+import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.ERole;
+import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.LoginRequest;
 import com.socialgame.alpha.dto.request.SignupRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.JwtResponse;
 import com.socialgame.alpha.dto.response.MessageResponse;
-import com.socialgame.alpha.repository.RoleRepository;
-import com.socialgame.alpha.repository.UserRepository;
+import com.socialgame.alpha.repository.*;
 import com.socialgame.alpha.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,9 +37,12 @@ public class AuthorizationService {
     private static final String ROLE_NOT_FOUND_ERROR = "Error: Role is not found.";
 
     private UserRepository userRepository;
-    private PasswordEncoder encoder;
     private RoleRepository roleRepository;
+    private LobbyRepository lobbyRepository;
+    private GameRepository gameRepository;
+    private PlayerRepository playerRepository;
     private AuthenticationManager authenticationManager;
+    private PasswordEncoder encoder;
     private JwtUtils jwtUtils;
 
     @Autowired
@@ -44,13 +51,28 @@ public class AuthorizationService {
     }
 
     @Autowired
-    public void setEncoder(PasswordEncoder passwordEncoder) {
-        this.encoder = passwordEncoder;
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public void setLobbyRepository(LobbyRepository lobbyRepository) {
+        this.lobbyRepository = lobbyRepository;
+    }
+
+    @Autowired
+    public void setGameRepository(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+    }
+
+    @Autowired
+    public void setPlayerRepository(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
+
+    @Autowired
+    public void setEncoder(PasswordEncoder passwordEncoder) {
+        this.encoder = passwordEncoder;
     }
 
     @Autowired
@@ -77,12 +99,6 @@ public class AuthorizationService {
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
-
-//        if (Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequest.getEmail()))) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Email is already in use!"));
-//        }
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
@@ -155,5 +171,69 @@ public class AuthorizationService {
                 userDetails.getUsername(),
                 roles));
     }
+
+    public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        int leftLimit = 66; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 4;
+        Random random = new Random();
+
+        String gameIdString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        String  username = gameIdString + "_" + createGameRequest.getUsername();
+
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: " + createGameRequest.getUsername() + " is already taken!"));
+        }
+
+        User user = new User(username, gameIdString);
+        user.setRoles(new HashSet<>());
+        user.getRoles().add(roleRepository.findByName(ERole.HOST).get());
+        userRepository.save(user);
+
+        Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
+        playerRepository.save(player);
+
+
+
+
+        // create user + add random String for uniqueness in whole database
+            // set Game id as password?
+        // authenticate user
+
+        // create player with role HOST
+        // create lobby(player)
+        // create game
+
+        // return JwtResponse + GameDetails
+        return ResponseEntity.ok(user);
+    }
+
+    public ResponseEntity<?> joinGame () {
+
+        // check if Lobby has Player with username
+
+        // create user + add random String for uniqueness in whole database
+        // authenticate user
+
+        // create player with role PLAYER
+        // player Join Lobby
+
+
+
+        // return JwtResponse + GameDetails
+        return ResponseEntity.ok("hola");
+    }
+
+
+
 
 }

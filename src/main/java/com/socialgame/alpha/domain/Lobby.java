@@ -17,6 +17,9 @@ public class Lobby {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column
+    private String gameIdString;
+
     @OneToOne
     private Game game;
 
