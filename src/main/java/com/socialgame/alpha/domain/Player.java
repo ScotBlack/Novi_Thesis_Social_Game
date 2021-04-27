@@ -32,22 +32,18 @@ public class Player {
         this.phone = phone;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {return name; }
+    public void setName(String name) {this.name = name;}
 
-    public Color getColor() { return color; }
-    public void setColor(Color color) { this.color = color; }
+    public Color getColor() {return color; }
+    public void setColor(Color color) {this.color = color;}
 
-    public Boolean getPhone() { return phone; }
-    public void setPhone(Boolean phone) { this.phone = phone; }
+    public Boolean getPhone() {return phone; }
+    public void setPhone(Boolean phone) {this.phone = phone;}
 
-    public Lobby getLobby() {
-        return lobby;
-    }
-    public void setLobby(Lobby lobby) {
-        this.lobby = lobby;
-    }
+    public Lobby getLobby() {return lobby;}
+    public void setLobby(Lobby lobby) {this.lobby = lobby;}
 }

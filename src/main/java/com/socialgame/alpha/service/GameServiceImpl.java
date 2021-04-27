@@ -10,7 +10,7 @@ import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.LobbyResponse;
-import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.dto.response.minigame.QuestionResponse;
 import com.socialgame.alpha.repository.GameRepository;
@@ -311,36 +311,51 @@ public class GameServiceImpl implements GameService {
 
 
     public LobbyResponse createResponseObject(Lobby lobby) {
+        Set<PlayerResponse> playerResponses = new HashSet<>();
+
+        for (Player player : lobby.getPlayers()) {
+
+            PlayerResponse playerResponse = new PlayerResponse(
+                    player.getId(),
+                    player.getName(),
+                    player.getColor().toString(),
+                    player.getPhone()
+            );
+
+            playerResponses.add(playerResponse);
+        }
+
+
         LobbyResponse lobbyResponse = new LobbyResponse (
                 lobby.getGameIdString(),
                 lobby.getCanStart(),
                 lobby.getStatus(),
                 lobby.getGame().getGameType().toString(),
-                lobby.getGame().getPoints()
+                lobby.getGame().getPoints(),
+                playerResponses
         );
 
         return lobbyResponse;
     }
 
-    public PlayerObjectResponse createResponseObject (Player player) {
+    public PlayerResponse createResponseObject (Player player) {
 
-        PlayerObjectResponse playerObjectResponse =
-                new PlayerObjectResponse(
+        PlayerResponse playerResponse =
+                new PlayerResponse(
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
-                        player.getPhone(),
-                        player.getLobby().getId()
+                        player.getPhone()
                 );
 
-        return playerObjectResponse;
+        return playerResponse;
     }
 
-    public Set<PlayerObjectResponse> createResponseObject (List<Player> players) {
-        Set<PlayerObjectResponse> playerObjectResponseList = new HashSet<>();
+    public Set<PlayerResponse> createResponseObject (List<Player> players) {
+        Set<PlayerResponse> playerObjectResponseList = new HashSet<>();
 
         for (Player player : players) {
-            PlayerObjectResponse playerObjectResponse = createResponseObject(player);
+            PlayerResponse playerObjectResponse = createResponseObject(player);
             playerObjectResponseList.add(playerObjectResponse);
         }
 

@@ -29,8 +29,7 @@ public class PlayerServiceImplTest {
     @BeforeEach
     void setUp() {
         newPlayerRequest = new JoinGameRequest();
-        newPlayerRequest.setName("Scot");
-        newPlayerRequest.setPhone("true");
+        newPlayerRequest.setUsername("Scot");
     }
 
     @Test

@@ -20,6 +20,7 @@ public class Lobby {
     @Column
     private String gameIdString;
 
+    //possibly redundant
     @OneToOne
     private Game game;
 
@@ -51,7 +52,6 @@ public class Lobby {
     public String getGameIdString() {
         return gameIdString;
     }
-
     public void setGameIdString(String gameIdString) {
         this.gameIdString = gameIdString;
     }

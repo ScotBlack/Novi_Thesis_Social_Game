@@ -3,13 +3,10 @@ package com.socialgame.alpha.service;
 import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.ERole;
-import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.request.CreateGameRequest;
+import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.dto.request.LoginRequest;
-import com.socialgame.alpha.dto.request.SignupRequest;
-import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.JwtResponse;
-import com.socialgame.alpha.dto.response.MessageResponse;
+import com.socialgame.alpha.dto.response.*;
 import com.socialgame.alpha.repository.*;
 import com.socialgame.alpha.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,18 +132,7 @@ public class AuthorizationService {
 //        return ResponseEntity.ok(authenticateUser(signUpRequest.getUsername(), signUpRequest.getPassword()));
 //    }
 
-    /**
-     * Deze methode controleert de ontvangen username en wachtwoord. Het gebruikt hiervoor de
-     * AuthenticationManager. I.a.w. Spring security doet die allemaal voor ons.
-     *
-     * Wanneer de gebruikersnaam/wachtwoord combinatie niet klopt, wordt er een Runtime exception gegooid:
-     * 401 Unauthorized. Deze wordt gegooid door
-//     * {@link nl.novi.stuivenberg.springboot.example.security.service.security.jwt.AuthEntryPointJwt}
-     *
-     *
-     * @param loginRequest De payload met username en password.
-     * @return een HTTP-response met daarin de JWT-token.
-     */
+
     public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -180,7 +162,7 @@ public class AuthorizationService {
         String gameIdString ="placeholder";
         int leftLimit = 66; // letter 'A'
         int rightLimit = 122; // letter 'z'
-        int targetStringLength = 3;
+        int targetStringLength = 4;
         Random random = new Random();
 
         // loops until unique String is generated
@@ -222,14 +204,16 @@ public class AuthorizationService {
         Lobby lobby = new Lobby(player, gameIdString);
         lobbyRepository.save(lobby);
 
-        Game game = new Game(gameIdString);
-        gameRepository.save(game);
-
         player.setLobby(lobby);
         playerRepository.save(player);
 
+        Game game = new Game(gameIdString);
+        gameRepository.save(game);
+
+
+        playerRepository.save(player);
+
         lobby.setGame(game);
-        lobby.getPlayers().add(player);
         lobbyRepository.save(lobby);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -244,40 +228,118 @@ public class AuthorizationService {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-
-        // create user + add random String for uniqueness in whole database with role HOST
-            // set Game id as password?
-        // authenticate user
-
-        // create player
-        // create lobby(player)
-        // create game
-
-        // return JwtResponse + GameDetails
-//        return ResponseEntity.ok(user);
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                roles));
+        return ResponseEntity.ok(createResponseObject(userDetails, jwt, roles, lobby));
     }
 
-    public ResponseEntity<?> joinGame () {
+    public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        String username = joinGameRequest.getUsername();
+        String gameIdString = joinGameRequest.getGameIdString();
+
+        // find Lobby
+
+        Optional<Lobby> optionalLobby = lobbyRepository.findByGameIdString(gameIdString);
+
+        if (optionalLobby.isEmpty()) {
+            errorResponse.addError("404", "Entity not found: " + gameIdString + " Lobby does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        Lobby lobby = optionalLobby.get();
+
+        // create User
+
+        String requestedUsername = gameIdString + "_" + username;
+
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(requestedUsername))) {
+            errorResponse.addError("422", "Unprocessable Entity: Username already exists in this game.");
+            return ResponseEntity.status(422).body(errorResponse);
+        }
+
+        User user = new User(requestedUsername, encoder.encode(gameIdString));
+        user.setRoles(new HashSet<>());
+        user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
+        userRepository.save(user);
+
+        // create Player
+
+        // determines what starting color Player should have
+        int c = 0;
+        for (int i = 0; i < lobby.getPlayers().size(); i++) {
+            c++;
+            if (c == 8) {
+                c = 0;
+            }
+        }
+
+        Player player = new Player(username, Color.values()[c], true);
+        player.setLobby(lobby);
+        playerRepository.save(player);
+
+        lobby.getPlayers().add(player);
+        lobbyRepository.save(lobby);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestedUsername,
+                        gameIdString));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
         // check if Lobby has Player with username
 
         // create user + add random String for uniqueness in whole database
         // authenticate user
 
-        // create player with role PLAYER
+        // create player
         // player Join Lobby
 
 
 
         // return JwtResponse + GameDetails
 
-    return ResponseEntity.ok("lol");
+        return ResponseEntity.ok(createResponseObject(userDetails, jwt, roles, lobby));
     }
 
+
+    public AuthGameResponse createResponseObject (UserDetailsImpl userDetails, String jwt, List<String> roles, Lobby lobby) {
+        JwtResponse jwtResponse = new JwtResponse(
+                jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                roles
+        );
+
+        Set<PlayerResponse> playerResponses = new HashSet<>();
+
+        for (Player player : lobby.getPlayers()) {
+
+            PlayerResponse playerResponse = new PlayerResponse(
+                    player.getId(),
+                    player.getName(),
+                    player.getColor().toString(),
+                    player.getPhone()
+            );
+
+            playerResponses.add(playerResponse);
+        }
+
+        LobbyResponse lobbyResponse = new LobbyResponse (
+                lobby.getGameIdString(),
+                lobby.getCanStart(),
+                lobby.getStatus(),
+                lobby.getGame().getGameType().toString(),
+                lobby.getGame().getPoints(),
+                playerResponses
+        );
+
+        return new AuthGameResponse(jwtResponse, lobbyResponse);
+    }
 
 
 

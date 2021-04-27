@@ -1,15 +1,12 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.enums.Color;
-import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.LobbyResponse;
-import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -71,10 +68,10 @@ public class GuestServiceImpl implements GuestService {
         Player player = new Player();
 
 
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(joinGameRequest.getLobbyId());
+        Optional<Lobby> optionalLobby = lobbyRepository.findByGameIdString(joinGameRequest.getGameIdString());
         // check if game exist
         if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404", "Lobby with ID: " + joinGameRequest.getLobbyId() + " does not exist.");
+            errorResponse.addError("404", "Lobby with ID: " + joinGameRequest.getGameIdString() + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
@@ -83,13 +80,13 @@ public class GuestServiceImpl implements GuestService {
         //check if game has started yet or not
 
         // check if game has player with same name:
-        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), joinGameRequest.getName()) != null) {
-            errorResponse.addError("409", "Name already exists in game.");
-        }
+//        if (playerRepository.findPlayerByNameAndLobbyId(lobby.getId(), joinGameRequest.getName()) != null) {
+//            errorResponse.addError("409", "Name already exists in game.");
+//        }
 
-        if(!joinGameRequest.getPhone().equals("true")&&!joinGameRequest.getPhone().equals("false")) {
-            errorResponse.addError("406", "Phone must be either true or false");
-        }
+//        if(!joinGameRequest.getPhone().equals("true")&&!joinGameRequest.getPhone().equals("false")) {
+//            errorResponse.addError("406", "Phone must be either true or false");
+//        }
 
         if (errorResponse.getErrors().size() > 0) {
             return ResponseEntity.status(400).body(errorResponse);
@@ -103,10 +100,10 @@ public class GuestServiceImpl implements GuestService {
             }
         }
 
-        player.setName(joinGameRequest.getName());
+        player.setName(joinGameRequest.getUsername());
         player.setColor(Color.values()[c]);
-        player.setPhone(joinGameRequest.getPhone().equals("true"));
-        player.setLobby(lobby);
+//        player.setPhone(joinGameRequest.getPhone().equals("true"));
+//        player.setLobby(lobby);
         lobby.getPlayers().add(player);
 
         playerRepository.save(player);
@@ -130,15 +127,14 @@ public class GuestServiceImpl implements GuestService {
 //        return lobbyResponse;
 //    }
 
-    public PlayerObjectResponse createResponseObject (Player player) {
+    public PlayerResponse createResponseObject (Player player) {
 
-        PlayerObjectResponse playerObjectResponse =
-                new PlayerObjectResponse(
+        PlayerResponse playerObjectResponse =
+                new PlayerResponse(
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
-                        player.getPhone(),
-                        player.getLobby().getId()
+                        player.getPhone()
                 );
 
         return playerObjectResponse;

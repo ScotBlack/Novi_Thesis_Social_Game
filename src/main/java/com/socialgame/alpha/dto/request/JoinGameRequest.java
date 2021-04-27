@@ -6,21 +6,14 @@ import javax.validation.constraints.*;
 public class JoinGameRequest {
 
     @NotBlank(message = "Name is required")
-    private String name;
+    private String username;
 
     @NotBlank
-//    @Pattern(regexp = "^true$|^false$", message = "allowed input: true or false")
-    private String phone;
+    private String gameIdString;
 
-    @NotNull
-    private Long lobbyId;
+    public String getUsername() {return username;}
+    public void setUsername(String username) {this.username = username;}
 
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
-
-    public String getPhone() {return phone;}
-    public void setPhone(String phone) {this.phone = phone;}
-
-    public Long getLobbyId() {return lobbyId;}
-    public void setLobbyId(Long lobbyId) {this.lobbyId = lobbyId;}
+    public String getGameIdString() {return gameIdString;}
+    public void setGameIdString(String gameIdString) {this.gameIdString = gameIdString;}
 }

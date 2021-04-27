@@ -8,7 +8,7 @@ import com.socialgame.alpha.domain.minigame.MiniGame;
 import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -124,14 +124,13 @@ public class PlayerServiceImpl implements PlayerService {
         return ResponseEntity.status(403).body(errorResponse);
     }
 
-    public PlayerObjectResponse createResponseObject (Player player) {
+    public PlayerResponse createResponseObject (Player player) {
         return (
-                new PlayerObjectResponse(
+                new PlayerResponse(
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
-                        player.getPhone(),
-                        player.getLobby().getId()
+                        player.getPhone()
                 )
         );
     }
