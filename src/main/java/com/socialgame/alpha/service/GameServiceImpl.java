@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@PreAuthorize("hasRole('GAMEHOST')")
 public class GameServiceImpl implements GameService {
 
     private LobbyRepository lobbyRepository;
@@ -46,7 +47,7 @@ public class GameServiceImpl implements GameService {
 
     // whole database
     @Override
-    @PreAuthorize("hasRole('HOST')")
+
     public ResponseEntity<?> findAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
     }
@@ -60,7 +61,7 @@ public class GameServiceImpl implements GameService {
 
     // could be used for ingame I guess
     @Override
-    @PreAuthorize("hasRole('HOST')")
+
     public ResponseEntity<?> findPlayerByID(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);

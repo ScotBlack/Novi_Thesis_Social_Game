@@ -4,7 +4,7 @@ public enum ERole {
     ROLE_USER,
     ROLE_MODERATOR,
     ROLE_ADMIN,
-  HOST,
+    ROLE_GAMEHOST,
     ROLE_CAPTAIN,
     ROLE_PLAYER
 }

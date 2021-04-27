@@ -38,7 +38,6 @@ public class GameController {
         return gameService.findPlayerByID(id);
     }
 
-
     // requests related to particular game
     @GetMapping("/lobbyStatus/{id}")
     public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
