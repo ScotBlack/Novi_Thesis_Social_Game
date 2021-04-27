@@ -37,9 +37,10 @@ public class Lobby {
     public Lobby() {
     }
 
-    public Lobby(Player player) {
+    public Lobby(Player player, String gameIdString) {
         this.players = new HashSet<>();
         this.players.add(player);
+        this.gameIdString = gameIdString;
         this.status = "Need more players.";
         this.canStart = false;
     }

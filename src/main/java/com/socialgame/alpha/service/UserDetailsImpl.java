@@ -1,6 +1,7 @@
 package com.socialgame.alpha.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.socialgame.alpha.domain.Role;
 import com.socialgame.alpha.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,7 +46,6 @@ public class UserDetailsImpl implements UserDetails {
     public Long getId() {
         return id;
     }
-
 
 
     @Override

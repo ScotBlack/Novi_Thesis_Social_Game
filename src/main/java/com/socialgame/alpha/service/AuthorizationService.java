@@ -145,7 +145,7 @@ public class AuthorizationService {
      *
      * Wanneer de gebruikersnaam/wachtwoord combinatie niet klopt, wordt er een Runtime exception gegooid:
      * 401 Unauthorized. Deze wordt gegooid door
-     * {@link nl.novi.stuivenberg.springboot.example.security.service.security.jwt.AuthEntryPointJwt}
+//     * {@link nl.novi.stuivenberg.springboot.example.security.service.security.jwt.AuthEntryPointJwt}
      *
      *
      * @param loginRequest De payload met username en password.
@@ -213,13 +213,13 @@ public class AuthorizationService {
 
         User user = new User(username, encoder.encode(gameIdString));
         user.setRoles(new HashSet<>());
-        user.getRoles().add(roleRepository.findByName(ERole.HOST).get());
+        user.getRoles().add(roleRepository.findByName(ERole.ROLE_GAMEHOST).get());
         userRepository.save(user);
 
         Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
 
-        Lobby lobby = new Lobby(player);
+        Lobby lobby = new Lobby(player, gameIdString);
         lobbyRepository.save(lobby);
 
         Game game = new Game(gameIdString);

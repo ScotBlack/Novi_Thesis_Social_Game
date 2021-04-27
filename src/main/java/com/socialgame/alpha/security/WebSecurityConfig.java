@@ -71,9 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/test/**").permitAll()
-                .antMatchers("/api/game**").hasRole(ERole.HOST.name())
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/**").permitAll()
+//                .antMatchers("/api/game**").hasRole("HOST")
+//                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();
 
         // If a user try to access a resource without having enough permissions
@@ -81,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Apply JWT
 //        http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
-
+//
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
