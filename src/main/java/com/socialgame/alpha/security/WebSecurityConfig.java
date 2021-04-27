@@ -71,9 +71,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/**").permitAll()
-//                .antMatchers("/api/game**").hasRole("HOST")
-//                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/game/**").hasRole("GAMEHOST")
+                .antMatchers("/api/host/**").hasRole("GAMEHOST")
+                .antMatchers("/api/player/**").hasRole("PLAYER")
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();
 
         // If a user try to access a resource without having enough permissions

@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface GameRepository extends JpaRepository<Game, Long> {
 
    Boolean existsByGameIdString(String gameIdString);
+   Optional<Game> findByGameIdString(String gameIdString);
 
 //    @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
 //    Player findPlayerByNameAndGameId(@Param("gameId") Long gameId,

@@ -7,7 +7,7 @@ import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.PlayerObjectResponse;
+import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
@@ -189,14 +189,13 @@ public class HostServiceImpl implements HostService {
     }
 
 
-    public PlayerObjectResponse createResponseObject (Player player) {
+    public PlayerResponse createResponseObject (Player player) {
         return (
-                new PlayerObjectResponse(
+                new PlayerResponse(
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
-                        player.getPhone(),
-                        player.getLobby().getId()
+                        player.getPhone()
                 )
         );
     }

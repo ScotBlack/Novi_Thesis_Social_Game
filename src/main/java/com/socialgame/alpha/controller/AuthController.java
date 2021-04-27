@@ -1,11 +1,8 @@
 package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.dto.request.CreateGameRequest;
-import com.socialgame.alpha.dto.request.LoginRequest;
-import com.socialgame.alpha.dto.request.SignupRequest;
-import com.socialgame.alpha.dto.response.JwtResponse;
-import com.socialgame.alpha.dto.response.MessageResponse;
-import com.socialgame.alpha.service.AuthorizationService;
+import com.socialgame.alpha.dto.request.JoinGameRequest;
+import com.socialgame.alpha.service.AuthorizationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,21 +23,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    AuthorizationService authorizationService;
-
-    @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        return authorizationService.authenticateUser(loginRequest);
-    }
-
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
-//        return authorizationService.registerUser(signUpRequest);
-//    }
+    AuthorizationServiceImpl authorizationService;
 
     @PostMapping("/creategame")
     public ResponseEntity<?> createGame(@RequestBody CreateGameRequest createGameRequest) {
         return authorizationService.createGame(createGameRequest);
     }
+
+    @PostMapping("/joingame")
+    public ResponseEntity<?> joinGame(@RequestBody JoinGameRequest joinGameRequest) {
+        return authorizationService.joinGame(joinGameRequest);
+    }
+
+    @PostMapping("/rejoin")
+    public ResponseEntity<?> rejoinGame(@RequestBody JoinGameRequest joinGameRequest) {
+        return authorizationService.rejoin(joinGameRequest);
+    }
+
 
 }
