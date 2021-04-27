@@ -5,7 +5,6 @@ import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.ERole;
 import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
-import com.socialgame.alpha.dto.request.LoginRequest;
 import com.socialgame.alpha.dto.response.*;
 import com.socialgame.alpha.repository.*;
 import com.socialgame.alpha.security.jwt.JwtUtils;
