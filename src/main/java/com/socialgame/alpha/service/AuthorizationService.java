@@ -77,84 +77,6 @@ public class AuthorizationService {
         this.jwtUtils = jwtUtils;
     }
 
-    /**
-     *
-     * Deze methode verwerkt de gebruiker die wil registreren. De username en e-mail worden gecheckt. Eventuele rollen
-     * worden toegevoegd en de gebruiker wordt opgeslagen in de database.
-     *
-     * @param signUpRequest de payload signup-request met gebruikersnaam en wachtwoord.
-     * @return een HTTP response met daarin een succesbericht.
-     */
-//    public ResponseEntity<?> registerUser(@Valid SignupRequest signUpRequest) {
-//        if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new MessageResponse("Error: Username is already taken!"));
-//        }
-//
-//        // Create new user's account
-//        User user = new User(signUpRequest.getUsername(),
-//                encoder.encode(signUpRequest.getPassword()));
-//
-//        Set<String> strRoles = signUpRequest.getRole();
-//        Set<Role> roles = new HashSet<>();
-//
-//        if (strRoles == null) {
-//            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-//                    .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND_ERROR));
-//            roles.add(userRole);
-//        } else {
-//            strRoles.forEach(role -> {
-//                switch (role) {
-//                    case "admin":
-//                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-//                                .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND_ERROR));
-//                        roles.add(adminRole);
-//
-//                        break;
-//                    case "mod":
-//                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-//                                .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND_ERROR));
-//                        roles.add(modRole);
-//
-//                        break;
-//                    default:
-//                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-//                                .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND_ERROR));
-//                        roles.add(userRole);
-//                }
-//            });
-//        }
-//
-//        user.setRoles(roles);
-//        userRepository.save(user);
-//
-//        return ResponseEntity.ok(authenticateUser(signUpRequest.getUsername(), signUpRequest.getPassword()));
-//    }
-
-
-    public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
-
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                roles));
-    }
-
     public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
@@ -216,19 +138,13 @@ public class AuthorizationService {
         lobby.setGame(game);
         lobbyRepository.save(lobby);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username,
-                        gameIdString));
+        JwtResponse jwtResponse =
+                authenticateUser(
+                        username,
+                        gameIdString
+                );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(createResponseObject(userDetails, jwt, roles, lobby));
+        return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
     }
 
     public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest) {
@@ -247,7 +163,9 @@ public class AuthorizationService {
 
         Lobby lobby = optionalLobby.get();
 
-        // create User
+        //TODO - check if game has started yet or not
+
+        //create User
 
         String requestedUsername = gameIdString + "_" + username;
 
@@ -279,9 +197,20 @@ public class AuthorizationService {
         lobby.getPlayers().add(player);
         lobbyRepository.save(lobby);
 
+        JwtResponse jwtResponse =
+                authenticateUser(
+                        requestedUsername,
+                        gameIdString
+                );
+
+        return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
+    }
+
+    public JwtResponse authenticateUser (String username, String password) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestedUsername,
-                        gameIdString));
+                new UsernamePasswordAuthenticationToken(
+                        username,
+                        password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -291,29 +220,11 @@ public class AuthorizationService {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        // check if Lobby has Player with username
-
-        // create user + add random String for uniqueness in whole database
-        // authenticate user
-
-        // create player
-        // player Join Lobby
-
-
-
-        // return JwtResponse + GameDetails
-
-        return ResponseEntity.ok(createResponseObject(userDetails, jwt, roles, lobby));
+        return new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles);
     }
 
 
-    public AuthGameResponse createResponseObject (UserDetailsImpl userDetails, String jwt, List<String> roles, Lobby lobby) {
-        JwtResponse jwtResponse = new JwtResponse(
-                jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                roles
-        );
+    public AuthGameResponse createResponseObject (JwtResponse jwtResponse, Lobby lobby) {
 
         Set<PlayerResponse> playerResponses = new HashSet<>();
 
