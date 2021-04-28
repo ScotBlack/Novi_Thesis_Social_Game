@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-
 public class Question extends MiniGame {
 
     @Column

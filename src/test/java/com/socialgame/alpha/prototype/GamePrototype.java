@@ -15,8 +15,9 @@ public class GamePrototype {
         game.setPoints(100);
         game.setStarted(false);
         game.setTeams(new HashSet<>());
-        game.getTeams().add(TeamPrototype.protoTeamOne());
-        game.getTeams().add(TeamPrototype.protoTeamTwo());
+        game.setCurrentMiniGame(QuestionPrototype.protoQuestion());
+        game.setCurrentCompetingTeams(new HashSet<>());
+        game.setCurrentCompetingTeams(new HashSet<>());
         return game;
     }
 }

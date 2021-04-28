@@ -6,18 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
 public class Role {
-
-
-//    public static final String USER_HOST = "USER_HOST";
-//    public static final String AUTHOR_ADMIN = "AUTHOR_ADMIN";
-//    public static final String BOOK_ADMIN = "BOOK_ADMIN";
-//
-//    private String authority;
-
 
     @Id
     @GeneratedValue(

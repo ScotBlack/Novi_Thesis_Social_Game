@@ -1,11 +1,16 @@
 package com.socialgame.alpha.domain;
 
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.domain.minigame.MiniGame;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.prototype.GamePrototype;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -13,15 +18,8 @@ import static org.mockito.Mockito.*;
 
 class GameTest {
 
-
-    @BeforeEach
-    void setUp() {
-//        Game game = new Game();
-//        game.setId(1L);
-//        game.setGameIdString("abc");
-//        game.setGameType(GameType.FFA);
-//        game.setPoints(100);
-//        game.setStarted(false);
+    public GameTest() {
+        Game game = new Game ("abc");
     }
 
     @Test
@@ -44,9 +42,6 @@ class GameTest {
         assertEquals("abc", gameIdString);
     }
 
-    @Test
-    void setGameIdString() {
-    }
 
     @Test
     void getGameType() {
@@ -58,9 +53,6 @@ class GameTest {
         assertEquals(GameType.FFA, gameType);
     }
 
-    @Test
-    void setGameType() {
-    }
 
     @Test
     void getPoints() {
@@ -72,9 +64,6 @@ class GameTest {
         assertEquals(100, points);
     }
 
-    @Test
-    void setPoints() {
-    }
 
     @Test
     void getStarted() {
@@ -87,30 +76,32 @@ class GameTest {
     }
 
     @Test
-    void setStarted() {
-    }
-
-    @Test
     void getTeams() {
-    }
+        EntityManager entityManager = mock(EntityManager.class);
+        when(entityManager.find(Game.class,1L)).thenReturn(GamePrototype.protoGame());
 
-    @Test
-    void setTeams() {
+        Set<Team> teams = GamePrototype.protoGame().getTeams();
+
+        assertTrue(teams instanceof HashSet);
     }
 
     @Test
     void getCurrentMiniGame() {
-    }
+        EntityManager entityManager = mock(EntityManager.class);
+        when(entityManager.find(Game.class,1L)).thenReturn(GamePrototype.protoGame());
 
-    @Test
-    void setCurrentMiniGame() {
+        MiniGame question = GamePrototype.protoGame().getCurrentMiniGame();
+
+        assertTrue(question instanceof Question);
     }
 
     @Test
     void getCurrentCompetingTeams() {
-    }
+        EntityManager entityManager = mock(EntityManager.class);
+        when(entityManager.find(Game.class,1L)).thenReturn(GamePrototype.protoGame());
 
-    @Test
-    void setCurrentCompetingTeams() {
+        Set<Team> teams = GamePrototype.protoGame().getCurrentCompetingTeams();
+
+        assertTrue(teams instanceof HashSet);
     }
 }
