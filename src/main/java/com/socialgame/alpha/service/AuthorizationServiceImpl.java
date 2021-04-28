@@ -211,7 +211,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public ResponseEntity<?> rejoin (JoinGameRequest joinGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-        String username = joinGameRequest.getUsername();
+        String username = joinGameRequest.getGameIdString() + "_" + joinGameRequest.getUsername() ;
         String gameIdString = joinGameRequest.getGameIdString();
 
         // find Lobby
@@ -226,8 +226,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         JwtResponse jwtResponse =
                 authenticateUser(
-                        joinGameRequest.getUsername(),
-                        joinGameRequest.getGameIdString()
+                        username,
+                        gameIdString
                 );
 
         return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
