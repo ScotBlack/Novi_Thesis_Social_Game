@@ -100,19 +100,19 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             }
         }
 
+        // to catch if something went wrong generating unique gameIdString
         if (gameIdString.equals("placeholder")) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Something went wrong generating gameIdString"));
+            errorResponse.addError("400" , "Error: Something went wrong generating gameIdString");
+            return ResponseEntity.status(400).body(errorResponse);
         }
 
         String  username = gameIdString + "_" + createGameRequest.getUsername();
 
-        // unnecessary
+        // redundant
+        // check if User exists, but impossible because its first Player in the game.
         if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: " + createGameRequest.getUsername() + " is already taken!"));
+            errorResponse.addError("400" , "Error: " + createGameRequest.getUsername() + " is already taken!");
+            return ResponseEntity.status(400).body(errorResponse);
         }
 
         User user = new User(username, encoder.encode(gameIdString));
@@ -120,18 +120,35 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_GAMEHOST).get());
         userRepository.save(user);
 
+        // test if User is created
+        if (Boolean.FALSE.equals(userRepository.existsByUsername(username))) {
+            errorResponse.addError("400" , "Error: User " + createGameRequest.getUsername() + " has not been created, something went wrong.");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
         Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
 
+        // test if Player is created
+        if (Boolean.FALSE.equals(playerRepository.existsByName(createGameRequest.getUsername()))) {
+            errorResponse.addError("400" , "Error: Player " + gameIdString + " has not been created, something went wrong.");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
+
         Lobby lobby = new Lobby(player, gameIdString);
         lobbyRepository.save(lobby);
+
+        // test if Lobby is created
+        if (Boolean.FALSE.equals(lobbyRepository.existsByGameIdString(gameIdString))) {
+            errorResponse.addError("400" , "Error: Lobby " + createGameRequest.getUsername() + " has not been created, something went wrong.");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
 
         player.setLobby(lobby);
         playerRepository.save(player);
 
         Game game = new Game(gameIdString);
         gameRepository.save(game);
-
 
         playerRepository.save(player);
 

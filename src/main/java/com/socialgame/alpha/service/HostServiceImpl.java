@@ -82,16 +82,16 @@ public class HostServiceImpl implements HostService {
             return ResponseEntity.status(400).body(errorResponse);
         }
 
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
+        Optional<Game> optionalGame = gameRepository.findById(id);
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Lobby lobby = optionalLobby.get();
-        lobby.getGame().setGameType(gameType);
-        lobbyRepository.save(lobby);
+        Game game = optionalGame.get();
+        game.setGameType(gameType);
+        gameRepository.save(game);
 
         return ResponseEntity.ok("needs fix");
     }

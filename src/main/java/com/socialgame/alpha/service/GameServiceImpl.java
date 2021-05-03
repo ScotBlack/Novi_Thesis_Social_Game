@@ -46,7 +46,6 @@ public class GameServiceImpl implements GameService {
 
     // whole database
     @Override
-
     public ResponseEntity<?> findAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
     }

@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
+    Boolean existsByName(String name);
+
     @Query("SELECT p FROM Player p WHERE p.lobby.id = :lobbyId and p.name = :name")
     Player findPlayerByNameAndLobbyId(@Param("lobbyId") Long gameId,
                                      @Param("name") String name);
