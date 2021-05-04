@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.prototype.GamePrototype;
 import com.socialgame.alpha.repository.GameRepository;
 import org.junit.jupiter.api.Assertions;
@@ -34,11 +35,14 @@ class HostServiceImplTest {
 
 
     Game game;
+    SetGameTypeRequest setGameTypeRequest = new SetGameTypeRequest();
 
     @BeforeEach
     void setUp() {
         game = new Game();
         game.setId(1L);
+
+        setGameTypeRequest = new SetGameTypeRequest();
     }
 
     //        EntityManager entityManager = mock(EntityManager.class);
@@ -50,20 +54,54 @@ class HostServiceImplTest {
 
     @Test
     void invalidGameTypeShouldReturnErrorResponse() {
+        ResponseEntity<?> responseEntity = hostService.setGameType(setGameTypeRequest);
 
-//
-        ResponseEntity<?> responseEntity = hostService.setGameType(1L, GameType.CLASSIC);
-//
+//        EntityManager entityManager = mock(EntityManager.class);
+//        when(entityManager.find(Game.class,1L)).thenReturn(game);
+
+//        Mockito.when(gameRepository.findById(Game.class, 1L).thenReturn(Optional.of(Game.class))
+//                remoteStore.get("a", "b") ).thenReturn( Optional.of("lol")
+        
+        game.setGameType(GameType.CLASSIC);
+
+//        assertAll("Properties Test",
+//                () -> assertEquals(game.getGameType(), GameType.CLASSIC)
+////                () -> assertEquals(200, responseEntity.getStatusCodeValue()
+//                        ));
+        assertEquals(game.getGameType(), GameType.CLASSIC);
+//        assertEquals(200, responseEntity.getStatusCodeValue());
+//        Assertions.assertEquals(400, responseEntity.getStatusCodeValue());
+
+    }
 
 
-        game.setGameType(GameType.FFA);
+    @Test
+    void invalidGameTypeShouldReturnIllegalArgumentException() {
+//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+//            Integer.parseInt("1a");
+//        });
 
-        assertAll("Properties Test",
-                () -> assertEquals(game.getGameType(), GameType.FFA),
-                () -> assertEquals(200, responseEntity.getStatusCodeValue()
-                        ));
-        assertEquals(game.getGameType(), GameType.FFA);
-        Assertions.assertEquals(200, responseEntity.getStatusCodeValue());
+        SetGameTypeRequest setGameTypeRequest = new SetGameTypeRequest();
+
+        String GameTypeValue = "WRONG";
+        GameType gameType = GameType.valueOf(GameTypeValue);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            Integer.parseInt("1a");
+        });
+
+        ResponseEntity<?> responseEntity = hostService.setGameType(setGameTypeRequest);
+
+//        game.setGameType(gameType);
+
+
+
+//        assertAll("Properties Test",
+//                () -> assertEquals(game.getGameType(), GameType.CLASSIC)
+////                () -> assertEquals(200, responseEntity.getStatusCodeValue()
+//                        ));
+//        assertEquals(game.getGameType(), GameType.CLASSIC);
+//        assertEquals(400, responseEntity.getStatusCodeValue());
 //        Assertions.assertEquals(400, responseEntity.getStatusCodeValue());
 
     }

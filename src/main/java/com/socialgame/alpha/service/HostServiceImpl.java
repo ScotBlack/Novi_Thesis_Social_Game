@@ -6,6 +6,7 @@ import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
@@ -74,19 +75,22 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public ResponseEntity<?> setGameType(Long id, GameType gameType) {
+    public ResponseEntity<?> setGameType(SetGameTypeRequest setGameTypeRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        if (!gameType.equals(GameType.CLASSIC) && !gameType.equals(GameType.FFA) && !gameType.equals(GameType.TEAMS)) {
-            errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
-            return ResponseEntity.status(400).body(errorResponse);
-        }
+        GameType gameType = setGameTypeRequest.getGameType();
 
-        Optional<Game> optionalGame = gameRepository.findById(id);
+//        if (gameType instanceof GameType) {
+//            errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
+//            return ResponseEntity.status(400).body(errorResponse);
+//        }
+
+
+        Optional<Game> optionalGame = gameRepository.findById(setGameTypeRequest.getGameId());
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
+            errorResponse.addError("404" , "Game with ID: " + " does not exist.");
+            return ResponseEntity.status(403).body(errorResponse);
         }
 
         Game game = optionalGame.get();
