@@ -1,8 +1,13 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
+import com.socialgame.alpha.domain.Lobby;
+import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.prototype.GamePrototype;
 import com.socialgame.alpha.repository.GameRepository;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import javax.persistence.EntityManager;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -33,123 +40,92 @@ class HostServiceImplTest {
     @Mock
     private GameRepository gameRepository;
 
-
     Game game;
-    SetGameTypeRequest setGameTypeRequest = new SetGameTypeRequest();
+    Lobby lobby;
+    SetGameTypeRequest setGameTypeRequest;
+    SetGamePointsRequest setGamePointsRequest;
 
     @BeforeEach
     void setUp() {
+        lobby = new Lobby();
+        lobby.setCanStart(false);
+
         game = new Game();
-        game.setId(1L);
+        game.setId(1l);
+        game.setGameIdString("abc");
+        game.setGameType(GameType.FFA);
+        game.setLobby(lobby);
+        game.setTeams(new HashSet<>());
 
         setGameTypeRequest = new SetGameTypeRequest();
+        setGamePointsRequest = new SetGamePointsRequest();
+        System.out.println(game.getGameIdString());
     }
 
-    //        EntityManager entityManager = mock(EntityManager.class);
-//        when(entityManager.find(Game.class,1L)).thenReturn(game);
-
-//        Mockito.when(gameRepository.findById(1l).thenReturn(Optional);
-//        Mockito.when(gameRepository.findById(1l)).thenReturn(Optional.);
-
-
     @Test
-    void invalidGameTypeShouldReturnErrorResponse() {
-        ResponseEntity<?> responseEntity = hostService.setGameType(setGameTypeRequest);
+    void invalidGameIdStringShouldReturnErrorResponse() {
+        setGameTypeRequest.setGameIdString("wrong");
+        setGamePointsRequest.setGameIdString("wrong");
 
-//        EntityManager entityManager = mock(EntityManager.class);
-//        when(entityManager.find(Game.class,1L)).thenReturn(game);
-
-//        Mockito.when(gameRepository.findById(Game.class, 1L).thenReturn(Optional.of(Game.class))
-//                remoteStore.get("a", "b") ).thenReturn( Optional.of("lol")
-        
-        game.setGameType(GameType.CLASSIC);
-
-//        assertAll("Properties Test",
-//                () -> assertEquals(game.getGameType(), GameType.CLASSIC)
-////                () -> assertEquals(200, responseEntity.getStatusCodeValue()
-//                        ));
-        assertEquals(game.getGameType(), GameType.CLASSIC);
-//        assertEquals(200, responseEntity.getStatusCodeValue());
-//        Assertions.assertEquals(400, responseEntity.getStatusCodeValue());
-
-    }
-
-
-    @Test
-    void invalidGameTypeShouldReturnIllegalArgumentException() {
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            Integer.parseInt("1a");
-//        });
-
-        SetGameTypeRequest setGameTypeRequest = new SetGameTypeRequest();
-
-        String GameTypeValue = "WRONG";
-        GameType gameType = GameType.valueOf(GameTypeValue);
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            Integer.parseInt("1a");
-        });
+        Mockito.when(gameRepository.findByGameIdString("wrong")).thenReturn(Optional.empty());
 
         ResponseEntity<?> responseEntity = hostService.setGameType(setGameTypeRequest);
+        ResponseEntity<?> responseEntity2 = hostService.setPoints(setGamePointsRequest);
+        ResponseEntity<?> responseEntity3 = hostService.startGame("wrong");
 
-//        game.setGameType(gameType);
-
-
-
-//        assertAll("Properties Test",
-//                () -> assertEquals(game.getGameType(), GameType.CLASSIC)
-////                () -> assertEquals(200, responseEntity.getStatusCodeValue()
-//                        ));
-//        assertEquals(game.getGameType(), GameType.CLASSIC);
-//        assertEquals(400, responseEntity.getStatusCodeValue());
-//        Assertions.assertEquals(400, responseEntity.getStatusCodeValue());
-
-    }
-
-
-
-    @Test
-    void setLobbyRepository() {
-
-    }
-
-    @Test
-    void setGameRepository() {
-    }
-
-    @Test
-    void setPlayerRepository() {
+        assertAll("Error Response setGameType Properties",
+                () -> assertEquals(404, responseEntity.getStatusCodeValue()),
+                () -> assertTrue(responseEntity instanceof ResponseEntity<?>),
+                () -> assertTrue(responseEntity.getBody() instanceof ErrorResponse),
+                () -> assertEquals(1, ((ErrorResponse) responseEntity.getBody()).getErrors().size()),
+                () -> assertTrue(((ErrorResponse) responseEntity.getBody()).getErrors().containsKey("ENTITY_NOT_FOUND"))
+        );
+        assertAll("Error Response setGamePoint Properties",
+                () -> assertEquals(404, responseEntity2.getStatusCodeValue()),
+                () -> assertTrue(responseEntity2 instanceof ResponseEntity<?>),
+                () -> assertTrue(responseEntity2.getBody() instanceof ErrorResponse),
+                () -> assertEquals(1, ((ErrorResponse) responseEntity2.getBody()).getErrors().size()),
+                () -> assertTrue(((ErrorResponse) responseEntity2.getBody()).getErrors().containsKey("ENTITY_NOT_FOUND"))
+        );
+        assertAll("Error Response setGamePoint Properties",
+                () -> assertEquals(404, responseEntity3.getStatusCodeValue()),
+                () -> assertTrue(responseEntity3 instanceof ResponseEntity<?>),
+                () -> assertTrue(responseEntity3.getBody() instanceof ErrorResponse),
+                () -> assertEquals(1, ((ErrorResponse) responseEntity3.getBody()).getErrors().size()),
+                () -> assertTrue(((ErrorResponse) responseEntity3.getBody()).getErrors().containsKey("ENTITY_NOT_FOUND"))
+        );
     }
 
     @Test
-    void setTeamRepository() {
+    void startGame_ShouldReturnErrorResponse_WhenLobbyCanStartIsFalse() {
+        Mockito.when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+
+        ResponseEntity<?> responseEntity = hostService.startGame("abc");
+
+        assertAll("Error Response startGame",
+                () -> assertEquals(403, responseEntity.getStatusCodeValue()),
+                () -> assertTrue(responseEntity instanceof ResponseEntity<?>),
+                () -> assertTrue(responseEntity.getBody() instanceof ErrorResponse),
+                () -> assertEquals(1, ((ErrorResponse) responseEntity.getBody()).getErrors().size()),
+                () -> assertTrue(((ErrorResponse) responseEntity.getBody()).getErrors().containsKey("NOT_READY"))
+        );
     }
 
     @Test
-    void toggleOtherPlayerColor() {
+    void startGame_ShouldSetGameStarted_WhenLobbyCanStartIsTrue() {
+        lobby.setCanStart(true);
+        lobby.setPlayers(new HashSet<Player>());
+        Mockito.when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
 
-        assertAll("Test Prop Set:",
-                () -> assertEquals(2,3, "Test failed lol idiot"),
-                () -> assertEquals("test", "test"));
-    }
 
-    @Test
-    void setGameType() {
-    }
+        ResponseEntity<?> responseEntity = hostService.startGame("abc");
 
-    @Test
-    void setPoints() {
-    }
+        assertEquals(200, responseEntity.getStatusCodeValue());
 
-    @Test
-    void startGame() {
-    }
-
-    @Test
-    void createResponseObject() {
-    }
-
-    @Test
-    void testCreateResponseObject() {
+        assertAll("Error Response startGame",
+                () -> assertEquals(200, responseEntity.getStatusCodeValue()),
+                () -> assertTrue(responseEntity instanceof ResponseEntity<?>),
+                () -> assertTrue(responseEntity.getBody() instanceof HashSet)
+        );
     }
 }

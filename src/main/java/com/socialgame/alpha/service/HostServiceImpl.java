@@ -6,10 +6,9 @@ import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
-import com.socialgame.alpha.dto.request.SetPointsRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
@@ -48,53 +47,19 @@ public class HostServiceImpl implements HostService {
     public void setTeamRepository(TeamRepository teamRepository) {this.teamRepository = teamRepository;}
 
     @Override
-    public ResponseEntity<?> toggleOtherPlayerColor(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
+    public ResponseEntity<?> setGameType(SetGameTypeRequest setGameTypeRequest) {
+        String gameIdString = setGameTypeRequest.getGameIdString();
+        GameType gameType = setGameTypeRequest.getGameType();
 
-        if (optionalPlayer.isEmpty()) {
-            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("ENTITY_NOT_FOUND"  , "Game with Id String: " + gameIdString + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Player player = optionalPlayer.get();
-        Color[] colors = Color.values();
-
-        Color currentColor = player.getColor();
-        Color newColor = Color.RED;
-
-        for (int i = 0; i < colors.length; i++) {
-            if (currentColor.equals(colors[i]) && i < colors.length - 1) {
-                newColor = colors[i + 1];
-            }
-        }
-
-        player.setColor(newColor);
-        playerRepository.save(player);
-
-        return ResponseEntity.ok(createResponseObject(player));
-    }
-
-    @Override
-    public ResponseEntity<?> setGameType(SetGameTypeRequest setGameTypeRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
-
-        GameType gameType = setGameTypeRequest.getGameType();
-
-//        if (gameType instanceof GameType) {
-//            errorResponse.addError("404" , "Game type: " + gameType + " is not a valid option.");
-//            return ResponseEntity.status(400).body(errorResponse);
-//        }
-
-
-        Optional<Game> optionalGame = gameRepository.findById(setGameTypeRequest.getGameId());
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + " does not exist.");
-            return ResponseEntity.status(403).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
+        Game game = gameRepository.findByGameIdString(gameIdString).get();
         game.setGameType(gameType);
         gameRepository.save(game);
 
@@ -102,58 +67,52 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public ResponseEntity<?> setPoints(SetPointsRequest setPointsRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Long gameId = setPointsRequest.getGameId();
+    public ResponseEntity<?> setPoints(SetGamePointsRequest setGamePointsRequest) {
+        String gameIdString = setGamePointsRequest.getGameIdString();
+        int gamePoints = setGamePointsRequest.getGamePoints();
 
-        Optional<Game> optionalGame = gameRepository.findById(gameId);
+        ErrorResponse errorResponse = new ErrorResponse();
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + gameId + " does not exist.");
+            errorResponse.addError("ENTITY_NOT_FOUND"  , "Game with Id String: " + gameIdString + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-
         Game game = optionalGame.get();
-        game.setPoints(setPointsRequest.getPoints());
+        game.setPoints(gamePoints);
         gameRepository.save(game);
 
-        // needs fix
         return ResponseEntity.ok(GameServiceImpl.createResponseObject(game));
     }
 
     @Override
-    public ResponseEntity<?> startGame(Long id) {
+    public ResponseEntity<?> startGame(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
-
-        Optional<Game> optionalGame = gameRepository.findById(id);
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404", "Game with ID: " + id + " does not exist.");
+            errorResponse.addError("ENTITY_NOT_FOUND", "Game with Id String: " + gameIdString + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
         Game game = optionalGame.get();
         Lobby lobby = game.getLobby();
-//        if (lobby.) {
-//            errorResponse.addError("404", "Lobby with ID: " + id + " does not exist.");
-//            return ResponseEntity.status(404).body(errorResponse);
-//        }
 
         // checks if game/lobby meets requirements to start (lobbyStatusUpdate)
         if (!lobby.getCanStart()) {
-            errorResponse.addError("404", "Game with ID: " + id + " cannot be started right now.");
+            errorResponse.addError("NOT_READY", "Game with ID: " + gameIdString + " cannot be started right now.");
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
+        Set<Player> players = lobby.getPlayers();
 
         for (Color color : Color.values()) {
             Team team = new Team(game, color);
 
             for (Player player : players) {
                 if (player.getColor().equals(color)) {
-                    team.getPlayers().put(player.getName(),0);
+                    team.getPlayers().put(player.getName(), 0);
                 }
             }
 
@@ -166,69 +125,11 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        //respond team objects
+        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game.getTeams()));
+    }
+        // respond team objects
         // User set Team
         // Give users Captain roles/ remove player role?
         // sth to fix
         // delete redundant player objects
-
-        return ResponseEntity.ok(createResponseObject(game.getTeams()));
-    }
-
-    public Set<TeamResponse> createResponseObject(Set<Team> teams) {
-        Set<TeamResponse> teamsRes = new HashSet<>();
-
-        for (Team team : teams) {
-            TeamResponse response =
-                    new TeamResponse(
-                            team.getId(),
-                            team.getGame().getId(),
-                            team.getName().toString(),
-                            team.getPlayers().keySet(),
-                            team.getPoints()
-                    );
-            teamsRes.add(response);
-        }
-        return teamsRes;
-    }
-
-
-    public PlayerResponse createResponseObject (Player player) {
-        return (
-                new PlayerResponse(
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone()
-                )
-        );
-    }
-
-//    public LobbyResponse createResponseObject(Lobby lobby) {
-//        Set<PlayerResponse> playerResponses = new HashSet<>();
-//
-//        for (Player player : lobby.getPlayers()) {
-//
-//            PlayerResponse playerResponse = new PlayerResponse(
-//                    player.getId(),
-//                    player.getName(),
-//                    player.getColor().toString(),
-//                    player.getPhone()
-//            );
-//
-//            playerResponses.add(playerResponse);
-//        }
-//
-//
-//        LobbyResponse lobbyResponse = new LobbyResponse (
-//                lobby.getGameIdString(),
-//                lobby.getCanStart(),
-//                lobby.getStatus(),
-//                "bla",
-//                100,
-//                playerResponses
-//        );
-//
-//        return lobbyResponse;
-//    }
 }

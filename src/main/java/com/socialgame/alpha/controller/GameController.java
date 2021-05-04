@@ -40,13 +40,13 @@ public class GameController {
 
     // requests related to particular game
     @GetMapping("/lobbyStatus/{id}")
-    public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") Long id) {
-        return gameService.lobbyStatusUpdate(id);
+    public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") String gameIdString) {
+        return gameService.lobbyStatusUpdate(gameIdString);
     }
 
     @GetMapping("/{id}/players")
-    public ResponseEntity<?> getPlayers(@PathVariable("id") Long id) {
-        return gameService.getPlayers(id);
+    public ResponseEntity<?> getPlayers(@PathVariable("id") String gameIdString) {
+        return gameService.getPlayers(gameIdString);
     }
 
     @GetMapping(path="/{id}/teams")

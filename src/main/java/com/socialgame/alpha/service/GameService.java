@@ -10,8 +10,8 @@ public interface GameService {
     ResponseEntity<?> findPlayerByID(Long id);
 
     // related to a particular game
-    ResponseEntity<?> lobbyStatusUpdate(Long id);
-    ResponseEntity<?> getPlayers(Long id);
+    ResponseEntity<?> lobbyStatusUpdate(String gameIdString);
+    ResponseEntity<?> getPlayers(String  gameIdString);
     ResponseEntity<?> getTeams(Long id);
     ResponseEntity<?> getScore(Long id);
     ResponseEntity<?> nextMiniGame(Long id);

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 public class SetGameTypeRequest {
 
     @NotNull
-    private Long gameId;
+    private String gameIdString;
 
     @JsonProperty("gameType")
     @EnumValidator(
@@ -19,11 +19,11 @@ public class SetGameTypeRequest {
     )
     private GameType gameType;
 
-    public Long getGameId() {
-        return gameId;
+    public String getGameIdString() {
+        return gameIdString;
     }
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
+    public void setGameIdString(String gameIdString) {
+        this.gameIdString = gameIdString;
     }
 
     public GameType getGameType() {
