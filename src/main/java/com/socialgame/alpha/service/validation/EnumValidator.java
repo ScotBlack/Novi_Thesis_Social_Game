@@ -23,7 +23,7 @@ public @interface EnumValidator {
 
     String message() default "Value is not valid";
 
-//    Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 

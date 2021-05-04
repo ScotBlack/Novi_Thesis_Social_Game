@@ -7,6 +7,7 @@ import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
+import com.socialgame.alpha.dto.request.SetPointsRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
@@ -101,19 +102,20 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public ResponseEntity<?> setPoints(Long id, int points) {
-
+    public ResponseEntity<?> setPoints(SetPointsRequest setPointsRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
+        Long gameId = setPointsRequest.getGameId();
+
+        Optional<Game> optionalGame = gameRepository.findById(gameId);
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            errorResponse.addError("404" , "Game with ID: " + gameId + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
 
         Game game = optionalGame.get();
-        game.setPoints(points);
+        game.setPoints(setPointsRequest.getPoints());
         gameRepository.save(game);
 
         // needs fix
