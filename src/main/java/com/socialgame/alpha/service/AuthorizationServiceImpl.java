@@ -148,12 +148,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         playerRepository.save(player);
 
         Game game = new Game(gameIdString);
+        game.setLobby(lobby);
         gameRepository.save(game);
-
-        playerRepository.save(player);
-
-        lobby.setGame(game);
-        lobbyRepository.save(lobby);
 
         JwtResponse jwtResponse =
                 authenticateUser(
@@ -289,8 +285,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 lobby.getGameIdString(),
                 lobby.getCanStart(),
                 lobby.getStatus(),
-                lobby.getGame().getGameType().toString(),
-                lobby.getGame().getPoints(),
+                "NEEDS FIX IN create response",
+                10,
                 playerResponses
         );
 

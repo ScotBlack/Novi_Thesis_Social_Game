@@ -7,6 +7,7 @@ import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.TeamResponse;
 import com.socialgame.alpha.repository.GameRepository;
@@ -74,7 +75,6 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public ResponseEntity<?> setGameType(Long id, GameType gameType) {
-
         ErrorResponse errorResponse = new ErrorResponse();
 
         if (!gameType.equals(GameType.CLASSIC) && !gameType.equals(GameType.FFA) && !gameType.equals(GameType.TEAMS)) {
@@ -93,41 +93,34 @@ public class HostServiceImpl implements HostService {
         game.setGameType(gameType);
         gameRepository.save(game);
 
-        return ResponseEntity.ok("needs fix");
+        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game));
     }
 
     @Override
     public ResponseEntity<?> setPoints(Long id, int points) {
 
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
+        Optional<Game> optionalGame = gameRepository.findById(id);
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Lobby lobby = optionalLobby.get();
-        lobby.getGame().setPoints(points);
-        lobbyRepository.save(lobby);
+
+        Game game = optionalGame.get();
+        game.setPoints(points);
+        gameRepository.save(game);
 
         // needs fix
-        return ResponseEntity.ok("needs fix");
+        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game));
     }
 
     @Override
     public ResponseEntity<?> startGame(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404", "Lobby with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        Optional<Game> optionalGame = gameRepository.findById(lobby.getGame().getId());
+        Optional<Game> optionalGame = gameRepository.findById(id);
 
         if (optionalGame.isEmpty()) {
             errorResponse.addError("404", "Game with ID: " + id + " does not exist.");
@@ -135,6 +128,11 @@ public class HostServiceImpl implements HostService {
         }
 
         Game game = optionalGame.get();
+        Lobby lobby = game.getLobby();
+//        if (lobby.) {
+//            errorResponse.addError("404", "Lobby with ID: " + id + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
 
         // checks if game/lobby meets requirements to start (lobbyStatusUpdate)
         if (!lobby.getCanStart()) {
@@ -199,4 +197,32 @@ public class HostServiceImpl implements HostService {
                 )
         );
     }
+
+//    public LobbyResponse createResponseObject(Lobby lobby) {
+//        Set<PlayerResponse> playerResponses = new HashSet<>();
+//
+//        for (Player player : lobby.getPlayers()) {
+//
+//            PlayerResponse playerResponse = new PlayerResponse(
+//                    player.getId(),
+//                    player.getName(),
+//                    player.getColor().toString(),
+//                    player.getPhone()
+//            );
+//
+//            playerResponses.add(playerResponse);
+//        }
+//
+//
+//        LobbyResponse lobbyResponse = new LobbyResponse (
+//                lobby.getGameIdString(),
+//                lobby.getCanStart(),
+//                lobby.getStatus(),
+//                "bla",
+//                100,
+//                playerResponses
+//        );
+//
+//        return lobbyResponse;
+//    }
 }

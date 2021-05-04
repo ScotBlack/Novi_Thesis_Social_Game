@@ -78,18 +78,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public ResponseEntity<?> lobbyStatusUpdate(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
-
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
-
-        Optional<Game> optionalGame = gameRepository.findById(lobby.getGame().getId());
+        Optional<Game> optionalGame = gameRepository.findById(id);
 
         if (optionalGame.isEmpty()) {
             errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
@@ -97,6 +86,9 @@ public class GameServiceImpl implements GameService {
         }
 
         Game game = optionalGame.get();
+        Lobby lobby = game.getLobby();
+
+        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
@@ -159,7 +151,7 @@ public class GameServiceImpl implements GameService {
         lobby.setStatus(status);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(createResponseObject(lobby));
+        return ResponseEntity.ok(createResponseObject(game));
     }
 
     @Override
@@ -308,10 +300,10 @@ public class GameServiceImpl implements GameService {
     }
 
 
-    public LobbyResponse createResponseObject(Lobby lobby) {
+    public static LobbyResponse createResponseObject(Game game) {
         Set<PlayerResponse> playerResponses = new HashSet<>();
 
-        for (Player player : lobby.getPlayers()) {
+        for (Player player : game.getLobby().getPlayers()) {
 
             PlayerResponse playerResponse = new PlayerResponse(
                     player.getId(),
@@ -325,11 +317,11 @@ public class GameServiceImpl implements GameService {
 
 
         LobbyResponse lobbyResponse = new LobbyResponse (
-                lobby.getGameIdString(),
-                lobby.getCanStart(),
-                lobby.getStatus(),
-                lobby.getGame().getGameType().toString(),
-                lobby.getGame().getPoints(),
+                game.getGameIdString(),
+                game.getLobby().getCanStart(),
+                game.getLobby().getStatus(),
+                game.getGameType().name(),
+                game.getPoints(),
                 playerResponses
         );
 
