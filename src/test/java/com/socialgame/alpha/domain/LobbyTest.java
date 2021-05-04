@@ -46,21 +46,6 @@ class LobbyTest {
     }
 
     @Test
-    void getGame() {
-        Player player = new Player();
-        Lobby lobby = new Lobby(player, "abc");
-        lobby.setId(1L);
-        lobby.setGame(GamePrototype.protoGame());
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Lobby.class,1L)).thenReturn(lobby);
-
-        Game game = lobby.getGame();;
-
-        assertTrue(game instanceof Game);
-    }
-
-    @Test
     void getPlayers() {
         Player player = new Player();
         Lobby lobby = new Lobby(player, "abc");

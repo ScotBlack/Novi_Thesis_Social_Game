@@ -46,7 +46,6 @@ public class GameServiceImpl implements GameService {
 
     // whole database
     @Override
-
     public ResponseEntity<?> findAllGames() {
         return ResponseEntity.ok(gameRepository.findAll());
     }
@@ -77,27 +76,19 @@ public class GameServiceImpl implements GameService {
 
     // related to particular game
     @Override
-    public ResponseEntity<?> lobbyStatusUpdate(Long id) {
+    public ResponseEntity<?> lobbyStatusUpdate(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
-
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        List<Player> players = playerRepository.findPlayersByLobbyId(lobby.getId());
-
-        Optional<Game> optionalGame = gameRepository.findById(lobby.getGame().getId());
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
+            errorResponse.addError("404" , "Game with ID: " + gameIdString + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
         Game game = optionalGame.get();
+        Lobby lobby = game.getLobby();
+
+        List<Player> players = playerRepository.findPlayersByGameIdString(lobby.getGameIdString());
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
@@ -160,20 +151,21 @@ public class GameServiceImpl implements GameService {
         lobby.setStatus(status);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(createResponseObject(lobby));
+        return ResponseEntity.ok(createResponseObject(game));
     }
 
     @Override
-    public ResponseEntity<?> getPlayers(Long id) {
+    public ResponseEntity<?> getPlayers(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(id);
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404" , "Lobby with ID: " + id + " does not exist.");
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
+
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("ENTITY_NOT_FOUND"  , "Game with Id String: " + gameIdString + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        List<Player> players = playerRepository.findPlayersByLobbyId(id);
+        List<Player> players = playerRepository.findPlayersByGameIdString(gameIdString);
 
         return ResponseEntity.ok(createResponseObject(players));
     }
@@ -309,10 +301,10 @@ public class GameServiceImpl implements GameService {
     }
 
 
-    public LobbyResponse createResponseObject(Lobby lobby) {
+    public static LobbyResponse createResponseObject(Game game) {
         Set<PlayerResponse> playerResponses = new HashSet<>();
 
-        for (Player player : lobby.getPlayers()) {
+        for (Player player : game.getLobby().getPlayers()) {
 
             PlayerResponse playerResponse = new PlayerResponse(
                     player.getId(),
@@ -326,11 +318,11 @@ public class GameServiceImpl implements GameService {
 
 
         LobbyResponse lobbyResponse = new LobbyResponse (
-                lobby.getGameIdString(),
-                lobby.getCanStart(),
-                lobby.getStatus(),
-                lobby.getGame().getGameType().toString(),
-                lobby.getGame().getPoints(),
+                game.getGameIdString(),
+                game.getLobby().getCanStart(),
+                game.getLobby().getStatus(),
+                game.getGameType().name(),
+                game.getPoints(),
                 playerResponses
         );
 
@@ -361,7 +353,7 @@ public class GameServiceImpl implements GameService {
         return playerObjectResponseList;
     }
 
-    public Set<TeamResponse> createResponseObject (Set<Team> teams) {
+    public static Set<TeamResponse> createResponseObject (Set<Team> teams) {
         Set<TeamResponse> teamsRes = new HashSet<>();
 
         for (Team team : teams) {

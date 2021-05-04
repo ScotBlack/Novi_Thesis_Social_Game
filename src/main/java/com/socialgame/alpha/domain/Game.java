@@ -17,6 +17,9 @@ public class Game {
     @Column
     private String gameIdString;
 
+    @OneToOne
+    private Lobby lobby;
+
     @Column
     private GameType gameType;
     @Column
@@ -57,6 +60,13 @@ public class Game {
 
     public String getGameIdString() { return gameIdString; }
     public void setGameIdString(String gameIdString) { this.gameIdString = gameIdString; }
+
+    public Lobby getLobby() {
+        return lobby;
+    }
+    public void setLobby(Lobby lobby) {
+        this.lobby = lobby;
+    }
 
     public GameType getGameType() {
         return gameType;

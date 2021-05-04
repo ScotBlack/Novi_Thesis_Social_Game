@@ -1,13 +1,14 @@
 package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.SetGamePointsRequest;
+import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/host")
@@ -18,23 +19,18 @@ public class HostController {
     @Autowired
     public void setHostService (HostService hostService) {this.hostService = hostService;}
 
-    @GetMapping(path="/toggle/{id}")
-    public ResponseEntity<?> toggleOtherPlayerColor (@PathVariable("id") Long id)  {
-        return hostService.toggleOtherPlayerColor(id);
+    @PostMapping(path="/setGameType")
+    public ResponseEntity<?> setGameType(@Valid  @RequestBody SetGameTypeRequest setGameTypeRequest) {
+        return hostService.setGameType(setGameTypeRequest);
     }
 
-    @GetMapping(path="/{id}/setGameType/{gameType}")
-    public ResponseEntity<?> setGameType(@PathVariable("id") Long id, @PathVariable("gameType") GameType gameType) {
-        return hostService.setGameType(id, gameType);
-    }
-
-    @GetMapping(path="/{id}/setPoints/{points}")
-    public ResponseEntity<?> setPoints(@PathVariable("id") Long id, @PathVariable("points")int points) {
-        return hostService.setPoints(id, points);
+    @PostMapping(path="/setPoints")
+    public ResponseEntity<?> setPoints(@Valid @RequestBody SetGamePointsRequest setGamePointsRequest) {
+        return hostService.setPoints(setGamePointsRequest);
     }
 
     @GetMapping(path="/{id}/start")
-    public ResponseEntity<?> startGame(@PathVariable("id") Long id) {
-        return hostService.startGame(id);
+    public ResponseEntity<?> startGame(@PathVariable("id") String gameIdString) {
+        return hostService.startGame(gameIdString);
     }
 }
