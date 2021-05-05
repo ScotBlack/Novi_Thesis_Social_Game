@@ -2,17 +2,26 @@ package com.socialgame.alpha.dto.response;
 
 public class PlayerResponse {
 
+    private String username;
     private Long id;
     private String name;
     private String color;
     private Boolean phone;
 
 
-    public PlayerResponse(Long id, String name, String color, Boolean phone) {
+    public PlayerResponse(String username, Long id, String name, String color, Boolean phone) {
+        this.username = username;
         this.id = id;
         this.name = name;
         this.color = color;
         this.phone = phone;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getId() { return id; }

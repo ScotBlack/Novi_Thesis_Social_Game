@@ -278,6 +278,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         for (Player player : lobby.getPlayers()) {
 
             PlayerResponse playerResponse = new PlayerResponse(
+                    player.getUser().getUsername(),
                     player.getId(),
                     player.getName(),
                     player.getColor().toString(),
