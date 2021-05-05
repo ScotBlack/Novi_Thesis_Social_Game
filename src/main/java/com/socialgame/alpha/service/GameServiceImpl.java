@@ -307,6 +307,7 @@ public class GameServiceImpl implements GameService {
         for (Player player : game.getLobby().getPlayers()) {
 
             PlayerResponse playerResponse = new PlayerResponse(
+                    player.getUser().getUsername(),
                     player.getId(),
                     player.getName(),
                     player.getColor().toString(),
@@ -333,6 +334,7 @@ public class GameServiceImpl implements GameService {
 
         PlayerResponse playerResponse =
                 new PlayerResponse(
+                        player.getUser().getUsername(),
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),

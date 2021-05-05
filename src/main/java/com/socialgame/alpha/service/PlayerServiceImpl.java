@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Team;
+import com.socialgame.alpha.domain.User;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.minigame.MiniGame;
@@ -13,10 +14,13 @@ import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
+import com.socialgame.alpha.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -25,6 +29,7 @@ public class PlayerServiceImpl implements PlayerService {
     private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
     private GameRepository gameRepository;
+    private UserRepository userRepository;
 
 
     @Autowired
@@ -36,21 +41,48 @@ public class PlayerServiceImpl implements PlayerService {
     @Autowired
     public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) { this.userRepository = userRepository;}
+
 
     @Override
-    public ResponseEntity<?> togglePlayerColor(Long id)  {
-
+    public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
+        ErrorResponse errorResponse = new ErrorResponse();
         // need to check if same player as who clicked button (with token)
 
-        ErrorResponse errorResponse = new ErrorResponse();
+//        if (gameHasStarted) {
+//
+//        }
+
+        Principal principal = request.getUserPrincipal();
+        String username = principal.getName();
+        Player jwtPlayer;
+        Player player;
+
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            jwtPlayer = user.getPlayer();
+        } else {
+            errorResponse.addError("404" , "User with: " + username + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
-        if (optionalPlayer.isEmpty()) {
+        if (optionalPlayer.isPresent()) {
+            player = optionalPlayer.get();
+            if (!jwtPlayer.equals(player)) {
+                errorResponse.addError("400" , "Player can only change it's own color.");
+                return ResponseEntity.status(400).body(errorResponse);
+            }
+        } else {
             errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Player player = optionalPlayer.get();
+
         Color[] colors = Color.values();
 
         Color currentColor = player.getColor();
@@ -127,6 +159,7 @@ public class PlayerServiceImpl implements PlayerService {
     public PlayerResponse createResponseObject (Player player) {
         return (
                 new PlayerResponse(
+                        player.getUser().getUsername(),
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),

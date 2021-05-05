@@ -126,8 +126,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             return ResponseEntity.status(400).body(errorResponse);
         }
 
-        Player player = new Player(createGameRequest.getUsername(), Color.RED, true);
+        Player player = new Player(user, createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
+
+        user.setPlayer(player);
+        userRepository.save(user);
 
         // test if Player is created
         if (Boolean.FALSE.equals(playerRepository.existsByName(createGameRequest.getUsername()))) {
@@ -204,9 +207,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             }
         }
 
-        Player player = new Player(username, Color.values()[c], true);
+        Player player = new Player(user, username, Color.values()[c], true);
         player.setLobby(lobby);
         playerRepository.save(player);
+
+        user.setPlayer(player);
+        userRepository.save(user);
 
         lobby.getPlayers().add(player);
         lobbyRepository.save(lobby);
@@ -272,6 +278,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         for (Player player : lobby.getPlayers()) {
 
             PlayerResponse playerResponse = new PlayerResponse(
+                    player.getUser().getUsername(),
                     player.getId(),
                     player.getName(),
                     player.getColor().toString(),

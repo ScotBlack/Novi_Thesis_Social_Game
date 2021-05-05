@@ -1,9 +1,14 @@
 package com.socialgame.alpha.domain;
 
 import com.socialgame.alpha.domain.enums.Color;
+import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.domain.minigame.Question;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,73 +16,34 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class PlayerTest {
+    Player player;
 
-    @Test
-    void getId() {
-        Player player = new Player("test", Color.RED, true);
+    @BeforeEach
+    void setUp() {
+        User user = new User();
+        Lobby lobby = new Lobby();
+        player = new Player(user, "Bob", Color.BLUE, false);
+
         player.setId(1L);
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Player.class,1L)).thenReturn(player);
-
-        Long playerId = player.getId();
-
-        assertEquals(1L, playerId);
-    }
-
-    @Test
-    void getName() {
-        Player player = new Player();
-        player.setId(1L);
-        player.setName("testName");
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Player.class,1L)).thenReturn(player);
-
-        String name = player.getName();
-
-        assertEquals("testName", name);
-    }
-
-    @Test
-    void getColor() {
-        Player player = new Player();
-        player.setId(1L);
+        player.setUser(user);
+        player.setName("Steve");
         player.setColor(Color.RED);
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Player.class,1L)).thenReturn(player);
-
-        Color color = player.getColor();
-
-        assertEquals(Color.RED, color);
-    }
-
-    @Test
-    void getPhone() {
-        Player player = new Player();
-        player.setId(1L);
         player.setPhone(true);
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Player.class,1L)).thenReturn(player);
-
-        Boolean phone = player.getPhone();
-
-        assertEquals(true, phone);
+        player.setLobby(lobby);
     }
 
+
     @Test
-    void getLobby() {
-        Player player = new Player();
-        player.setId(1L);
-        player.setLobby(new Lobby());
-
-        EntityManager entityManager = mock(EntityManager.class);
-        when(entityManager.find(Player.class,1L)).thenReturn(player);
-
-        Lobby lobby = player.getLobby();
-
-        assertTrue(lobby instanceof Lobby);
+    void propertiesTest() {
+        assertAll("Properties Test",
+                () -> assertAll("Player Properties",
+                        () ->  assertEquals(1L, player.getId()),
+                        () ->  assertTrue(player.getUser() instanceof User),
+                        () ->  assertEquals("Steve", player.getName()),
+                        () ->  assertEquals(Color.RED, player.getColor()),
+                        () ->  assertTrue(player.getPhone()),
+                        () ->  assertTrue(player.getLobby() instanceof Lobby)
+                )
+        );
     }
 }

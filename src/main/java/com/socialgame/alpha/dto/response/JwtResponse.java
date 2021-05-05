@@ -19,7 +19,6 @@ public class JwtResponse {
     public String getAccessToken() {
         return token;
     }
-
     public void setAccessToken(String accessToken) {
         this.token = accessToken;
     }
@@ -27,7 +26,6 @@ public class JwtResponse {
     public String getTokenType() {
         return type;
     }
-
     public void setTokenType(String tokenType) {
         this.type = tokenType;
     }
@@ -35,7 +33,6 @@ public class JwtResponse {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -43,7 +40,6 @@ public class JwtResponse {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
