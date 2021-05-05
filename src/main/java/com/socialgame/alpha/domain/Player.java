@@ -12,6 +12,9 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @OneToOne
+    private User user;
+
     @Column
     private String name;
     @Column
@@ -26,7 +29,8 @@ public class Player {
     public Player() {
     }
 
-    public Player(String name, Color color, Boolean phone) {
+    public Player(User user,String name, Color color, Boolean phone) {
+        this.user = user;
         this.name = name;
         this.color = color;
         this.phone = phone;

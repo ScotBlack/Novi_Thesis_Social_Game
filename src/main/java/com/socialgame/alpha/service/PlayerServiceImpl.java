@@ -47,7 +47,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
-
+        ErrorResponse errorResponse = new ErrorResponse();
         // need to check if same player as who clicked button (with token)
 
 //        if (gameHasStarted) {
@@ -55,19 +55,34 @@ public class PlayerServiceImpl implements PlayerService {
 //        }
 
         Principal principal = request.getUserPrincipal();
-        String jwtUserName = principal.getName();
+        String username = principal.getName();
+        Player jwtPlayer;
+        Player player;
 
-        Optional<User>
+        Optional<User> optionalUser = userRepository.findByUsername(username);
 
-        ErrorResponse errorResponse = new ErrorResponse();
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            jwtPlayer = user.getPlayer();
+        } else {
+            errorResponse.addError("404" , "User with: " + username + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
-        if (optionalPlayer.isEmpty()) {
+        if (optionalPlayer.isPresent()) {
+            player = optionalPlayer.get();
+            if (!jwtPlayer.equals(player)) {
+                errorResponse.addError("400" , "Player can only change it's own color.");
+                return ResponseEntity.status(400).body(errorResponse);
+            }
+        } else {
             errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Player player = optionalPlayer.get();
+
         Color[] colors = Color.values();
 
         Color currentColor = player.getColor();
