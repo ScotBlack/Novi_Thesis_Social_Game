@@ -1,6 +1,7 @@
 package com.socialgame.alpha.controller;
 
 import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.dto.request.JwtRequest;
 import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.service.HostService;
@@ -18,6 +19,11 @@ public class HostController {
 
     @Autowired
     public void setHostService (HostService hostService) {this.hostService = hostService;}
+
+//    @GetMapping(path="/test1")
+//    public void testJwtGet(@RequestBody JwtRequest) {
+//
+//    }
 
     @PostMapping(path="/setGameType")
     public ResponseEntity<?> setGameType(@Valid  @RequestBody SetGameTypeRequest setGameTypeRequest) {

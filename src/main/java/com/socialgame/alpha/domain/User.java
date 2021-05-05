@@ -9,7 +9,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
-public class User {
+public class
+
+User {
 
     @Id
     @GeneratedValue(
@@ -22,8 +24,9 @@ public class User {
     )
     @Column(columnDefinition = "serial")
     private long id;
+
     private String username;
-//    private String email;
+
     private String password;
 
     @ManyToMany
@@ -31,6 +34,9 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @OneToOne
+    private Player player;
 
     public User() {
 
@@ -45,7 +51,6 @@ public class User {
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -53,7 +58,6 @@ public class User {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -61,7 +65,6 @@ public class User {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -69,8 +72,14 @@ public class User {
     public Set<Role> getRoles() {
         return roles;
     }
-
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

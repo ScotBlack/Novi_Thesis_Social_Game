@@ -3,13 +3,14 @@ package com.socialgame.alpha.controller;
 import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.service.PlayerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
@@ -22,10 +23,16 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
+//    @GetMapping(path= "/username")
+//    public String currentUserNameSimple(HttpServletRequest request) {
+//        Principal principal = request.getUserPrincipal();
+//        return principal.getName();
+//    }
+
     // need to add something that also checks gameid
     @GetMapping(path="/toggle/{id}")
-    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id)  {
-        return playerService.togglePlayerColor(id);
+    public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id, HttpServletRequest request )  {
+        return playerService.togglePlayerColor(id, request);
     }
 
     @PostMapping(path="/answer")

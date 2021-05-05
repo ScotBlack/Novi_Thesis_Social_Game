@@ -2,6 +2,7 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Team;
+import com.socialgame.alpha.domain.User;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.minigame.MiniGame;
@@ -13,10 +14,13 @@ import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
+import com.socialgame.alpha.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -25,6 +29,7 @@ public class PlayerServiceImpl implements PlayerService {
     private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
     private GameRepository gameRepository;
+    private UserRepository userRepository;
 
 
     @Autowired
@@ -36,11 +41,23 @@ public class PlayerServiceImpl implements PlayerService {
     @Autowired
     public void setGameRepository(GameRepository gameRepository) { this.gameRepository = gameRepository;}
 
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) { this.userRepository = userRepository;}
+
 
     @Override
-    public ResponseEntity<?> togglePlayerColor(Long id)  {
+    public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
 
         // need to check if same player as who clicked button (with token)
+
+//        if (gameHasStarted) {
+//
+//        }
+
+        Principal principal = request.getUserPrincipal();
+        String jwtUserName = principal.getName();
+
+        Optional<User>
 
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
