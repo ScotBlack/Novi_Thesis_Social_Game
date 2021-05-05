@@ -30,10 +30,10 @@ public class Role {
         this.name = name;
     }
 
+
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -41,7 +41,6 @@ public class Role {
     public ERole getName() {
         return name;
     }
-
     public void setName(ERole name) {
         this.name = name;
     }
