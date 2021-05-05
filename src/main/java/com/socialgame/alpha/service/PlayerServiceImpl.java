@@ -159,6 +159,7 @@ public class PlayerServiceImpl implements PlayerService {
     public PlayerResponse createResponseObject (Player player) {
         return (
                 new PlayerResponse(
+                        player.getUser().getUsername(),
                         player.getId(),
                         player.getName(),
                         player.getColor().toString(),
