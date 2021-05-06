@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Validated
+//@Validated
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     private static final String ROLE_NOT_FOUND_ERROR = "Error: Role is not found.";

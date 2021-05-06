@@ -4,19 +4,18 @@ import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.service.AuthorizationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Uitleg over CrossOrigin en CORS:
- * https://medium.com/@baphemot/understanding-cors-18ad6b478e2b
- *
- * Gebruik in Spring-boot (op controller en globally)
- * https://www.tutorialspoint.com/spring_boot/spring_boot_cors_support.htm
- *
- * Zoals je hieronder ziet, kun je ook op klasse-niveau een adres configureren. Iaw alle methodes hieronder, hebben
- * /api/auth voor de link staan.
- */
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -26,7 +25,7 @@ public class AuthController {
     AuthorizationServiceImpl authorizationService;
 
     @PostMapping("/creategame")
-    public ResponseEntity<?> createGame(@RequestBody CreateGameRequest createGameRequest) {
+    public ResponseEntity<?> createGame(@Valid @RequestBody CreateGameRequest createGameRequest) {
         return authorizationService.createGame(createGameRequest);
     }
 
@@ -40,5 +39,15 @@ public class AuthController {
         return authorizationService.rejoin(joinGameRequest);
     }
 
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 }
