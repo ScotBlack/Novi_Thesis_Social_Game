@@ -1,6 +1,6 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.service.TestService;
+import com.socialgame.alpha.service.StartService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StartControllerTest {
 
     @Mock
-    TestService testService;
+    StartService startService;
 
     @InjectMocks
     StartController startController;
@@ -34,6 +34,10 @@ class StartControllerTest {
         Assertions.assertNotNull(startController);
     }
 
+    @Test
+    void shortAndLongUsername_shouldReturnBadRequest() {
+
+    }
 
     @Test
     void createGame() {

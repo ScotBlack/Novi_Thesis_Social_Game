@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-//@Validated
 public class StartServiceImpl implements StartService {
 
     private static final String ROLE_NOT_FOUND_ERROR = "Error: Role is not found.";

@@ -107,7 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/game/**").hasRole("GAMEHOST")
                 .antMatchers("/api/host/**").hasRole("GAMEHOST")
                 .antMatchers("/api/player/**").hasRole("PLAYER")
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/start/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .anyRequest().authenticated();
 
