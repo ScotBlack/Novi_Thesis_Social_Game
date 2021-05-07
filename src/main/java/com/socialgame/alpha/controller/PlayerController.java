@@ -16,8 +16,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/player")
-public class
-PlayerController {
+public class PlayerController {
 
     private PlayerService playerService;
 
