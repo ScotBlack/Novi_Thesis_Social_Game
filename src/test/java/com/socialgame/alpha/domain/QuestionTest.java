@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,7 @@ public class QuestionTest {
                         () ->  assertEquals(10,  question.getPoints()),
                         () ->  assertEquals(AgeSetting.FAMILY,  question.getAgeSetting()),
                         () ->  assertEquals("A",  question.getCorrectAnswer()),
-//                        () ->  assertTrue(question.getAllAnswers() instanceof String[]),
+                        () ->  assertTrue(question.getAllAnswers() instanceof Set),
                         () ->  assertEquals("Test",  question.getTopic())
                 )
         );

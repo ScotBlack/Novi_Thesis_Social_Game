@@ -4,9 +4,11 @@ import com.socialgame.alpha.domain.enums.ERole;
 import com.socialgame.alpha.repository.RoleRepository;
 import com.socialgame.alpha.security.jwt.AuthEntryPointJwt;
 import com.socialgame.alpha.security.jwt.AuthTokenFilter;
+import com.socialgame.alpha.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,29 +22,36 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Hier gebruiken we de EnableGlobalMethodSecurity(prePostIsEnabled = true) om de @PreAuthorize annotaties te gebruiken
  * op andere plekken in de applicatie.
  */
 @Configuration
+//@ComponentScan("com.socialgame.alpha")
 @EnableWebSecurity
+//@EnableTransactionManagement
 @EnableGlobalMethodSecurity(
         prePostEnabled = true
 )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
     @Qualifier("userDetailsServiceImpl")
     @Autowired
     UserDetailsService userDetailsService;
 
-    RoleRepository roleRepository;
 
-    @Autowired
-    public void setRoleRepository (RoleRepository roleRepository) {this.roleRepository = roleRepository;}
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
+//    @Autowired
+//    RoleRepository roleRepository;
+//
+//    @Autowired
+//    public void setRoleRepository (RoleRepository roleRepository) {this.roleRepository = roleRepository;}
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -60,10 +69,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
+//    @Bean
+//    public RoleRepository roleRepository() { return new RoleRepository(); }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return super.userDetailsService();
+    }
+
+
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+//
+//    @Bean
+//    public UserDetailsService userDetailsService()  {
+//        UserDetailsService userDetailsService =
+//                new UserDetailsServiceImpl();
+//        return userDetailsService;
+//    }
+
+
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -74,7 +107,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/game/**").hasRole("GAMEHOST")
                 .antMatchers("/api/host/**").hasRole("GAMEHOST")
                 .antMatchers("/api/player/**").hasRole("PLAYER")
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/start/**").permitAll()
+                .antMatchers("/test/**").permitAll()
                 .anyRequest().authenticated();
 
         // If a user try to access a resource without having enough permissions

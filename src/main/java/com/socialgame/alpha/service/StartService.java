@@ -4,7 +4,7 @@ import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
 import org.springframework.http.ResponseEntity;
 
-public interface AuthorizationService {
+public interface StartService {
     ResponseEntity<?> createGame (CreateGameRequest createGameRequest);
     public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest);
     public ResponseEntity<?> rejoin (JoinGameRequest joinGameRequest);

@@ -5,7 +5,7 @@ import javax.validation.constraints.*;
 
 public class JoinGameRequest {
 
-    @NotBlank(message = "Name is required")
+    @Size(min = 3 , max = 12, message = "Username length must be between 3 and 12 characters long.")
     private String username;
 
     @NotBlank
