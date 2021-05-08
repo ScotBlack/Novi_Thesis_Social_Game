@@ -29,7 +29,7 @@ public class PlayerController {
 //        return principal.getName();
 //    }
 
-    // need to add something that also checks gameid
+
     @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id, HttpServletRequest request )  {
         return playerService.togglePlayerColor(id, request);
