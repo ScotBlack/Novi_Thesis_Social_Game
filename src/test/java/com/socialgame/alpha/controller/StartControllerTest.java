@@ -112,20 +112,4 @@ class StartControllerTest {
                 .andExpect(status().isOk());
 
     }
-
-    @Test
-    void createGame() {
-    }
-
-    @Test
-    void joinGame() {
-    }
-
-    @Test
-    void rejoinGame() {
-    }
-
-    @Test
-    void handleValidationExceptions() {
-    }
 }
