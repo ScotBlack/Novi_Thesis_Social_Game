@@ -90,7 +90,7 @@ class StartControllerTest {
     }
 
     @Test
-    void correctUsername_shouldReturnOkRequest() throws Exception {
+    void testCreateAndJoinValid() throws Exception {
         String user = "{" +
                 "    \"username\":\"correct\"" +
                 "}";
