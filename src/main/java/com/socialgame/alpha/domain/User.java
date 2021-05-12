@@ -38,13 +38,15 @@ User {
     @OneToOne
     private Player player;
 
+    @OneToOne
+    private Team team;
+
     public User() {
 
     }
 
     public User(String username, String password) {
         this.username = username;
-
         this.password = password;
     }
 
@@ -81,5 +83,12 @@ User {
     }
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

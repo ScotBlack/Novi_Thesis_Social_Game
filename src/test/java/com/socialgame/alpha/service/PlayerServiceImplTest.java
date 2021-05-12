@@ -40,8 +40,6 @@ public class PlayerServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-//    private JoinGameRequest newPlayerRequest;
-
     Player player1;
     Player player2;
     User user;
@@ -68,6 +66,8 @@ public class PlayerServiceImplTest {
         mockPrincipal = mock(UserPrincipal.class);
     }
 
+
+    // togglePlayerColor
     @Test
     void notExistingPlayerId_ShouldReturnError() {
         when(request.getUserPrincipal()).thenReturn(mockPrincipal);
@@ -105,7 +105,6 @@ public class PlayerServiceImplTest {
         );
     }
 
-    
     @Test
 //    @WithMockUser(username="username",roles={"PLAYER"})
     void notMatchingPlayers_ShouldReturnErrorResponse() {
@@ -140,12 +139,8 @@ public class PlayerServiceImplTest {
     }
 
 
-    @Test
-    void phoneMustTrueOrFalse_ElseReturnError () {
+    // teamAnswer
 
-
-
-    }
 
 
 }
