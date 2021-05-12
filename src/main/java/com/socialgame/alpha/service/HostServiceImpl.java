@@ -1,9 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.Team;
+import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.request.SetGamePointsRequest;
@@ -11,28 +8,26 @@ import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.TeamResponse;
-import com.socialgame.alpha.repository.GameRepository;
-import com.socialgame.alpha.repository.LobbyRepository;
-import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.TeamRepository;
+import com.socialgame.alpha.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @PreAuthorize("hasRole('GAMEHOST')")
 public class HostServiceImpl implements HostService {
 
     private LobbyRepository lobbyRepository;
+    private UserRepository userRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
     private TeamRepository teamRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) { this.userRepository = userRepository;}
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
@@ -111,7 +106,12 @@ public class HostServiceImpl implements HostService {
             Team team = new Team(game, color);
 
             for (Player player : players) {
-                if (player.getColor().equals(color)) {
+//                if (player.getColor().equals(color) && team.getPlayers().isEmpty()) {
+//                    team.getPlayers().put(player.getName(), 0);
+//                    User user = player.getUser();
+//                    user.setTeam(team);
+//                    userRepository.save(user);
+               if (player.getColor().equals(color)) {
                     team.getPlayers().put(player.getName(), 0);
                 }
             }
@@ -121,6 +121,26 @@ public class HostServiceImpl implements HostService {
                 teamRepository.save(team);
             }
         }
+
+        for (Team team : game.getTeams()) {
+            Map<String,Integer> playersMap = team.getPlayers();
+            Map.Entry<String,Integer> entry = playersMap.entrySet().iterator().next();
+
+            Optional<Player> optionalPlayer = playerRepository.findByName(entry.getKey());
+            if (optionalPlayer.isEmpty()) {
+                errorResponse.addError("ENTITY_NOT_FOUND", "Player with name: " + entry.getKey() + " does not exist.");
+                return ResponseEntity.status(404).body(errorResponse);
+            }
+
+            Player player = optionalPlayer.get();
+
+            User user = player.getUser();
+            user.setTeam(team);
+            userRepository.save(user);
+
+        }
+
+
 
         game.setStarted(true);
         gameRepository.save(game);

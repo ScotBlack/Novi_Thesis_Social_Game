@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
@@ -20,6 +21,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     @Query("SELECT p FROM Player p WHERE p.lobby.gameIdString= :gameIdString")
     List<Player> findPlayersByGameIdString(@Param("gameIdString") String gameIdString);
+
+    Optional<Player> findByName(String name);
 
 //    @Query("SELECT p FROM Player p WHERE p.game.id= :gameId ORDER BY p.id ASC")
 //    List<Player> findPlayersByLobbyId(@Param("gameId") Long lobbyId);

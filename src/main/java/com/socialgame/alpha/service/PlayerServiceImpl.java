@@ -107,21 +107,35 @@ public class PlayerServiceImpl implements PlayerService {
 
         Principal principal = request.getUserPrincipal();
         String username = principal.getName();
+        User user;
         Team team;
         Game game;
 
         Optional<User> optionalUser = userRepository.findByUsername(username);
 
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            user = optionalUser.get();
+            userRepository.save(user);
             team = user.getTeam();
-            game = team.getGame();
+            teamRepository.save(team);
         } else {
             errorResponse.addError("USER_NOT_FOUND" , "User with: " + username + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(user.getGameIdString());
 
+        if (optionalGame.isEmpty()) {
+            errorResponse.addError("ENTITY_NOT_FOUND", "Game with Id String: " + user.getGameIdString() + " does not exist.");
+            return ResponseEntity.status(404).body(errorResponse);
+        }
+
+        game = optionalGame.get();;
+
+        if (!game.getStarted()) {
+            errorResponse.addError("GAME_NOT_STARTED" , "Game has not yet started.");
+            return ResponseEntity.status(400).body(errorResponse);
+        }
 
 
 
