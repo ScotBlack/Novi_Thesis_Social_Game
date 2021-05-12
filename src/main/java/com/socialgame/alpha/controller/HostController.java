@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -20,11 +21,6 @@ public class HostController {
     @Autowired
     public void setHostService (HostService hostService) {this.hostService = hostService;}
 
-//    @GetMapping(path="/test1")
-//    public void testJwtGet(@RequestBody JwtRequest) {
-//
-//    }
-
     @PostMapping(path="/setGameType")
     public ResponseEntity<?> setGameType(@Valid  @RequestBody SetGameTypeRequest setGameTypeRequest) {
         return hostService.setGameType(setGameTypeRequest);
@@ -35,8 +31,8 @@ public class HostController {
         return hostService.setPoints(setGamePointsRequest);
     }
 
-    @GetMapping(path="/{id}/start")
-    public ResponseEntity<?> startGame(@PathVariable("id") String gameIdString) {
-        return hostService.startGame(gameIdString);
+    @GetMapping(path="/start")
+    public ResponseEntity<?> startGame(HttpServletRequest request) {
+        return hostService.startGame(request);
     }
 }

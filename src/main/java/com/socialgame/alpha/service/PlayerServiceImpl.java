@@ -11,6 +11,7 @@ import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
+import com.socialgame.alpha.exception.PlayerNotFoundException;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
@@ -69,22 +70,15 @@ public class PlayerServiceImpl implements PlayerService {
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
+//        Optional<Player> optionalPlayer = playerRepository.findById(id);
+//
+//        Player player2 = optionalPlayer.orElseThrow(() -> new PlayerNotFoundException("Player with ID: " + id + " does not exist."));
 
-        if (optionalPlayer.isPresent()) {
-            player = optionalPlayer.get();
-            if (!jwtPlayer.equals(player)) {
-                errorResponse.addError("BAD_REQUEST" , "Player can only change it's own color.");
-                return ResponseEntity.status(400).body(errorResponse);
-            }
-        } else {
-            errorResponse.addError("ENTITY_NOT_FOUND" , "Player with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
+        Player player2 = playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException("Player with ID: " + id + " does not exist."));
 
         Color[] colors = Color.values();
 
-        Color currentColor = player.getColor();
+        Color currentColor = player2.getColor();
         Color newColor = Color.RED;
 
         for (int i = 0; i < colors.length; i++) {
@@ -93,10 +87,10 @@ public class PlayerServiceImpl implements PlayerService {
             }
         }
 
-        player.setColor(newColor);
-        playerRepository.save(player);
+        player2.setColor(newColor);
+        playerRepository.save(player2);
 
-        return ResponseEntity.ok(createResponseObject(player));
+        return ResponseEntity.ok(createResponseObject(player2));
     }
 
     @Override

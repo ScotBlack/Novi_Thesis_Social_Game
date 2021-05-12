@@ -8,6 +8,18 @@ public class ErrorResponse {
 
     public ErrorResponse() { this.errors = new HashMap<>(); }
 
+    public ErrorResponse(Map<String, String> errors) {
+        this.errors = new HashMap<>();
+        this.errors = errors;
+    }
+
+    public static ErrorResponse build(Exception exception, String cause) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(cause, exception.getMessage());
+
+        return new ErrorResponse(errors);
+    }
+
     public Map<String, String> getErrors() { return errors; }
 
     public void addError (String errorType, String errorMessage) {errors.put(errorType, errorMessage);}

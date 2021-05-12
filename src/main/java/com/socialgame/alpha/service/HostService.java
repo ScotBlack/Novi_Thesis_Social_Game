@@ -4,8 +4,10 @@ import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface HostService {
     ResponseEntity<?> setGameType(SetGameTypeRequest setGameTypeRequest);
     ResponseEntity<?> setPoints(SetGamePointsRequest setGamePointsRequest);
-    ResponseEntity<?> startGame(String gameIdString);
+    ResponseEntity<?> startGame(HttpServletRequest request);
 }
