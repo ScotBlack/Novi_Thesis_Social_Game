@@ -35,8 +35,13 @@ User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    private String gameIdString;
+
     @OneToOne
     private Player player;
+
+    @OneToOne
+    private Team team;
 
     public User() {
 
@@ -44,7 +49,6 @@ User {
 
     public User(String username, String password) {
         this.username = username;
-
         this.password = password;
     }
 
@@ -76,10 +80,24 @@ User {
         this.roles = roles;
     }
 
+    public String getGameIdString() {
+        return gameIdString;
+    }
+    public void setGameIdString(String gameIdString) {
+        this.gameIdString = gameIdString;
+    }
+
     public Player getPlayer() {
         return player;
     }
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }

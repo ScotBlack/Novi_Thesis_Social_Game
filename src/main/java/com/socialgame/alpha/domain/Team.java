@@ -4,6 +4,7 @@ import com.socialgame.alpha.domain.enums.Color;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Entity
@@ -18,6 +19,8 @@ public class Team {
 
     private Color name;
 
+    private Boolean hasAnswered;
+
     @ElementCollection
     private Map<String, Integer> players;
 
@@ -29,7 +32,8 @@ public class Team {
     public Team(Game game, Color name) {
         this.game = game;
         this.name = name;
-        this.players = new HashMap<>();
+        this.players = new LinkedHashMap<>();
+        this.hasAnswered = false;
         this.points = 0;
     }
 
@@ -52,6 +56,13 @@ public class Team {
     }
     public void setName(Color name) {
         this.name = name;
+    }
+
+    public Boolean getHasAnswered() {
+        return hasAnswered;
+    }
+    public void setHasAnswered(Boolean hasAnswered) {
+        this.hasAnswered = hasAnswered;
     }
 
     public Map<String, Integer> getPlayers() {

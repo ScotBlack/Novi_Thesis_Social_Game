@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/game")
@@ -39,9 +41,9 @@ public class GameController {
     }
 
     // requests related to particular game
-    @GetMapping("/lobbyStatus/{id}")
-    public ResponseEntity<?> lobbyStatusUpdate(@PathVariable("id") String gameIdString) {
-        return gameService.lobbyStatusUpdate(gameIdString);
+    @GetMapping("/lobbyStatus")
+    public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
+        return gameService.lobbyStatusUpdate(request);
     }
 
     @GetMapping("/{id}/players")

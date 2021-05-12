@@ -4,7 +4,6 @@ import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.service.StartService;
-import com.socialgame.alpha.service.StartServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +35,10 @@ public class StartController {
         return startService.joinGame(joinGameRequest);
     }
 
-    @PostMapping("/rejoin")
-    public ResponseEntity<?> rejoinGame(@RequestBody JoinGameRequest joinGameRequest) {
-        return startService.rejoin(joinGameRequest);
-    }
+//    @PostMapping("/rejoin")
+//    public ResponseEntity<?> rejoinGame(@RequestBody JoinGameRequest joinGameRequest) {
+//        return startService.rejoin(joinGameRequest);
+//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

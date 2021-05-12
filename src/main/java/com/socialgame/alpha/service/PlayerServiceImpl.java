@@ -11,6 +11,7 @@ import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
 import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
+
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
@@ -47,114 +49,82 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
-        ErrorResponse errorResponse = new ErrorResponse();
-        // need to check if same player as who clicked button (with token)
+        Color newColor = null;
+        String username = request.getUserPrincipal().getName();
+        Player player1 = userRepository.findByUsername(username)
+                .orElseThrow(() -> new  EntityNotFoundException("User with: " + username + " does not exist."))
+                .getPlayer();
 
-//        if (gameHasStarted) {
-//
-//        }
+        Player player2 = playerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));
 
-        Principal principal = request.getUserPrincipal();
-        String username = principal.getName();
-        Player jwtPlayer;
-        Player player;
-
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            jwtPlayer = user.getPlayer();
-        } else {
-            errorResponse.addError("404" , "User with: " + username + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
+        if (!player1.equals(player2)) {
+            throw new IllegalArgumentException("You may only change your own color");
         }
 
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
-
-        if (optionalPlayer.isPresent()) {
-            player = optionalPlayer.get();
-            if (!jwtPlayer.equals(player)) {
-                errorResponse.addError("400" , "Player can only change it's own color.");
-                return ResponseEntity.status(400).body(errorResponse);
-            }
-        } else {
-            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-
-        Color[] colors = Color.values();
-
-        Color currentColor = player.getColor();
-        Color newColor = Color.RED;
-
-        for (int i = 0; i < colors.length; i++) {
-            if (currentColor.equals(colors[i]) && i < colors.length - 1) {
-                newColor = colors[i + 1];
+        for (int i = 0; i < Color.values().length - 1; i++) {
+            if (player2.getColor().equals(Color.values()[i])) {
+                newColor = Color.values()[i + 1];
             }
         }
 
-        player.setColor(newColor);
-        playerRepository.save(player);
+        player2.setColor(newColor == null ? Color.RED : newColor);
+        playerRepository.save(player2);
 
-        return ResponseEntity.ok(createResponseObject(player));
+        return ResponseEntity.ok(createResponseObject(player2));
     }
 
     @Override
-    public ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest) {
+    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
+        String username = request.getUserPrincipal().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
 
-        // if curentMiniGame is null, then create ErrorResponse
+        String gameIdString = user.getGameIdString();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        ErrorResponse errorResponse = new ErrorResponse();
 
-        Optional<Game> optionalGame = gameRepository.findById(teamAnswerRequest.getGameId());
+        if (!game.getStarted())  throw new IllegalArgumentException("Game has not yet started.");
 
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404", "Game with ID: " + teamAnswerRequest.getGameId() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
+        if (user.getTeam()== null) throw new IllegalArgumentException("User doesn't have any team assigned, fatal error for game.");
+        Team team = user.getTeam();
 
-        Game game = optionalGame.get();
+        if (!game.getCurrentCompetingTeams().contains(team)) throw new IllegalArgumentException("Team: " + team.getName() + " does not compete in this MiniGame.");
 
-        Optional<Team> optionalTeam = teamRepository.findById(teamAnswerRequest.getTeamId());
-
-        if (optionalTeam.isEmpty()) {
-            errorResponse.addError("404", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Team team = optionalTeam.get();
-
-        // check if team is in game??
-
-        if (!game.getCurrentCompetingTeams().contains(team)) {
-            errorResponse.addError("403", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not compete in this Mini Game.");
-        }
-
-        // check if team already answer the question, so they cant get double triple score
-
-        // check if scoreGoal is met
+        if (team.getHasAnswered()) throw new IllegalArgumentException("Team: " + team.getName() + " has already answered.");
 
         switch (game.getCurrentMiniGame().getMiniGameType()) {
             case QUESTION:
-                Question question = (Question) game.getCurrentMiniGame();
-                if (question.getCorrectAnswer().equals(teamAnswerRequest.getAnswer())) {
-                    team.setPoints(team.getPoints() + question.getPoints());
-                    teamRepository.save(team);
-                    return ResponseEntity.ok(createResponseObject(team, question, teamAnswerRequest.getAnswer(),true));
-                } else {
-                    return ResponseEntity.ok(createResponseObject(team, question,teamAnswerRequest.getAnswer(), false));
-                }
+                return ResponseEntity.ok(answerQuestion(game,team));
             case DARE:
             case BEST_ANSWER:
             case RANKING:
             case GUESS_WORD:
-                errorResponse.addError("403", "This Mini Game Type has not yet been deployed.");
                 break;
         }
 
-        return ResponseEntity.status(403).body(errorResponse);
+        throw new IllegalArgumentException("This should not happen.");
     }
+
+    public ResponseEntity<?> answerQuestion(Game game, Team team) {
+        Question question = (Question) game.getCurrentMiniGame();
+        team.setHasAnswered(true);
+
+        if (!question.getCorrectAnswer().equals("Lima")) {
+            return ResponseEntity.ok(createResponseObject(team, question, "Lima", false));
+        }
+
+        team.setPoints(team.getPoints() + question.getPoints());
+        teamRepository.save(team);
+
+        if (team.getPoints() >= game.getPoints()) {
+            return ResponseEntity.ok("You have won the game!");
+        }
+
+        return ResponseEntity.ok(createResponseObject(team, question, "Lima",true));
+    }
+
 
     public PlayerResponse createResponseObject (Player player) {
         return (

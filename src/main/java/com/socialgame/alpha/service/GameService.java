@@ -2,6 +2,8 @@ package com.socialgame.alpha.service;
 
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface GameService {
 
     // whole database
@@ -10,7 +12,7 @@ public interface GameService {
     ResponseEntity<?> findPlayerByID(Long id);
 
     // related to a particular game
-    ResponseEntity<?> lobbyStatusUpdate(String gameIdString);
+    ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request);
     ResponseEntity<?> getPlayers(String  gameIdString);
     ResponseEntity<?> getTeams(Long id);
     ResponseEntity<?> getScore(Long id);

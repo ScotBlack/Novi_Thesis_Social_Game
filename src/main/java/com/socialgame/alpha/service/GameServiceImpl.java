@@ -1,9 +1,6 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.Team;
-import com.socialgame.alpha.domain.Game;
+import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.domain.enums.MiniGameType;
@@ -16,12 +13,14 @@ import com.socialgame.alpha.dto.response.minigame.QuestionResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.LobbyRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
+import com.socialgame.alpha.repository.UserRepository;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -30,19 +29,25 @@ public class GameServiceImpl implements GameService {
     private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private UserRepository userRepository;
     private QuestionRepository questionRepository;
 
-    @Autowired
-    public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
+    private UserHttpServletRequest userRequest;
 
-    @Autowired
-    public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
-
+    @Autowired
+    public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
+    @Autowired
+    public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) { this.userRepository = userRepository;}
     @Autowired
     public void setQuestionRepository(QuestionRepository questionRepository) {this.questionRepository = questionRepository;}
+
+    @Autowired
+    public void setUserRequest(UserHttpServletRequest userRequest) { this.userRequest = userRequest; }
 
     // whole database
     @Override
@@ -76,12 +81,29 @@ public class GameServiceImpl implements GameService {
 
     // related to particular game
     @Override
-    public ResponseEntity<?> lobbyStatusUpdate(String gameIdString) {
+    public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
+
+        User user = userRequest.retrieveUser(request);
+
+        Principal principal = request.getUserPrincipal();
+        String username = principal.getName();
+
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+//        User user;
+//
+//        if (optionalUser.isPresent()) {
+//            user = optionalUser.get();
+//        } else {
+//            errorResponse.addError("USER_NOT_FOUND" , "User with: " + username + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+
+        Optional<Game> optionalGame = gameRepository.findByGameIdString(user.getGameIdString());
 
         if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + gameIdString + " does not exist.");
+            errorResponse.addError("404" , "Game with IdString: " + user.getGameIdString() + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
@@ -217,6 +239,10 @@ public class GameServiceImpl implements GameService {
         }
 
         Game game = optionalGame.get();
+
+        for (Team team : game.getTeams()) {
+            team.setHasAnswered(false);
+        }
 
         // selects miniGameType, but since there is only one MiniGameType currently
 //        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
