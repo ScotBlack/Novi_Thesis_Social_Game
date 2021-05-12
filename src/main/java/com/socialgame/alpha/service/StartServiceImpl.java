@@ -116,6 +116,7 @@ public class StartServiceImpl implements StartService {
         User user = new User(username, encoder.encode(gameIdString));
         user.setRoles(new HashSet<>());
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_GAMEHOST).get());
+        user.setGameIdString(gameIdString);
         userRepository.save(user);
 
         // test if User is created

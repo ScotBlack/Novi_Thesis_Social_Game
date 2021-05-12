@@ -100,49 +100,71 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest) {
+    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
 
         // if curentMiniGame is null, then create ErrorResponse
-
         ErrorResponse errorResponse = new ErrorResponse();
 
-        Optional<Game> optionalGame = gameRepository.findById(teamAnswerRequest.getGameId());
+        Principal principal = request.getUserPrincipal();
+        String username = principal.getName();
+        Team team;
+        Game game;
 
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404", "Game with ID: " + teamAnswerRequest.getGameId() + " does not exist.");
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            team = user.getTeam();
+            game = team.getGame();
+        } else {
+            errorResponse.addError("USER_NOT_FOUND" , "User with: " + username + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
-        Game game = optionalGame.get();
 
-        Optional<Team> optionalTeam = teamRepository.findById(teamAnswerRequest.getTeamId());
 
-        if (optionalTeam.isEmpty()) {
-            errorResponse.addError("404", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
 
-        Team team = optionalTeam.get();
+
+//        Optional<Game> optionalGame = gameRepository.findByGameIdString(teamAnswerRequest.getGameIdString());
+//
+//        if (optionalGame.isEmpty()) {
+//            errorResponse.addError("404", "Game with IdString: " + teamAnswerRequest.getGameIdString() + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+//
+//        if (optionalTeam.isEmpty()) {
+//            errorResponse.addError("404", "Team with ID: " + teamId + " does not exist.");
+//            return ResponseEntity.status(404).body(errorResponse);
+//        }
+//
+//        Game game = optionalGame.get();
+//        Team team = optionalTeam.get();
 
         // check if team is in game??
 
         if (!game.getCurrentCompetingTeams().contains(team)) {
-            errorResponse.addError("403", "Team with ID: " + teamAnswerRequest.getTeamId() + " does not compete in this Mini Game.");
+            errorResponse.addError("403", "Team: " + team.getName() + " does not compete in this Mini Game.");
         }
 
-        // check if team already answer the question, so they cant get double triple score
-
-        // check if scoreGoal is met
+        if (team.getHasAnswered()) {
+            errorResponse.addError("403", "Team: " + team.getName() + " has already answered.");
+        }
 
         switch (game.getCurrentMiniGame().getMiniGameType()) {
             case QUESTION:
                 Question question = (Question) game.getCurrentMiniGame();
-                if (question.getCorrectAnswer().equals(teamAnswerRequest.getAnswer())) {
+                if (question.getCorrectAnswer().equals("Lima")) {
                     team.setPoints(team.getPoints() + question.getPoints());
+                    team.setHasAnswered(true);
                     teamRepository.save(team);
-                    return ResponseEntity.ok(createResponseObject(team, question, teamAnswerRequest.getAnswer(),true));
+                    if (team.getPoints() >= game.getPoints()) {
+                        return ResponseEntity.ok("You have won the game!");
+                    }
+                    return ResponseEntity.ok(createResponseObject(team, question, "Lima",true));
                 } else {
-                    return ResponseEntity.ok(createResponseObject(team, question,teamAnswerRequest.getAnswer(), false));
+                    return ResponseEntity.ok(createResponseObject(team, question,"Lima", false));
                 }
             case DARE:
             case BEST_ANSWER:

@@ -18,6 +18,8 @@ public class Team {
 
     private Color name;
 
+    private Boolean hasAnswered;
+
     @ElementCollection
     private Map<String, Integer> players;
 
@@ -30,6 +32,7 @@ public class Team {
         this.game = game;
         this.name = name;
         this.players = new HashMap<>();
+        this.hasAnswered = false;
         this.points = 0;
     }
 
@@ -52,6 +55,13 @@ public class Team {
     }
     public void setName(Color name) {
         this.name = name;
+    }
+
+    public Boolean getHasAnswered() {
+        return hasAnswered;
+    }
+    public void setHasAnswered(Boolean hasAnswered) {
+        this.hasAnswered = hasAnswered;
     }
 
     public Map<String, Integer> getPlayers() {
