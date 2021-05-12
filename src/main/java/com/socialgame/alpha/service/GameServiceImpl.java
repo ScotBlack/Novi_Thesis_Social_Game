@@ -240,6 +240,10 @@ public class GameServiceImpl implements GameService {
 
         Game game = optionalGame.get();
 
+        for (Team team : game.getTeams()) {
+            team.setHasAnswered(false);
+        }
+
         // selects miniGameType, but since there is only one MiniGameType currently
 //        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
 

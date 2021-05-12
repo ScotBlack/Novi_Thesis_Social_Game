@@ -145,7 +145,7 @@ public class HostServiceImpl implements HostService {
             Player player = optionalPlayer.get();
 
             User teamUser = player.getUser();
-            user.setTeam(team);
+            teamUser.setTeam(team);
             userRepository.save(teamUser);
         }
 
