@@ -117,7 +117,6 @@ class HostServiceImplTest {
         lobby.setPlayers(new HashSet<Player>());
         Mockito.when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
 
-
         ResponseEntity<?> responseEntity = hostService.startGame("abc");
 
         assertEquals(200, responseEntity.getStatusCodeValue());

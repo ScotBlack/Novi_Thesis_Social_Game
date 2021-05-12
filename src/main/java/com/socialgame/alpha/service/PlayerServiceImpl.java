@@ -65,7 +65,7 @@ public class PlayerServiceImpl implements PlayerService {
             User user = optionalUser.get();
             jwtPlayer = user.getPlayer();
         } else {
-            errorResponse.addError("404" , "User with: " + username + " does not exist.");
+            errorResponse.addError("USER_NOT_FOUND" , "User with: " + username + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
 
@@ -74,14 +74,13 @@ public class PlayerServiceImpl implements PlayerService {
         if (optionalPlayer.isPresent()) {
             player = optionalPlayer.get();
             if (!jwtPlayer.equals(player)) {
-                errorResponse.addError("400" , "Player can only change it's own color.");
+                errorResponse.addError("BAD_REQUEST" , "Player can only change it's own color.");
                 return ResponseEntity.status(400).body(errorResponse);
             }
         } else {
-            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
+            errorResponse.addError("ENTITY_NOT_FOUND" , "Player with ID: " + id + " does not exist.");
             return ResponseEntity.status(404).body(errorResponse);
         }
-
 
         Color[] colors = Color.values();
 
