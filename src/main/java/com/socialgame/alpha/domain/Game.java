@@ -23,7 +23,7 @@ public class Game {
     @Column
     private GameType gameType;
     @Column
-    private int points;
+    private int scoreToWin;
     @Column
     private Boolean started;
 
@@ -45,7 +45,7 @@ public class Game {
     public Game(String gameIdString) {
         this.gameIdString = gameIdString;
         this.gameType = GameType.FFA;
-        this.points = 100;
+        this.scoreToWin = 50;
         this.started = false;
         this.teams = new HashSet<>();
         this.currentCompetingTeams = new HashSet<>();
@@ -75,11 +75,11 @@ public class Game {
         this.gameType = gameType;
     }
 
-    public int getPoints() {
-        return points;
+    public int getScoreToWin() {
+        return scoreToWin;
     }
-    public void setPoints(int points) {
-        this.points = points;
+    public void setScoreToWin(int scoreToWin) {
+        this.scoreToWin = scoreToWin;
     }
 
     public Boolean getStarted() {

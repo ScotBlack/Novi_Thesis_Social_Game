@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
@@ -32,8 +33,6 @@ public class GameServiceImpl implements GameService {
     private UserRepository userRepository;
     private QuestionRepository questionRepository;
 
-    private UserHttpServletRequest userRequest;
-
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
@@ -46,8 +45,7 @@ public class GameServiceImpl implements GameService {
     @Autowired
     public void setQuestionRepository(QuestionRepository questionRepository) {this.questionRepository = questionRepository;}
 
-    @Autowired
-    public void setUserRequest(UserHttpServletRequest userRequest) { this.userRequest = userRequest; }
+
 
     // whole database
     @Override
@@ -64,7 +62,6 @@ public class GameServiceImpl implements GameService {
 
     // could be used for ingame I guess
     @Override
-
     public ResponseEntity<?> findPlayerByID(Long id) {
         ErrorResponse errorResponse = new ErrorResponse();
         Optional<Player> optionalPlayer = playerRepository.findById(id);
@@ -84,33 +81,17 @@ public class GameServiceImpl implements GameService {
     public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        User user = userRequest.retrieveUser(request);
+        String username = request.getUserPrincipal().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
 
-        Principal principal = request.getUserPrincipal();
-        String username = principal.getName();
+        String gameIdString = user.getGameIdString();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-
-//        User user;
-//
-//        if (optionalUser.isPresent()) {
-//            user = optionalUser.get();
-//        } else {
-//            errorResponse.addError("USER_NOT_FOUND" , "User with: " + username + " does not exist.");
-//            return ResponseEntity.status(404).body(errorResponse);
-//        }
-
-        Optional<Game> optionalGame = gameRepository.findByGameIdString(user.getGameIdString());
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with IdString: " + user.getGameIdString() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
         Lobby lobby = game.getLobby();
 
-        List<Player> players = playerRepository.findPlayersByGameIdString(lobby.getGameIdString());
+        List<Player> players = playerRepository.findPlayersByGameIdString(gameIdString);
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
@@ -255,13 +236,9 @@ public class GameServiceImpl implements GameService {
 
         switch (MiniGameType.values()[i]) {
             case QUESTION:
-
                 return nextQuestion(game);
             case DARE:
-                List<Question> questions2 = questionRepository.findAll();
-                int z = (int) Math.round(Math.random() * (questions2.size() -1));
-                Question question2 = questions2.get(z);
-                return ResponseEntity.status(200).body("got to dare " + z);
+                return ResponseEntity.status(200).body("got to dare " );
             case BEST_ANSWER:
                 return ResponseEntity.status(200).body("got to best answer");
             case RANKING:
@@ -270,7 +247,6 @@ public class GameServiceImpl implements GameService {
                 return ResponseEntity.status(200).body("got to guess word");
             default:
                 return ResponseEntity.status(200).body("got to default");
-
         }
     }
 
@@ -349,7 +325,7 @@ public class GameServiceImpl implements GameService {
                 game.getLobby().getCanStart(),
                 game.getLobby().getStatus(),
                 game.getGameType().name(),
-                game.getPoints(),
+                game.getScoreToWin(),
                 playerResponses
         );
 

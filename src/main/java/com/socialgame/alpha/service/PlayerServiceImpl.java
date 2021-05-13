@@ -118,7 +118,7 @@ public class PlayerServiceImpl implements PlayerService {
         team.setPoints(team.getPoints() + question.getPoints());
         teamRepository.save(team);
 
-        if (team.getPoints() >= game.getPoints()) {
+        if (team.getPoints() >= game.getScoreToWin()) {
             return ResponseEntity.ok("You have won the game!");
         }
 

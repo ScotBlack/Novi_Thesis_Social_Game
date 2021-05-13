@@ -28,7 +28,7 @@ class GameTest {
         game.setGameIdString("abc");
         game.setLobby(new Lobby());
         game.setGameType(GameType.FFA);
-        game.setPoints(100);
+        game.setScoreToWin(50);
         game.setStarted(false);
         game.setTeams(new HashSet<>());
         game.setCurrentMiniGame(QuestionPrototype.protoQuestion());
@@ -43,7 +43,7 @@ class GameTest {
                 () ->  assertEquals("abc", game.getGameIdString()),
                 () ->  assertTrue(game.getLobby() instanceof Lobby),
                 () ->  assertEquals(GameType.FFA, game.getGameType()),
-                () ->  assertEquals(100, game.getPoints()),
+                () ->  assertEquals(50, game.getScoreToWin()),
                 () ->  assertEquals(false, game.getStarted()),
                 () ->  assertTrue(game.getTeams() instanceof HashSet),
                 () ->  assertTrue(game.getCurrentMiniGame() instanceof Question),

@@ -1,14 +1,20 @@
 package com.socialgame.alpha.dto.request;
 
+import com.socialgame.alpha.domain.enums.GameType;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class SetGamePointsRequest {
 
-    @NotNull
+    @NotBlank
     private String gameIdString;
 
-    @NotNull
+    private String setting;
+
     private int gamePoints;
+
+    private GameType gameType;
 
     public String getGameIdString() {
         return gameIdString;
