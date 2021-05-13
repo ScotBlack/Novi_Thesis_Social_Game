@@ -63,35 +63,21 @@ public class HostServiceImpl implements HostService {
     public ResponseEntity<?> startGame(HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        Principal principal = request.getUserPrincipal();
-        String username = principal.getName();
+        String username = request.getUserPrincipal().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
 
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        User user;
+        String gameIdString = user.getGameIdString();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            errorResponse.addError("USER_NOT_FOUND", "User with: " + username + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
 
-        Optional<Game> optionalGame = gameRepository.findByGameIdString(user.getGameIdString());
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404", "Game with IdString: " + user.getGameIdString() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
-        Lobby lobby = game.getLobby();
-
-        if (!lobby.getCanStart()) {
+        if (!game.getLobby().getCanStart()) {
             errorResponse.addError("NOT_READY", "Game with ID: " + user.getGameIdString() + " cannot be started right now.");
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        Set<Player> players = lobby.getPlayers();
+        Set<Player> players = game.getLobby().getPlayers();
 
         for (Color color : Color.values()) {
             Team team = new Team(game, color);
@@ -128,6 +114,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
+        return ResponseEntity.ok("hallo?? something wrong with ResponseObject");
     }
 }
