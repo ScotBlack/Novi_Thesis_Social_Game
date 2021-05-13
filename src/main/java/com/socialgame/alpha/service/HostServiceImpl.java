@@ -2,13 +2,9 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.domain.enums.Color;
-import com.socialgame.alpha.domain.enums.GameSetting;
-import com.socialgame.alpha.domain.enums.GameType;
-import com.socialgame.alpha.dto.request.SetGamePointsRequest;
-import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.request.SettingRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.Response;
+import com.socialgame.alpha.dto.response.ResponseBuilder;
 import com.socialgame.alpha.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
-
-import static com.socialgame.alpha.domain.enums.GameSetting.*;
 
 @Service
 @PreAuthorize("hasRole('GAMEHOST')")
@@ -62,7 +56,7 @@ public class HostServiceImpl implements HostService {
         }
 
         gameRepository.save(game);
-        return ResponseEntity.ok(Response.lobbyResponse(game.getLobby()));
+        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(game.getLobby()));
     }
 
     @Override
@@ -134,6 +128,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(Response.teamResponseSet(game));
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
 }

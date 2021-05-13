@@ -12,7 +12,7 @@ import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Response {
+public class ResponseBuilder {
 
     public static LobbyResponse lobbyResponse(Lobby lobby) {
         LobbyResponse lobbyResponse = new LobbyResponse (

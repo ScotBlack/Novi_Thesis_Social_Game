@@ -6,7 +6,6 @@ import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.response.*;
-import com.socialgame.alpha.dto.response.minigame.QuestionResponse;
 import com.socialgame.alpha.repository.*;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -45,7 +43,7 @@ public class GameServiceImpl implements GameService {
     public ResponseEntity<?> findPlayerByID(Long id) {
         Player player = playerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));
-        return ResponseEntity.ok(Response.playerResponse(player));
+        return ResponseEntity.ok(ResponseBuilder.playerResponse(player));
     }
 
     @Override
@@ -125,7 +123,7 @@ public class GameServiceImpl implements GameService {
         lobby.setStatus(status);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(Response.lobbyResponse(lobby));
+        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(lobby));
     }
 
     @Override
@@ -133,7 +131,7 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        return ResponseEntity.ok(Response.playerResponseSet(game.getLobby()));
+        return ResponseEntity.ok(ResponseBuilder.playerResponseSet(game.getLobby()));
     }
 
     @Override
@@ -141,7 +139,7 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        return ResponseEntity.ok(Response.teamResponseSet(game)); // needs response object
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game)); // needs response object
     }
  
     @Override
@@ -156,7 +154,7 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        return ResponseEntity.ok(Response.teamResponseSet(game));
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
 
     @Override
@@ -224,6 +222,6 @@ public class GameServiceImpl implements GameService {
         game.setCurrentMiniGame(question);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(Response.questionResponse(game, answers));
+        return ResponseEntity.ok(ResponseBuilder.questionResponse(game, answers));
     }
 }
