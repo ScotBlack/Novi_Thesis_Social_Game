@@ -24,21 +24,21 @@ public class GameController {
     // get all games()
 
     // all are not in postman
-
-    @GetMapping(path="/games")
-    public ResponseEntity<?> findAllGames() {
-        return gameService.findAllGames();
-    }
-
-    @GetMapping(path="/players")
-    public ResponseEntity<?> findAllPlayers () {
-        return gameService.findAllPlayers();
-    }
-
-    @GetMapping(path="/{id}")
-    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
-        return gameService.findPlayerByID(id);
-    }
+//
+//    @GetMapping(path="/games")
+//    public ResponseEntity<?> findAllGames() {
+//        return gameService.findAllGames();
+//    }
+//
+//    @GetMapping(path="/players")
+//    public ResponseEntity<?> findAllPlayers () {
+//        return gameService.findAllPlayers();
+//    }
+//
+//    @GetMapping(path="/{id}")
+//    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
+//        return gameService.findPlayerByID(id);
+//    }
 
     // requests related to particular game
     @GetMapping("/lobbyStatus")

@@ -12,7 +12,7 @@ public class GamePrototype {
         game.setId(1L);
         game.setGameIdString("abc");
         game.setGameType(GameType.FFA);
-        game.setPoints(100);
+        game.setScoreToWin(100);
         game.setStarted(false);
         game.setTeams(new HashSet<>());
         game.setCurrentMiniGame(QuestionPrototype.protoQuestion());

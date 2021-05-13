@@ -1,13 +1,11 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.dto.request.SetGamePointsRequest;
-import com.socialgame.alpha.dto.request.SetGameTypeRequest;
+import com.socialgame.alpha.dto.request.SettingRequest;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface HostService {
-    ResponseEntity<?> setGameType(SetGameTypeRequest setGameTypeRequest);
-    ResponseEntity<?> setPoints(SetGamePointsRequest setGamePointsRequest);
+    ResponseEntity<?> setGameSetting(SettingRequest request);
     ResponseEntity<?> startGame(HttpServletRequest request);
 }

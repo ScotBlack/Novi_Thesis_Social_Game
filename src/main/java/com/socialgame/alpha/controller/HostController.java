@@ -4,6 +4,7 @@ import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.dto.request.JwtRequest;
 import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
+import com.socialgame.alpha.dto.request.SettingRequest;
 import com.socialgame.alpha.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,9 @@ public class HostController {
     @Autowired
     public void setHostService (HostService hostService) {this.hostService = hostService;}
 
-    @PostMapping(path="/setGameType")
-    public ResponseEntity<?> setGameType(@Valid  @RequestBody SetGameTypeRequest setGameTypeRequest) {
-        return hostService.setGameType(setGameTypeRequest);
-    }
-
-    @PostMapping(path="/setPoints")
-    public ResponseEntity<?> setPoints(@Valid @RequestBody SetGamePointsRequest setGamePointsRequest) {
-        return hostService.setPoints(setGamePointsRequest);
+    @PostMapping(path="/gamesetting")
+    public ResponseEntity<?> setGameSetting(@Valid  @RequestBody SettingRequest request) {
+        return hostService.setGameSetting(request);
     }
 
     @GetMapping(path="/start")
