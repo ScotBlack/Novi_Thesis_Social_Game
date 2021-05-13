@@ -5,12 +5,8 @@ import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.User;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.minigame.MiniGame;
 import com.socialgame.alpha.domain.minigame.Question;
-import com.socialgame.alpha.dto.request.TeamAnswerRequest;
-import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.PlayerResponse;
-import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
+import com.socialgame.alpha.dto.response.ResponseBuilder;
 
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
@@ -22,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.*;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -71,7 +65,7 @@ public class PlayerServiceImpl implements PlayerService {
         player2.setColor(newColor == null ? Color.RED : newColor);
         playerRepository.save(player2);
 
-        return ResponseEntity.ok(createResponseObject(player2));
+        return ResponseEntity.ok(ResponseBuilder.playerResponse(player2));
     }
 
     @Override
@@ -112,7 +106,7 @@ public class PlayerServiceImpl implements PlayerService {
         team.setHasAnswered(true);
 
         if (!question.getCorrectAnswer().equals("Lima")) {
-            return ResponseEntity.ok(createResponseObject(team, question, "Lima", false));
+            return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, "Lima", false));
         }
 
         team.setPoints(team.getPoints() + question.getPoints());
@@ -122,34 +116,6 @@ public class PlayerServiceImpl implements PlayerService {
             return ResponseEntity.ok("You have won the game!");
         }
 
-        return ResponseEntity.ok(createResponseObject(team, question, "Lima",true));
-    }
-
-
-    public PlayerResponse createResponseObject (Player player) {
-        return (
-                new PlayerResponse(
-                        player.getUser().getUsername(),
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone()
-                )
-        );
-    }
-
-    public TeamAnswerResponse createResponseObject (Team team, MiniGame minigame, String answer, Boolean answerCorrect) {
-
-        TeamAnswerResponse response =
-                new TeamAnswerResponse (
-                        team.getId(),
-                        minigame.getQuestion(),
-                        answer,
-                        answerCorrect,
-                        minigame.getPoints(),
-                        team.getPoints()
-                );
-
-        return response;
+        return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, "Lima",true));
     }
 }

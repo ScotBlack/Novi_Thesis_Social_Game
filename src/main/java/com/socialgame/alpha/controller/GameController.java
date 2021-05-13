@@ -18,29 +18,12 @@ public class GameController {
     @Autowired
     public void setGameService(GameService gameService) { this.gameService = gameService;}
 
-    // requests unrelated to a game, but whole database
-        // useless request (for game at least)
 
-    // get all games()
+    @GetMapping(path="/player/{id}")
+    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
+        return gameService.findPlayerByID(id);
+    }
 
-    // all are not in postman
-//
-//    @GetMapping(path="/games")
-//    public ResponseEntity<?> findAllGames() {
-//        return gameService.findAllGames();
-//    }
-//
-//    @GetMapping(path="/players")
-//    public ResponseEntity<?> findAllPlayers () {
-//        return gameService.findAllPlayers();
-//    }
-//
-//    @GetMapping(path="/{id}")
-//    public ResponseEntity<?> findPlayerByID (@PathVariable("id") Long id) {
-//        return gameService.findPlayerByID(id);
-//    }
-
-    // requests related to particular game
     @GetMapping("/lobbyStatus")
     public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
         return gameService.lobbyStatusUpdate(request);
@@ -52,20 +35,20 @@ public class GameController {
     }
 
     @GetMapping(path="/{id}/teams")
-    public ResponseEntity<?> getTeams(@PathVariable("id") Long id) {
-        return gameService.getTeams(id);
+    public ResponseEntity<?> getTeams(@PathVariable("id") String gameIdString) {
+        return gameService.getTeams(gameIdString);
     }
 
     // redundant, same as getTeams()
     // not in postman
     @GetMapping(path="/{id}/score")
-    public ResponseEntity<?> getScore(@PathVariable("id") Long id) {
-        return gameService.getScore(id);
+    public ResponseEntity<?> getScore(@PathVariable("id") String gameIdString) {
+        return gameService.getScore(gameIdString);
     }
 
     @GetMapping(path="/{id}/nextMiniGame")
-    public ResponseEntity<?> nextMiniGame(@PathVariable("id") Long id) {
-        return gameService.nextMiniGame(id);
+    public ResponseEntity<?> nextMiniGame(@PathVariable("id") String gameIdString) {
+        return gameService.nextMiniGame(gameIdString);
     }
 
     // need miniGameResult()

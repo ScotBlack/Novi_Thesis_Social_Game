@@ -5,15 +5,8 @@ import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.enums.GameType;
 import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.Question;
-import com.socialgame.alpha.dto.response.ErrorResponse;
-import com.socialgame.alpha.dto.response.LobbyResponse;
-import com.socialgame.alpha.dto.response.PlayerResponse;
-import com.socialgame.alpha.dto.response.TeamResponse;
-import com.socialgame.alpha.dto.response.minigame.QuestionResponse;
-import com.socialgame.alpha.repository.GameRepository;
-import com.socialgame.alpha.repository.LobbyRepository;
-import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.UserRepository;
+import com.socialgame.alpha.dto.response.*;
+import com.socialgame.alpha.repository.*;
 import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -29,54 +21,31 @@ public class GameServiceImpl implements GameService {
 
     private LobbyRepository lobbyRepository;
     private GameRepository gameRepository;
-    private PlayerRepository playerRepository;
     private UserRepository userRepository;
+    private PlayerRepository playerRepository;
+    private TeamRepository teamRepository;
     private QuestionRepository questionRepository;
-
 
     @Autowired
     public void setLobbyRepository(LobbyRepository lobbyRepository) {this.lobbyRepository = lobbyRepository;}
     @Autowired
     public void setGameRepository(GameRepository gameRepository) {this.gameRepository = gameRepository;}
     @Autowired
+    public void setUserRepository(UserRepository userRepository) {this.userRepository = userRepository;}
+    @Autowired
     public void setPlayerRepository(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
     @Autowired
-    public void setUserRepository(UserRepository userRepository) { this.userRepository = userRepository;}
+    public void setTeamRepository(TeamRepository teamRepository) {this.teamRepository = teamRepository;}
     @Autowired
     public void setQuestionRepository(QuestionRepository questionRepository) {this.questionRepository = questionRepository;}
 
-
-
-    // whole database
-    @Override
-    public ResponseEntity<?> findAllGames() {
-        return ResponseEntity.ok(gameRepository.findAll());
-    }
-
-    @Override
-    public ResponseEntity<?> findAllPlayers() {
-        List<Player> players = playerRepository.findAll();
-
-        return ResponseEntity.ok(createResponseObject(players));
-    }
-
-    // could be used for ingame I guess
     @Override
     public ResponseEntity<?> findPlayerByID(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
-
-        if (optionalPlayer.isEmpty()) {
-            errorResponse.addError("404" , "Player with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Player player = optionalPlayer.get();
-        return ResponseEntity.ok(createResponseObject(player));
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));
+        return ResponseEntity.ok(ResponseBuilder.playerResponse(player));
     }
 
-
-    // related to particular game
     @Override
     public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -154,75 +123,50 @@ public class GameServiceImpl implements GameService {
         lobby.setStatus(status);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(createResponseObject(game));
+        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(lobby));
     }
 
     @Override
     public ResponseEntity<?> getPlayers(String gameIdString) {
-        ErrorResponse errorResponse = new ErrorResponse();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        Optional<Game> optionalGame = gameRepository.findByGameIdString(gameIdString);
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("ENTITY_NOT_FOUND"  , "Game with Id String: " + gameIdString + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        List<Player> players = playerRepository.findPlayersByGameIdString(gameIdString);
-
-        return ResponseEntity.ok(createResponseObject(players));
+        return ResponseEntity.ok(ResponseBuilder.playerResponseSet(game.getLobby()));
     }
 
     @Override
-    public ResponseEntity<?> getTeams(Long id) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
+    public ResponseEntity<?> getTeams(String gameIdString) {
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
-        Set<Team> teams = game.getTeams();
-
-        return ResponseEntity.ok(createResponseObject(teams)); // needs response object
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game)); // needs response object
     }
  
     @Override
-    public ResponseEntity<?> getScore(Long id) {
+    public ResponseEntity<?> getScore(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
 
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
         if (!game.getStarted()) {
-            errorResponse.addError("403" , "Game with ID: " + id + " has not yet started.");
+            errorResponse.addError("403" , "Game with ID: " + gameIdString + " has not yet started.");
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        return ResponseEntity.ok(createResponseObject(game.getTeams()));
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
 
     @Override
-    public ResponseEntity<?> nextMiniGame(Long id) {
+    public ResponseEntity<?> nextMiniGame(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
-        Optional<Game> optionalGame = gameRepository.findById(id);
 
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404" , "Game with ID: " + id + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
         for (Team team : game.getTeams()) {
             team.setHasAnswered(false);
+            teamRepository.save(team);
         }
 
         // selects miniGameType, but since there is only one MiniGameType currently
@@ -278,100 +222,6 @@ public class GameServiceImpl implements GameService {
         game.setCurrentMiniGame(question);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(createResponseObject(game, question, answers));
-    }
-
-    public QuestionResponse createResponseObject (Game game, Question miniGame, String[] answerList) {
-
-        Set<Long> teamIds = new HashSet<>();
-
-        for (Team team : game.getCurrentCompetingTeams()) {
-            teamIds.add(team.getId());
-        }
-
-        QuestionResponse questionResponse =
-                new QuestionResponse(
-                        game.getId(),
-                        miniGame.getMiniGameType(),
-                        miniGame.getId(),
-                        teamIds,
-                        miniGame.getQuestion(),
-                        answerList
-                );
-
-        return questionResponse;
-    }
-
-
-    public static LobbyResponse createResponseObject(Game game) {
-        Set<PlayerResponse> playerResponses = new HashSet<>();
-
-        for (Player player : game.getLobby().getPlayers()) {
-
-            PlayerResponse playerResponse = new PlayerResponse(
-                    player.getUser().getUsername(),
-                    player.getId(),
-                    player.getName(),
-                    player.getColor().toString(),
-                    player.getPhone()
-            );
-
-            playerResponses.add(playerResponse);
-        }
-
-
-        LobbyResponse lobbyResponse = new LobbyResponse (
-                game.getGameIdString(),
-                game.getLobby().getCanStart(),
-                game.getLobby().getStatus(),
-                game.getGameType().name(),
-                game.getScoreToWin(),
-                playerResponses
-        );
-
-        return lobbyResponse;
-    }
-
-    public PlayerResponse createResponseObject (Player player) {
-
-        PlayerResponse playerResponse =
-                new PlayerResponse(
-                        player.getUser().getUsername(),
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone()
-                );
-
-        return playerResponse;
-    }
-
-    public Set<PlayerResponse> createResponseObject (List<Player> players) {
-        Set<PlayerResponse> playerObjectResponseList = new HashSet<>();
-
-        for (Player player : players) {
-            PlayerResponse playerObjectResponse = createResponseObject(player);
-            playerObjectResponseList.add(playerObjectResponse);
-        }
-
-        return playerObjectResponseList;
-    }
-
-    public static Set<TeamResponse> createResponseObject (Set<Team> teams) {
-        Set<TeamResponse> teamsRes = new HashSet<>();
-
-        for (Team team : teams) {
-            TeamResponse response =
-                    new TeamResponse(
-                            team.getId(),
-                            team.getGame().getId(),
-                            team.getName().toString(),
-                            team.getPlayers().keySet(),
-                            team.getPoints()
-                    );
-            teamsRes.add(response);
-        }
-
-        return teamsRes;
+        return ResponseEntity.ok(ResponseBuilder.questionResponse(game, answers));
     }
 }

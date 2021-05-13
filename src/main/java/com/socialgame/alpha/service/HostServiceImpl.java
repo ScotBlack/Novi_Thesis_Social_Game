@@ -2,12 +2,9 @@ package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.*;
 import com.socialgame.alpha.domain.enums.Color;
-import com.socialgame.alpha.domain.enums.GameSetting;
-import com.socialgame.alpha.domain.enums.GameType;
-import com.socialgame.alpha.dto.request.SetGamePointsRequest;
-import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.request.SettingRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.ResponseBuilder;
 import com.socialgame.alpha.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
-
-import static com.socialgame.alpha.domain.enums.GameSetting.*;
 
 @Service
 @PreAuthorize("hasRole('GAMEHOST')")
@@ -61,42 +56,28 @@ public class HostServiceImpl implements HostService {
         }
 
         gameRepository.save(game);
-        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game));
+        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(game.getLobby()));
     }
 
     @Override
     public ResponseEntity<?> startGame(HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        Principal principal = request.getUserPrincipal();
-        String username = principal.getName();
+        String username = request.getUserPrincipal().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
 
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        User user;
+        String gameIdString = user.getGameIdString();
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            errorResponse.addError("USER_NOT_FOUND", "User with: " + username + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
 
-        Optional<Game> optionalGame = gameRepository.findByGameIdString(user.getGameIdString());
-
-        if (optionalGame.isEmpty()) {
-            errorResponse.addError("404", "Game with IdString: " + user.getGameIdString() + " does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Game game = optionalGame.get();
-        Lobby lobby = game.getLobby();
-
-        if (!lobby.getCanStart()) {
+        if (!game.getLobby().getCanStart()) {
             errorResponse.addError("NOT_READY", "Game with ID: " + user.getGameIdString() + " cannot be started right now.");
             return ResponseEntity.status(403).body(errorResponse);
         }
 
-        Set<Player> players = lobby.getPlayers();
+        Set<Player> players = game.getLobby().getPlayers();
 
         for (Color color : Color.values()) {
             Team team = new Team(game, color);
@@ -133,7 +114,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game.getTeams()));
+        return ResponseEntity.ok("hallo?? something wrong with ResponseObject");
     }
-        // delete redundant player objects
 }

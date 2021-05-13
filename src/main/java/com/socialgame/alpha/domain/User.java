@@ -52,6 +52,13 @@ User {
         this.password = password;
     }
 
+    public User(String username, String password, String gameIdString) {
+        this.roles = new HashSet<>();
+        this.username = username;
+        this.password = password;
+        this.gameIdString = gameIdString;
+    }
+
     public long getId() {
         return id;
     }
