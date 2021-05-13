@@ -20,6 +20,9 @@ public class Lobby {
     @Column
     private String gameIdString;
 
+    @OneToOne
+    private Game game;
+
     @OneToMany (mappedBy = "lobby")
     private Set<Player> players;
 
@@ -51,6 +54,9 @@ public class Lobby {
     public void setGameIdString(String gameIdString) {
         this.gameIdString = gameIdString;
     }
+
+    public Game getGame() {return game;}
+    public void setGame(Game game) {this.game = game;}
 
     public Set<Player> getPlayers() {return players;}
     public void setPlayers(Set<Player> players) {this.players = players;}

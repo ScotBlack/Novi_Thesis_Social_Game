@@ -8,6 +8,7 @@ import com.socialgame.alpha.dto.request.SetGamePointsRequest;
 import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.request.SettingRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
+import com.socialgame.alpha.dto.response.Response;
 import com.socialgame.alpha.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,7 @@ public class HostServiceImpl implements HostService {
         }
 
         gameRepository.save(game);
-        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game));
+        return ResponseEntity.ok(Response.lobbyResponse(game.getLobby()));
     }
 
     @Override
@@ -133,7 +134,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok(GameServiceImpl.createResponseObject(game.getTeams()));
+        return ResponseEntity.ok(Response.teamResponseSet(game));
     }
-        // delete redundant player objects
 }

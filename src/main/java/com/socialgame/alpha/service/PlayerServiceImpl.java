@@ -10,6 +10,7 @@ import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
+import com.socialgame.alpha.dto.response.Response;
 import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 
 import com.socialgame.alpha.repository.GameRepository;
@@ -71,7 +72,7 @@ public class PlayerServiceImpl implements PlayerService {
         player2.setColor(newColor == null ? Color.RED : newColor);
         playerRepository.save(player2);
 
-        return ResponseEntity.ok(createResponseObject(player2));
+        return ResponseEntity.ok(Response.playerResponse(player2));
     }
 
     @Override
@@ -112,7 +113,7 @@ public class PlayerServiceImpl implements PlayerService {
         team.setHasAnswered(true);
 
         if (!question.getCorrectAnswer().equals("Lima")) {
-            return ResponseEntity.ok(createResponseObject(team, question, "Lima", false));
+            return ResponseEntity.ok(Response.teamAnswerResponse(team, question, "Lima", false));
         }
 
         team.setPoints(team.getPoints() + question.getPoints());
@@ -122,34 +123,6 @@ public class PlayerServiceImpl implements PlayerService {
             return ResponseEntity.ok("You have won the game!");
         }
 
-        return ResponseEntity.ok(createResponseObject(team, question, "Lima",true));
-    }
-
-
-    public PlayerResponse createResponseObject (Player player) {
-        return (
-                new PlayerResponse(
-                        player.getUser().getUsername(),
-                        player.getId(),
-                        player.getName(),
-                        player.getColor().toString(),
-                        player.getPhone()
-                )
-        );
-    }
-
-    public TeamAnswerResponse createResponseObject (Team team, MiniGame minigame, String answer, Boolean answerCorrect) {
-
-        TeamAnswerResponse response =
-                new TeamAnswerResponse (
-                        team.getId(),
-                        minigame.getQuestion(),
-                        answer,
-                        answerCorrect,
-                        minigame.getPoints(),
-                        team.getPoints()
-                );
-
-        return response;
+        return ResponseEntity.ok(Response.teamAnswerResponse(team, question, "Lima",true));
     }
 }

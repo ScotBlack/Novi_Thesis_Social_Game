@@ -171,6 +171,9 @@ public class StartServiceImpl implements StartService {
         game.setLobby(lobby);
         gameRepository.save(game);
 
+        lobby.setGame(game);
+        lobbyRepository.save(lobby);
+
         return ResponseEntity.ok(authenticateUser(username, gameIdString));
     }
 
