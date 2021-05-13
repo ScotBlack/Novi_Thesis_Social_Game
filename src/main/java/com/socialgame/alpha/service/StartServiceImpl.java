@@ -78,11 +78,11 @@ public class StartServiceImpl implements StartService {
     public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
-        Boolean uniqueGameIdString = false;
+        boolean uniqueGameIdString = false;
         String gameIdString ="placeholder";
         int leftLimit = 66; // letter 'A'
         int rightLimit = 122; // letter 'z'
-        int targetStringLength = 4;
+        int targetStringLength = 3;
         Random random = new Random();
 
         // loops until unique String is generated
@@ -113,10 +113,11 @@ public class StartServiceImpl implements StartService {
             return ResponseEntity.status(400).body(errorResponse);
         }
 
-        User user = new User(username, encoder.encode(gameIdString));
-        user.setRoles(new HashSet<>());
+
+
+        User user = new User(username, encoder.encode(gameIdString), gameIdString);
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_GAMEHOST).get());
-        user.setGameIdString(gameIdString);
+        user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
         userRepository.save(user);
 
         // test if User is created
@@ -153,20 +154,21 @@ public class StartServiceImpl implements StartService {
         game.setLobby(lobby);
         gameRepository.save(game);
 
-        JwtResponse jwtResponse =
-                authenticateUser(
-                        username,
-                        gameIdString
-                );
+//        JwtResponse jwtResponse =
+//                authenticateUser(
+//                        username,
+//                        gameIdString
+//                );
 
-        return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
+        return ResponseEntity.ok(authenticateUser(username, gameIdString));
     }
 
     @Override
     public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-        String username = joinGameRequest.getUsername();
+        String username = joinGameRequest.getUsername() ;
         String gameIdString = joinGameRequest.getGameIdString();
+        String requestedUsername = gameIdString + "_" + username;
 
         // find Lobby
 
@@ -182,18 +184,13 @@ public class StartServiceImpl implements StartService {
         //TODO - check if game has started yet or not
 
         //create User
-
-        String requestedUsername = gameIdString + "_" + username;
-
         if (Boolean.TRUE.equals(userRepository.existsByUsername(requestedUsername))) {
             errorResponse.addError("422", "Unprocessable Entity: Username already exists in this game.");
             return ResponseEntity.status(422).body(errorResponse);
         }
 
-        User user = new User(requestedUsername, encoder.encode(gameIdString));
-        user.setRoles(new HashSet<>());
+        User user = new User(requestedUsername, encoder.encode(gameIdString), gameIdString);
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
-        user.setGameIdString(gameIdString);
         userRepository.save(user);
 
         // create Player
@@ -217,13 +214,7 @@ public class StartServiceImpl implements StartService {
         lobby.getPlayers().add(player);
         lobbyRepository.save(lobby);
 
-        JwtResponse jwtResponse =
-                authenticateUser(
-                        requestedUsername,
-                        gameIdString
-                );
-
-        return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
+        return ResponseEntity.ok(authenticateUser(requestedUsername, gameIdString));
     }
 
     // merge with Joingame
@@ -243,13 +234,7 @@ public class StartServiceImpl implements StartService {
 
         Lobby lobby = optionalLobby.get();
 
-        JwtResponse jwtResponse =
-                authenticateUser(
-                        username,
-                        gameIdString
-                );
-
-        return ResponseEntity.ok(createResponseObject(jwtResponse, lobby));
+        return ResponseEntity.ok(authenticateUser(username, gameIdString));
     }
 
 

@@ -16,6 +16,13 @@ public class JwtResponse {
         this.roles = roles;
     }
 
+//    public static JwtResponse build(String accessToken, Long id, String username, List<String> roles) {
+//        this.token = accessToken;
+//        this.id = id;
+//        this.username = username;
+//        this.roles = roles;
+//    }
+
     public String getAccessToken() {
         return token;
     }
