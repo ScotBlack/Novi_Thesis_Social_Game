@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -74,12 +75,27 @@ public class StartServiceImpl implements StartService {
         this.jwtUtils = jwtUtils;
     }
 
-    @Override
-    public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
+    public JwtResponse authenticateUser (String username, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        username,
+                        password));
 
-        boolean uniqueGameIdString = false;
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles);
+    }
+
+    public String generateGameIdString() {
         String gameIdString ="placeholder";
+        boolean uniqueGameIdString = false;
+
         int leftLimit = 66; // letter 'A'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 3;
@@ -87,7 +103,7 @@ public class StartServiceImpl implements StartService {
 
         // loops until unique String is generated
         while (!uniqueGameIdString) {
-            gameIdString = random.ints(leftLimit, rightLimit + 1)
+           gameIdString = random.ints(leftLimit, rightLimit + 1)
                     .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
                     .limit(targetStringLength)
                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
@@ -97,14 +113,17 @@ public class StartServiceImpl implements StartService {
                 uniqueGameIdString = true;
             }
         }
+        return gameIdString;
+    }
 
-        // to catch if something went wrong generating unique gameIdString
-        if (gameIdString.equals("placeholder")) {
-            errorResponse.addError("400" , "Error: Something went wrong generating gameIdString");
-            return ResponseEntity.status(400).body(errorResponse);
-        }
+    @Override
+    public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
+        ErrorResponse errorResponse = new ErrorResponse();
 
+        String gameIdString = generateGameIdString();
         String  username = gameIdString + "_" + createGameRequest.getUsername();
+
+        if (gameIdString.equals("placeholder")) throw new IllegalArgumentException("Error: Something went wrong generating gameIdString");
 
         // redundant
         // check if User exists, but impossible because its first Player in the game.
@@ -112,8 +131,6 @@ public class StartServiceImpl implements StartService {
             errorResponse.addError("400" , "Error: " + createGameRequest.getUsername() + " is already taken!");
             return ResponseEntity.status(400).body(errorResponse);
         }
-
-
 
         User user = new User(username, encoder.encode(gameIdString), gameIdString);
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_GAMEHOST).get());
@@ -154,12 +171,6 @@ public class StartServiceImpl implements StartService {
         game.setLobby(lobby);
         gameRepository.save(game);
 
-//        JwtResponse jwtResponse =
-//                authenticateUser(
-//                        username,
-//                        gameIdString
-//                );
-
         return ResponseEntity.ok(authenticateUser(username, gameIdString));
     }
 
@@ -171,19 +182,13 @@ public class StartServiceImpl implements StartService {
         String requestedUsername = gameIdString + "_" + username;
 
         // find Lobby
+        Lobby lobby = lobbyRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Lobby with: " + gameIdString + " does not exist."));
 
-        Optional<Lobby> optionalLobby = lobbyRepository.findByGameIdString(gameIdString);
+        if (gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."))
+                .getStarted()) throw new IllegalArgumentException("You can't join, game has already started.");
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404", "Entity not found: " + gameIdString + " Lobby does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
-        }
-
-        Lobby lobby = optionalLobby.get();
-
-        //TODO - check if game has started yet or not
-
-        //create User
         if (Boolean.TRUE.equals(userRepository.existsByUsername(requestedUsername))) {
             errorResponse.addError("422", "Unprocessable Entity: Username already exists in this game.");
             return ResponseEntity.status(422).body(errorResponse);
@@ -192,8 +197,6 @@ public class StartServiceImpl implements StartService {
         User user = new User(requestedUsername, encoder.encode(gameIdString), gameIdString);
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
         userRepository.save(user);
-
-        // create Player
 
         // determines what starting color Player should have
         int c = 0;
@@ -236,55 +239,4 @@ public class StartServiceImpl implements StartService {
 
         return ResponseEntity.ok(authenticateUser(username, gameIdString));
     }
-
-
-    public JwtResponse authenticateUser (String username, String password) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        username,
-                        password));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        return new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles);
-    }
-
-
-    public AuthGameResponse createResponseObject (JwtResponse jwtResponse, Lobby lobby) {
-
-        Set<PlayerResponse> playerResponses = new HashSet<>();
-
-        for (Player player : lobby.getPlayers()) {
-
-            PlayerResponse playerResponse = new PlayerResponse(
-                    player.getUser().getUsername(),
-                    player.getId(),
-                    player.getName(),
-                    player.getColor().toString(),
-                    player.getPhone()
-            );
-
-            playerResponses.add(playerResponse);
-        }
-
-        LobbyResponse lobbyResponse = new LobbyResponse (
-                lobby.getGameIdString(),
-                lobby.getCanStart(),
-                lobby.getStatus(),
-                "NEEDS FIX IN create response",
-                10,
-                playerResponses
-        );
-
-        return new AuthGameResponse(jwtResponse, lobbyResponse);
-    }
-
-
-
 }
