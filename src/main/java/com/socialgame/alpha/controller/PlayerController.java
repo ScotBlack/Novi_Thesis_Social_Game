@@ -29,9 +29,9 @@ public class PlayerController {
 //        return principal.getName();
 //    }
 
-    @GetMapping(path="/answer")
-    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
-        return playerService.teamAnswer(request);
+    @PostMapping(path="/answer")
+    public ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, @Valid @RequestBody TeamAnswerRequest answerRequest) {
+        return playerService.teamAnswer(httpRequest, answerRequest);
     }
 
 
