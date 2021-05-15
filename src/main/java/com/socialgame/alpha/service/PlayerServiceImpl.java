@@ -7,8 +7,10 @@ import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.request.TeamAnswerRequest;
+import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.ResponseBuilder;
 
+import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 import com.socialgame.alpha.repository.GameRepository;
 import com.socialgame.alpha.repository.PlayerRepository;
 import com.socialgame.alpha.repository.TeamRepository;
@@ -88,10 +90,9 @@ public class PlayerServiceImpl implements PlayerService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-
         if (!game.getStarted())  throw new IllegalArgumentException("Game has not yet started.");
 
-        if (user.getTeam()== null) throw new IllegalArgumentException("User doesn't have any team assigned, fatal error for game.");
+        if (user.getTeam()== null) throw new NullPointerException("User doesn't have any team assigned, fatal error for game.");
         Team team = user.getTeam();
 
         if (!game.getCurrentCompetingTeams().contains(team)) throw new IllegalArgumentException("Team: " + team.getName() + " does not compete in this MiniGame.");
@@ -100,15 +101,12 @@ public class PlayerServiceImpl implements PlayerService {
 
         switch (game.getCurrentMiniGame().getMiniGameType()) {
             case QUESTION:
-                return ResponseEntity.ok(answerQuestion(game,team, answerRequest));
-            case DARE:
-            case BEST_ANSWER:
-            case RANKING:
-            case GUESS_WORD:
-                break;
+                return answerQuestion(game,team, answerRequest);
+            default:
+                ErrorResponse errorResponse = new ErrorResponse();
+                errorResponse.addError("BAD_REQUEST", "Minigame has not yet deployed");
+                return ResponseEntity.status(400).body(errorResponse);
         }
-
-        throw new IllegalArgumentException("This should not happen.");
     }
 
     public ResponseEntity<?> answerQuestion(Game game, Team team, TeamAnswerRequest answerRequest) {
@@ -116,7 +114,8 @@ public class PlayerServiceImpl implements PlayerService {
         team.setHasAnswered(true);
 
         if (!question.getCorrectAnswer().equals(answerRequest.getAnswer())) {
-            return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(), false));
+            TeamAnswerResponse response = ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(), false);
+            return ResponseEntity.ok(response);
         }
 
         team.setPoints(team.getPoints() + question.getPoints());
@@ -126,6 +125,7 @@ public class PlayerServiceImpl implements PlayerService {
             return ResponseEntity.ok("You have won the game!");
         }
 
-        return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(),true));
+        TeamAnswerResponse response = ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(), true);
+        return ResponseEntity.ok(response);
     }
 }
