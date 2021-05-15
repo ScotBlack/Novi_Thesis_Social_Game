@@ -6,6 +6,7 @@ import com.socialgame.alpha.domain.User;
 import com.socialgame.alpha.domain.enums.Color;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.minigame.Question;
+import com.socialgame.alpha.dto.request.TeamAnswerRequest;
 import com.socialgame.alpha.dto.response.ResponseBuilder;
 
 import com.socialgame.alpha.repository.GameRepository;
@@ -44,19 +45,19 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
         Color newColor = null;
-        String username = request.getUserPrincipal().getName();
 
+        String username = request.getUserPrincipal().getName();
         Player player1 = userRepository.findByUsername(username)
                 .orElseThrow(() -> new  EntityNotFoundException("User with: " + username + " does not exist."))
                 .getPlayer();
 
 
-        String gameIdString = player1.getUser().getGameIdString();
+//        String gameIdString = player1.getUser().getGameIdString();
 
-        Game game = gameRepository.findByGameIdString(gameIdString)
-                .orElseThrow(() -> new  EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
-
-        if (game.getStarted()) throw new IllegalArgumentException("Game has already started.");
+//        Game game = gameRepository.findByGameIdString(gameIdString)
+//                .orElseThrow(() -> new  EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
+//
+//        if (game.getStarted()) throw new IllegalArgumentException("Game has already started.");
 
         Player player2 = playerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));
@@ -78,8 +79,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
-        String username = request.getUserPrincipal().getName();
+    public ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, TeamAnswerRequest answerRequest) {
+        String username = httpRequest.getUserPrincipal().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
 
@@ -99,7 +100,7 @@ public class PlayerServiceImpl implements PlayerService {
 
         switch (game.getCurrentMiniGame().getMiniGameType()) {
             case QUESTION:
-                return ResponseEntity.ok(answerQuestion(game,team));
+                return ResponseEntity.ok(answerQuestion(game,team, answerRequest));
             case DARE:
             case BEST_ANSWER:
             case RANKING:
@@ -110,12 +111,12 @@ public class PlayerServiceImpl implements PlayerService {
         throw new IllegalArgumentException("This should not happen.");
     }
 
-    public ResponseEntity<?> answerQuestion(Game game, Team team) {
+    public ResponseEntity<?> answerQuestion(Game game, Team team, TeamAnswerRequest answerRequest) {
         Question question = (Question) game.getCurrentMiniGame();
         team.setHasAnswered(true);
 
-        if (!question.getCorrectAnswer().equals("Lima")) {
-            return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, "Lima", false));
+        if (!question.getCorrectAnswer().equals(answerRequest.getAnswer())) {
+            return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(), false));
         }
 
         team.setPoints(team.getPoints() + question.getPoints());
@@ -125,6 +126,6 @@ public class PlayerServiceImpl implements PlayerService {
             return ResponseEntity.ok("You have won the game!");
         }
 
-        return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, "Lima",true));
+        return ResponseEntity.ok(ResponseBuilder.teamAnswerResponse(team, question, answerRequest.getAnswer(),true));
     }
 }

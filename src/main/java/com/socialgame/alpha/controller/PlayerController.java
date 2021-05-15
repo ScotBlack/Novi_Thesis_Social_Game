@@ -30,8 +30,8 @@ public class PlayerController {
 //    }
 
     @GetMapping(path="/answer")
-    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
-        return playerService.teamAnswer(request);
+    public ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, TeamAnswerRequest answerRequest) {
+        return playerService.teamAnswer(httpRequest, answerRequest);
     }
 
 

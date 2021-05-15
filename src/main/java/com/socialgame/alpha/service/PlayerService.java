@@ -9,6 +9,6 @@ public interface PlayerService {
 
     ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request);
 //    ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest, Long teamId);
-    ResponseEntity<?> teamAnswer(HttpServletRequest request);
+    ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, TeamAnswerRequest answerRequest);
 
 }

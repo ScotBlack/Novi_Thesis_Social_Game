@@ -66,7 +66,7 @@ public class PlayerServiceImplTest {
         team1.setName(Color.BLUE);
 
         user.setPlayer(player1);
-        user.setTeam();
+        user.setTeam(team1);
 
         player2 = new Player();
 
