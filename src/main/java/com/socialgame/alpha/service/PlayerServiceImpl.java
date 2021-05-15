@@ -45,9 +45,18 @@ public class PlayerServiceImpl implements PlayerService {
     public ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request)  {
         Color newColor = null;
         String username = request.getUserPrincipal().getName();
+
         Player player1 = userRepository.findByUsername(username)
                 .orElseThrow(() -> new  EntityNotFoundException("User with: " + username + " does not exist."))
                 .getPlayer();
+
+
+        String gameIdString = player1.getUser().getGameIdString();
+
+        Game game = gameRepository.findByGameIdString(gameIdString)
+                .orElseThrow(() -> new  EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
+
+        if (game.getStarted()) throw new IllegalArgumentException("Game has already started.");
 
         Player player2 = playerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));

@@ -37,7 +37,7 @@ class PlayerTest {
     void propertiesTest() {
         assertAll("Properties Test",
                 () -> assertAll("Player Properties",
-                        () ->  assertEquals(1L, player.getId()),
+//                        () ->  assertEquals(1L, player.getId()),
                         () ->  assertTrue(player.getUser() instanceof User),
                         () ->  assertEquals("Steve", player.getName()),
                         () ->  assertEquals(Color.RED, player.getColor()),
