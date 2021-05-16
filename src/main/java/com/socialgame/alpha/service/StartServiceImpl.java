@@ -75,8 +75,8 @@ public class StartServiceImpl implements StartService {
         this.jwtUtils = jwtUtils;
     }
 
-    @Override
-    public ResponseEntity<?> authenticateUser (String username, String password) {
+
+    public JwtResponse authenticateUser (String username, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         username,
@@ -91,35 +91,29 @@ public class StartServiceImpl implements StartService {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles));
+        return new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles);
     }
 
-    public String generateGameIdString() {
-        String gameIdString ="placeholder";
-        boolean uniqueGameIdString = false;
+    @Override
+    public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
+        String gameIdString = initializeGame(createGameRequest);
+        String username = gameIdString + "_" + createGameRequest.getUsername();
 
-        int leftLimit = 66; // letter 'A'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 3;
-        Random random = new Random();
+        JwtResponse jwtResponse = authenticateUser(username, gameIdString);
 
-        // loops until unique String is generated
-        while (!uniqueGameIdString) {
-           gameIdString = random.ints(leftLimit, rightLimit + 1)
-                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                    .limit(targetStringLength)
-                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                    .toString();
-
-            if (Boolean.FALSE.equals(gameRepository.existsByGameIdString(gameIdString))) {
-                uniqueGameIdString = true;
-            }
-        }
-        return gameIdString;
+        return ResponseEntity.ok(jwtResponse);
     }
 
+    @Override
+    public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest) {
+        String username = initializePlayer(joinGameRequest);
 
-    public String createGame (CreateGameRequest createGameRequest) {
+        JwtResponse jwtResponse = authenticateUser(username, joinGameRequest.getGameIdString());
+
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    public String initializeGame (CreateGameRequest createGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
         String gameIdString = generateGameIdString();
@@ -127,8 +121,6 @@ public class StartServiceImpl implements StartService {
 
         if (gameIdString.equals("placeholder")) throw new IllegalArgumentException("Error: Something went wrong generating gameIdString");
 
-        // redundant
-        // check if User exists, but impossible because its first Player in the game.
         if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
             throw new IllegalArgumentException( "Error: " + createGameRequest.getUsername() + " is already taken!");
         }
@@ -160,9 +152,7 @@ public class StartServiceImpl implements StartService {
         return gameIdString;
     }
 
-    @Override
-    public ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
+    public String initializePlayer(JoinGameRequest joinGameRequest) {
         String username = joinGameRequest.getUsername() ;
         String gameIdString = joinGameRequest.getGameIdString();
         String requestedUsername = gameIdString + "_" + username;
@@ -176,8 +166,7 @@ public class StartServiceImpl implements StartService {
                 .getStarted()) throw new IllegalArgumentException("You can't join, game has already started.");
 
         if (Boolean.TRUE.equals(userRepository.existsByUsername(requestedUsername))) {
-            errorResponse.addError("422", "Unprocessable Entity: Username already exists in this game.");
-            return ResponseEntity.status(422).body(errorResponse);
+            throw new IllegalArgumentException( "Error: " + joinGameRequest.getUsername() + " is already taken!");
         }
 
         User user = new User(requestedUsername, encoder.encode(gameIdString), gameIdString);
@@ -203,26 +192,30 @@ public class StartServiceImpl implements StartService {
         lobby.getPlayers().add(player);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(authenticateUser(requestedUsername, gameIdString));
+        return requestedUsername;
     }
 
-    // merge with Joingame
-    @Override
-    public ResponseEntity<?> rejoin (JoinGameRequest joinGameRequest) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        String username = joinGameRequest.getGameIdString() + "_" + joinGameRequest.getUsername() ;
-        String gameIdString = joinGameRequest.getGameIdString();
+    public String generateGameIdString() {
+        String gameIdString ="placeholder";
+        boolean uniqueGameIdString = false;
 
-        // find Lobby
-        Optional<Lobby> optionalLobby = lobbyRepository.findByGameIdString(gameIdString);
+        int leftLimit = 66; // letter 'A'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 3;
+        Random random = new Random();
 
-        if (optionalLobby.isEmpty()) {
-            errorResponse.addError("404", "Entity not found: " + gameIdString + " Lobby does not exist.");
-            return ResponseEntity.status(404).body(errorResponse);
+        // loops until unique String is generated
+        while (!uniqueGameIdString) {
+            gameIdString = random.ints(leftLimit, rightLimit + 1)
+                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                    .limit(targetStringLength)
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+
+            if (Boolean.FALSE.equals(gameRepository.existsByGameIdString(gameIdString))) {
+                uniqueGameIdString = true;
+            }
         }
-
-        Lobby lobby = optionalLobby.get();
-
-        return ResponseEntity.ok(authenticateUser(username, gameIdString));
+        return gameIdString;
     }
 }

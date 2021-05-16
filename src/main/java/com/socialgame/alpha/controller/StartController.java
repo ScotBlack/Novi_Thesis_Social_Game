@@ -27,22 +27,13 @@ public class StartController {
 
     @PostMapping("/creategame")
     public ResponseEntity<?> createGame(@Valid @RequestBody CreateGameRequest createGameRequest) {
-
-        String gameIdString = startService.createGame(createGameRequest);
-        String username = gameIdString + "_" + createGameRequest.getUsername();
-
-        return startService.authenticateUser(username, gameIdString);
+        return startService.createGame(createGameRequest);
     }
 
     @PostMapping("/joingame")
     public ResponseEntity<?> joinGame(@Valid @RequestBody JoinGameRequest joinGameRequest) {
         return startService.joinGame(joinGameRequest);
     }
-
-//    @PostMapping("/rejoin")
-//    public ResponseEntity<?> rejoinGame(@RequestBody JoinGameRequest joinGameRequest) {
-//        return startService.rejoin(joinGameRequest);
-//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

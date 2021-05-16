@@ -71,7 +71,6 @@ public class HostServiceImpl implements HostService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-
         if (!game.getLobby().getCanStart()) {
             errorResponse.addError("NOT_READY", "Game with ID: " + user.getGameIdString() + " cannot be started right now.");
             return ResponseEntity.status(403).body(errorResponse);
