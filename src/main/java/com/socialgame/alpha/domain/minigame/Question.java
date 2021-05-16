@@ -2,7 +2,6 @@ package com.socialgame.alpha.domain.minigame;
 
 import com.socialgame.alpha.domain.enums.AgeSetting;
 import com.socialgame.alpha.domain.enums.MiniGameType;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.util.HashSet;

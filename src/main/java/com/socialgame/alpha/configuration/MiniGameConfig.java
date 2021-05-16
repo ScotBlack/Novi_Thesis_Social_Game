@@ -1,4 +1,4 @@
-package com.socialgame.alpha.config;
+package com.socialgame.alpha.configuration;
 
 import com.socialgame.alpha.domain.enums.AgeSetting;
 import com.socialgame.alpha.domain.enums.MiniGameType;
@@ -7,9 +7,6 @@ import com.socialgame.alpha.repository.minigame.MiniGameRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Configuration
 public class MiniGameConfig {

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Inheritance
+//@Inheritance
 public abstract class MiniGame {
 
     @Id
