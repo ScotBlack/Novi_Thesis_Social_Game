@@ -5,7 +5,7 @@
 //import com.socialgame.alpha.dto.response.AuthGameResponse;
 //import com.socialgame.alpha.dto.response.ErrorResponse;
 //import com.socialgame.alpha.repository.*;
-//import com.socialgame.alpha.security.jwt.JwtUtils;
+//import com.socialgame.alpha.configuration.security.jwt.JwtUtils;
 //import java.util.*;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;
