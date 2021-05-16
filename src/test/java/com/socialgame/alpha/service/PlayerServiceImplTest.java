@@ -61,11 +61,10 @@ public class PlayerServiceImplTest {
 
     @Mock
     private TeamRepository teamRepository;
-    
 
 
-    Game game;
     User user;
+    Game game;
     Player player1;
     Player player2;
     Team team1;
