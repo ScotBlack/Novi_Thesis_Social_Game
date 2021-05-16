@@ -121,8 +121,6 @@ public class StartServiceImpl implements StartService {
 
         if (gameIdString.equals("placeholder")) throw new IllegalArgumentException("Error: Something went wrong generating gameIdString");
 
-        // redundant
-        // check if User exists, but impossible because its first Player in the game.
         if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
             throw new IllegalArgumentException( "Error: " + createGameRequest.getUsername() + " is already taken!");
         }

@@ -37,13 +37,22 @@ public class StartServiceImplTest {
     private final StartServiceImpl startService = new StartServiceImpl();
 
     @Mock
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
 
     @Mock
     private GameRepository gameRepository;
 
     @Mock
     private LobbyRepository lobbyRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     Lobby lobby;
     Game game;
