@@ -1,16 +1,11 @@
-package com.socialgame.alpha.security;
+package com.socialgame.alpha.configuration.security;
 
-import com.socialgame.alpha.domain.enums.ERole;
-import com.socialgame.alpha.repository.RoleRepository;
-import com.socialgame.alpha.security.jwt.AuthEntryPointJwt;
-import com.socialgame.alpha.security.jwt.AuthTokenFilter;
-import com.socialgame.alpha.service.UserDetailsServiceImpl;
+import com.socialgame.alpha.configuration.security.jwt.AuthEntryPointJwt;
+import com.socialgame.alpha.configuration.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Hier gebruiken we de EnableGlobalMethodSecurity(prePostIsEnabled = true) om de @PreAuthorize annotaties te gebruiken
@@ -32,9 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //@ComponentScan("com.socialgame.alpha")
 @EnableWebSecurity
 //@EnableTransactionManagement
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true
-)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 

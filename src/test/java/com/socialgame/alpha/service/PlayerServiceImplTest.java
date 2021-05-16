@@ -59,7 +59,8 @@ public class PlayerServiceImplTest {
     @Mock
     private ResponseBuilder responseBuilder;
 
-    @Mock private TeamRepository teamRepository;
+    @Mock
+    private TeamRepository teamRepository;
     
 
 
@@ -159,10 +160,17 @@ public class PlayerServiceImplTest {
         assertEquals(player1.getColor(), Color.BLUE);
     }
 
-//    @Test
-//    void shouldReturnRedColor_byDefault() {
-//
-//    }
+    @Test
+    void shouldReturnRedColor_byDefault() {
+        player1.setColor(Color.PURPLE);
+
+        when(playerRepository.findById(1L)).thenReturn(Optional.ofNullable(player1));
+
+        ResponseEntity<?> responseEntity = playerService.togglePlayerColor(1L, request);
+
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(player1.getColor(), Color.RED);
+    }
 
 
     /** TeamAnswer Tests */
@@ -170,10 +178,6 @@ public class PlayerServiceImplTest {
     void notExistingGameIdString_shouldThrowException() {
         String gameIdString = "def";
         user.setGameIdString(gameIdString);
-//        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
-
-
-//        when(gameRepository.findByGameIdString("abc").thenReturn
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
             playerService.teamAnswer(request, answerRequest);
@@ -197,19 +201,6 @@ public class PlayerServiceImplTest {
 
         assertTrue(exception.getMessage().contains(expectedMessage));
     }
-
-//    @Test
-//    void userWithNoSetTeam_shouldThrowException() {
-//        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
-//
-//        Exception exception = assertThrows(NullPointerException.class, () -> {
-//            playerService.teamAnswer(request, answerRequest);
-//        });
-//
-//        String expectedMessage = "User doesn't have any team assigned, fatal error for game.";
-//
-//        assertTrue(exception.getMessage().contains(expectedMessage));
-//    }
 
     @Test
     void notCompetingTeam_shouldReturnException() {
@@ -298,12 +289,4 @@ public class PlayerServiceImplTest {
                 () -> assertTrue(team1.getHasAnswered())
         );
     }
-
-
-
-
-
-
-
-
 }

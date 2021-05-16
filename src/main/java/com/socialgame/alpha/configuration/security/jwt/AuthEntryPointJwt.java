@@ -1,4 +1,4 @@
-package com.socialgame.alpha.security.jwt;
+package com.socialgame.alpha.configuration.security.jwt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

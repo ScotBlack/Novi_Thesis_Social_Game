@@ -1,4 +1,4 @@
-package com.socialgame.alpha.security.jwt;
+package com.socialgame.alpha.configuration.security.jwt;
 
 import com.socialgame.alpha.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
