@@ -7,7 +7,7 @@ import com.socialgame.alpha.dto.request.CreateGameRequest;
 import com.socialgame.alpha.dto.request.JoinGameRequest;
 import com.socialgame.alpha.dto.response.*;
 import com.socialgame.alpha.repository.*;
-import com.socialgame.alpha.security.jwt.JwtUtils;
+import com.socialgame.alpha.configuration.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,7 +75,8 @@ public class StartServiceImpl implements StartService {
         this.jwtUtils = jwtUtils;
     }
 
-    public JwtResponse authenticateUser (String username, String password) {
+    @Override
+    public ResponseEntity<?> authenticateUser (String username, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         username,
@@ -85,11 +86,12 @@ public class StartServiceImpl implements StartService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles);
+        return ResponseEntity.ok(new JwtResponse (jwt, userDetails.getId(),userDetails.getUsername(), roles));
     }
 
     public String generateGameIdString() {
@@ -116,8 +118,8 @@ public class StartServiceImpl implements StartService {
         return gameIdString;
     }
 
-    @Override
-    public ResponseEntity<?> createGame (CreateGameRequest createGameRequest) {
+
+    public String createGame (CreateGameRequest createGameRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
 
         String gameIdString = generateGameIdString();
@@ -128,8 +130,7 @@ public class StartServiceImpl implements StartService {
         // redundant
         // check if User exists, but impossible because its first Player in the game.
         if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
-            errorResponse.addError("400" , "Error: " + createGameRequest.getUsername() + " is already taken!");
-            return ResponseEntity.status(400).body(errorResponse);
+            throw new IllegalArgumentException( "Error: " + createGameRequest.getUsername() + " is already taken!");
         }
 
         User user = new User(username, encoder.encode(gameIdString), gameIdString);
@@ -137,32 +138,14 @@ public class StartServiceImpl implements StartService {
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
         userRepository.save(user);
 
-        // test if User is created
-        if (Boolean.FALSE.equals(userRepository.existsByUsername(username))) {
-            errorResponse.addError("400" , "Error: User " + createGameRequest.getUsername() + " has not been created, something went wrong.");
-            return ResponseEntity.status(400).body(errorResponse);
-        }
-
         Player player = new Player(user, createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
 
         user.setPlayer(player);
         userRepository.save(user);
 
-        // test if Player is created
-        if (Boolean.FALSE.equals(playerRepository.existsByName(createGameRequest.getUsername()))) {
-            errorResponse.addError("400" , "Error: Player " + gameIdString + " has not been created, something went wrong.");
-            return ResponseEntity.status(400).body(errorResponse);
-        }
-
         Lobby lobby = new Lobby(player, gameIdString);
         lobbyRepository.save(lobby);
-
-        // test if Lobby is created
-        if (Boolean.FALSE.equals(lobbyRepository.existsByGameIdString(gameIdString))) {
-            errorResponse.addError("400" , "Error: Lobby " + createGameRequest.getUsername() + " has not been created, something went wrong.");
-            return ResponseEntity.status(400).body(errorResponse);
-        }
 
         player.setLobby(lobby);
         playerRepository.save(player);
@@ -174,7 +157,7 @@ public class StartServiceImpl implements StartService {
         lobby.setGame(game);
         lobbyRepository.save(lobby);
 
-        return ResponseEntity.ok(authenticateUser(username, gameIdString));
+        return gameIdString;
     }
 
     @Override

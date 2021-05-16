@@ -27,7 +27,11 @@ public class StartController {
 
     @PostMapping("/creategame")
     public ResponseEntity<?> createGame(@Valid @RequestBody CreateGameRequest createGameRequest) {
-        return startService.createGame(createGameRequest);
+
+        String gameIdString = startService.createGame(createGameRequest);
+        String username = gameIdString + "_" + createGameRequest.getUsername();
+
+        return startService.authenticateUser(username, gameIdString);
     }
 
     @PostMapping("/joingame")
