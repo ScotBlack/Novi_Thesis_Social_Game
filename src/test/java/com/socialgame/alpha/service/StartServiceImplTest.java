@@ -110,30 +110,18 @@ public class StartServiceImplTest {
         assertNotEquals("placeholder", gameIdString);
     }
 
-//    @Test
-//    void existingUserName_shouldReturnErrorResponse() {
-//        CreateGameRequest request = new CreateGameRequest();
-//        request.setUsername("takenUsername");
-//
-//        when(startService.generateGameIdString()).thenReturn("abc");
-//
-//
-////        userRepository.
-//
-//        given(userRepository.existsByUsername("abc_takenUsername")).willReturn(true);
-//
-//        ResponseEntity<?> responseEntity = startService.createGame(request);
-//
-//        assertAll("Correct Answer Response",
-//                () -> assertEquals(400, responseEntity.getStatusCodeValue()),
-//                () -> assertTrue(responseEntity.getBody() instanceof ErrorResponse));
-////                () -> assertTrue(((ErrorResponse) responseEntity.getBody()).getErrors().containsKey("BAD_REQUEST"))
-//
-//
-//    }
+    @Test
+    void existingUserName_shouldReturnErrorResponse() {
+        CreateGameRequest request = new CreateGameRequest();
+        request.setUsername("takenUsername");
+
+        given(startService.generateGameIdString()).willReturn("abc");
+        when(userRepository.existsByUsername("abc_takenUsername")).thenReturn(Boolean.TRUE);
+
+    }
 
     @Test
-    void createGame_shouldReturnJwtResponse() {
+    void createGame_shouldReturnGameIdString() {
 
 //        AuthenticationManager authenticationManager=mock(AuthenticationManager.class);
         Role gameHostRole = new Role(ERole.ROLE_GAMEHOST);
@@ -146,16 +134,24 @@ public class StartServiceImplTest {
         when(roleRepository.findByName(ERole.ROLE_GAMEHOST)).thenReturn(Optional.of(gameHostRole));
         when(roleRepository.findByName(ERole.ROLE_PLAYER)).thenReturn(Optional.of(playerRole));
 
-        String gameIdString = startService.createGame(request);
+        String gameIdString = startService.initializeGame(request);
+        boolean onlyLetters = true;
 
-        assertAll("Correct Answer Response",
-                () -> assertTrue(gameIdString instanceof String),
-                () -> assertEquals(3, gameIdString.length())
-//                );
-////                () -> assertTrue(((ErrorResponse) responseEntity.getBody()).getErrors().containsKey("BAD_REQUEST"))
-        );
+        char[] chars = gameIdString.toCharArray();
+
+        for (char c : chars) {
+            if(!Character.isLetter(c)) {
+               onlyLetters = false;
+            }
+        }
+
+        assertTrue(onlyLetters);
+        assertEquals(3, gameIdString.length());
     }
+
+
 }
+
 
 
 
