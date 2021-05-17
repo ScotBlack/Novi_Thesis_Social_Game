@@ -90,8 +90,6 @@ class HostServiceImplTest {
         game.setLobby(lobby);
         game.setTeams(new HashSet<>());
 
-
-
         player1 = new Player();
         player1.setUser(user);
         player1.setId(1L);
@@ -117,9 +115,6 @@ class HostServiceImplTest {
 
         settingRequest1 = new SettingRequest();
         settingRequest2 = new SettingRequest();
-
-
-
     }
 
     @Test
@@ -161,9 +156,6 @@ class HostServiceImplTest {
         hostService.setGameSetting(settingRequest2);
         assertEquals(GameType.CLASSIC, game.getGameType());
     }
-
-
-
 
     /** startGame tests */
     @Test
@@ -210,8 +202,6 @@ class HostServiceImplTest {
         );
     }
 
-
-
     @Test
     void startGame_ShouldSetGameStarted_WhenLobbyCanStartIsTrue() {
         when(httpRequest.getUserPrincipal()).thenReturn(mockPrincipal);
@@ -224,11 +214,6 @@ class HostServiceImplTest {
 
         ResponseEntity<?> responseEntity = hostService.startGame(httpRequest);
 
-
-
-
-//        assertEquals(200, responseEntity.getStatusCodeValue());
-//
         assertAll("Error Response startGame",
                 () -> assertEquals(404, responseEntity.getStatusCodeValue())
 //                () -> assertTrue(responseEntity instanceof ResponseEntity<?>),
