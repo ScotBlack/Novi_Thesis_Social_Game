@@ -109,7 +109,6 @@ class HostServiceImplTest {
         lobby.getPlayers().add(player1);
         lobby.getPlayers().add(player2);
 
-
         httpRequest = mock(HttpServletRequest.class);
         mockPrincipal = mock(UserPrincipal.class);
 
