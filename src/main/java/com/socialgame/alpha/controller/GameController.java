@@ -34,13 +34,6 @@ public class GameController {
         return gameService.getPlayers(gameIdString);
     }
 
-    @GetMapping(path="/{id}/teams")
-    public ResponseEntity<?> getTeams(@PathVariable("id") String gameIdString) {
-        return gameService.getTeams(gameIdString);
-    }
-
-    // redundant, same as getTeams()
-    // not in postman
     @GetMapping(path="/{id}/score")
     public ResponseEntity<?> getScore(@PathVariable("id") String gameIdString) {
         return gameService.getScore(gameIdString);

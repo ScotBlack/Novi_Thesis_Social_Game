@@ -10,7 +10,6 @@ public interface GameService {
     ResponseEntity<?> findPlayerByID(Long id);
     ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request);
     ResponseEntity<?> getPlayers(String  gameIdString);
-    ResponseEntity<?> getTeams(String  gameIdString);
     ResponseEntity<?> getScore(String  gameIdString);
     ResponseEntity<?> nextMiniGame(String  gameIdString);
 }

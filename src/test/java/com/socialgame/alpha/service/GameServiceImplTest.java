@@ -1,18 +1,12 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.domain.Game;
-import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.User;
-import com.socialgame.alpha.domain.enums.Color;
-import com.socialgame.alpha.domain.enums.GameType;
+import com.socialgame.alpha.domain.*;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
-import com.socialgame.alpha.repository.GameRepository;
-import com.socialgame.alpha.repository.LobbyRepository;
-import com.socialgame.alpha.repository.PlayerRepository;
-import com.socialgame.alpha.repository.UserRepository;
+import com.socialgame.alpha.repository.*;
+import com.socialgame.alpha.repository.minigame.QuestionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.nio.file.attribute.UserPrincipal;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,6 +44,13 @@ class GameServiceImplTest {
     Player player2;
     Player player3;
     Player player4;
+    Team team1;
+    Team team2;
+
+    Question question1;
+    Question question2;
+    Question question3;
+    Question question4;
 
     HttpServletRequest httpRequest;
     UserPrincipal mockPrincipal;
@@ -69,6 +69,12 @@ class GameServiceImplTest {
 
     @Mock
     private PlayerRepository playerRepository;
+
+    @Mock
+    private TeamRepository teamRepository;
+
+    @Mock
+    private QuestionRepository questionRepository;
     
     @BeforeEach
     void setUp() {
@@ -124,11 +130,31 @@ class GameServiceImplTest {
     player4.setColor(YELLOW);
     player4.setPhone(true);
 
+    team1 = new Team();
+    team1.setId(1L);
+    team1.setGame(game);
+    team1.setName(RED);
+    team1.setPlayers(new HashMap<>());
+    team1.getPlayers().put(player1.getName(),100);
+
+    team2 = new Team();
+    team2.setId(2L);
+    team2.setGame(game);
+    team2.setName(BLUE);
+    team2.setPlayers(new HashMap<>());
+    team2.getPlayers().put(player2.getName(),100);
+
     game.setLobby(lobby);
+    game.setTeams(new HashSet<>());
+    game.getTeams().add(team1);
+    game.getTeams().add(team2);
     lobby.setGame(game);
     lobby.setPlayers(new HashSet<>());
 
-
+    question1 = new Question();
+    question2 = new Question();
+    question3 = new Question();
+    question4 = new Question();
 
     httpRequest = mock(HttpServletRequest.class);
     mockPrincipal = mock(UserPrincipal.class);
@@ -155,7 +181,7 @@ class GameServiceImplTest {
         assertAll("Error Response startGame",
                 () -> assertEquals(200, response.getStatusCodeValue()),
                 () -> assertTrue(response.getBody() instanceof PlayerResponse),
-                () -> assertEquals(Color.RED.toString(), ((PlayerResponse) response.getBody()).getColor()),
+                () -> assertEquals(RED.toString(), ((PlayerResponse) response.getBody()).getColor()),
                 () -> assertTrue(((PlayerResponse) response.getBody()).getPhone())
         );
     }
@@ -191,12 +217,13 @@ class GameServiceImplTest {
             gameService.getPlayers("wrong");
         });
 
+
         Exception exception3 = assertThrows(EntityNotFoundException.class, () -> {
-            gameService.getTeams("wrong");
+            gameService.getScore("wrong");
         });
 
         Exception exception4 = assertThrows(EntityNotFoundException.class, () -> {
-            gameService.getScore("wrong");
+            gameService.nextMiniGame("wrong");
         });
 
         String expectedMessage = "Game with: " + "wrong" + " does not exist.";
@@ -208,7 +235,7 @@ class GameServiceImplTest {
 
     @Test
     void playerComposition_shouldReturnDifferentStatus() {
-            System.out.println("|||LobbyStatus Test|||");
+        System.out.println("\n |||LobbyStatus Test|||");
 
         when(httpRequest.getUserPrincipal()).thenReturn(mockPrincipal);
         when(mockPrincipal.getName()).thenReturn("abc_player");
@@ -303,7 +330,6 @@ class GameServiceImplTest {
     // -- 4 players // FFA // Team/Color has 0 players with Phone
         player1.setPhone(true);
 
-
         ResponseEntity<?> responseEntity9 = gameService.lobbyStatusUpdate(httpRequest);
         LobbyResponse lobbyResponse9 = (LobbyResponse) responseEntity9.getBody();
 
@@ -311,6 +337,87 @@ class GameServiceImplTest {
         System.out.println("Test Complete: Team game can be started");
     }
 
+    /** getPlayers test */
+    @Test
+    void foundGame_shouldReturnPlayerResponse() {
+        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+
+        ResponseEntity<?> responseEntity = gameService.getPlayers("abc");
+
+        assertAll("Error Response startGame",
+                () -> assertEquals(200, responseEntity.getStatusCodeValue())
+        );
+    }
+
+    /** getScore test */
+
+    @Test
+    void notStartedGame_shouldReturnErrorResponse() {
+        game.setStarted(false);
+        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+
+        ResponseEntity<?> responseEntity = gameService.getScore("abc");
+
+        assertAll("Error Response startGame",
+                () -> assertEquals(403, responseEntity.getStatusCodeValue()),
+                () -> assertTrue(responseEntity.getBody() instanceof ErrorResponse),
+                () -> assertTrue(((ErrorResponse) responseEntity.getBody()).getErrors().containsKey("NOT_STARTED"))
+        );
+    }
+
+    @Test
+    void startedGame_shouldReturnTeamResponseSet() {
+        game.setStarted(true);
+        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+
+        ResponseEntity<?> responseEntity = gameService.getScore("abc");
+
+        Assertions.assertEquals(200, responseEntity.getStatusCodeValue());
+    }
+
+    /** nextMiniGame tests */
+    @Test
+    void nextMiniGame_shouldResetAllTeamsHasAnsweredToFalse() {
+        System.out.println("\n |||NextMiniGame Test|||");
+
+        team1.setHasAnswered(true);
+        team2.setHasAnswered(true);
+
+        Set<String> answersSet =new HashSet<>();
+        answersSet.add("a");
+        answersSet.add("b");
+        answersSet.add("c");
+        answersSet.add("d");
+
+        List<Question> questionSet = new ArrayList<>();
+        questionSet.add(question1);
+        questionSet.add(question2);
+        questionSet.add(question3);
+        questionSet.add(question4);
+
+        question1.setAllAnswers(new HashSet<>());
+        question2.setAllAnswers(new HashSet<>());
+        question3.setAllAnswers(new HashSet<>());
+        question4.setAllAnswers(new HashSet<>());
+        question1.setAllAnswers(answersSet);
+        question2.setAllAnswers(answersSet);
+        question3.setAllAnswers(answersSet);
+        question4.setAllAnswers(answersSet);
+
+
+        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+        when(questionRepository.findAll()).thenReturn(questionSet);
+
+        gameService.nextMiniGame("abc");
+
+        Assertions.assertFalse(team1.getHasAnswered());
+            System.out.println("Test Complete: Team1 answered set False");
+        Assertions.assertFalse(team2.getHasAnswered());
+            System.out.println("Test Complete: Team2 answered set False");
+        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team1));
+        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team2));
+
+    }
 
 
 

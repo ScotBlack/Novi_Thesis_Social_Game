@@ -132,14 +132,7 @@ public class GameServiceImpl implements GameService {
         return ResponseEntity.ok(ResponseBuilder.playerResponseSet(game.getLobby()));
     }
 
-    @Override
-    public ResponseEntity<?> getTeams(String gameIdString) {
-        Game game = gameRepository.findByGameIdString(gameIdString)
-                .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
-    }
- 
     @Override
     public ResponseEntity<?> getScore(String gameIdString) {
         ErrorResponse errorResponse = new ErrorResponse();
@@ -148,7 +141,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
         if (!game.getStarted()) {
-            errorResponse.addError("403" , "Game with ID: " + gameIdString + " has not yet started.");
+            errorResponse.addError("NOT_STARTED" , "Game with ID: " + gameIdString + " has not yet started.");
             return ResponseEntity.status(403).body(errorResponse);
         }
 
@@ -157,8 +150,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public ResponseEntity<?> nextMiniGame(String gameIdString) {
-        ErrorResponse errorResponse = new ErrorResponse();
-
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
@@ -167,21 +158,11 @@ public class GameServiceImpl implements GameService {
             teamRepository.save(team);
         }
 
-        int i = 0;
-
-        switch (MiniGameType.values()[i]) {
+        switch (MiniGameType.values()[0]) {
             case QUESTION:
                 return nextQuestion(game);
-            case DARE:
-                return ResponseEntity.status(200).body("got to dare " );
-            case BEST_ANSWER:
-                return ResponseEntity.status(200).body("got to best answer");
-            case RANKING:
-                return ResponseEntity.status(200).body("got to ranking");
-            case GUESS_WORD:
-                return ResponseEntity.status(200).body("got to guess word");
             default:
-                return ResponseEntity.status(200).body("got to default");
+                return ResponseEntity.status(200).body("Other minigames not yet deployed");
         }
     }
 
@@ -194,7 +175,7 @@ public class GameServiceImpl implements GameService {
             return ResponseEntity.status(400).body("Question index out of bounds");
         }
 
-        // remove previous competing players
+        // removes previous competing players
         game.setCurrentCompetingTeams(new HashSet<>());
 
         for (Team team : game.getTeams()) {
