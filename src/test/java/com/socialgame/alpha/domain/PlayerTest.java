@@ -22,14 +22,14 @@ class PlayerTest {
     void setUp() {
         User user = new User();
         Lobby lobby = new Lobby();
-        player = new Player(user, "Bob", Color.BLUE, false);
+        player = new Player("abc", user, "Bob", Color.BLUE, false);
 
         player.setId(1L);
         player.setUser(user);
         player.setName("Steve");
         player.setColor(Color.RED);
         player.setPhone(true);
-        player.setLobby(lobby);
+//        player.setLobby(lobby);
     }
 
 
