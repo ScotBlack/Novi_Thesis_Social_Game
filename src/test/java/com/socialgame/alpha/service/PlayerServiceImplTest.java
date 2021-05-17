@@ -247,7 +247,6 @@ public class PlayerServiceImplTest {
         );
     }
 
-
     @Test
     void correctAnswer_shouldIncreaseTeamPointsAndSetHasAnsweredTrue() {
         TeamAnswerResponse answerResponse =

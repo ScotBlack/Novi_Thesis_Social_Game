@@ -130,7 +130,7 @@ public class StartServiceImpl implements StartService {
         user.getRoles().add(roleRepository.findByName(ERole.ROLE_PLAYER).get());
         userRepository.save(user);
 
-        Player player = new Player(user, createGameRequest.getUsername(), Color.RED, true);
+        Player player = new Player(gameIdString, user, createGameRequest.getUsername(), Color.RED, true);
         playerRepository.save(player);
 
         user.setPlayer(player);
@@ -182,7 +182,7 @@ public class StartServiceImpl implements StartService {
             }
         }
 
-        Player player = new Player(user, username, Color.values()[c], true);
+        Player player = new Player(gameIdString, user, username, Color.values()[c], true);
         player.setLobby(lobby);
         playerRepository.save(player);
 
