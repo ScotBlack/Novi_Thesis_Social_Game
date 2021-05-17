@@ -58,9 +58,7 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        Lobby lobby = game.getLobby();
-
-        List<Player> players = playerRepository.findPlayersByGameIdString(gameIdString);
+        Set<Player> players = game.getLobby().getPlayers();
 
         // make list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
@@ -110,20 +108,20 @@ public class GameServiceImpl implements GameService {
             }
         } else if (game.getGameType().equals(GameType.TEAMS)) {
             if (teamsList.contains(0) || teamsList.contains(1)) {
-                status = "Every team needs at least 2 players ";
+                status = "Every team needs at least 2 players";
             } else if (teamsList.contains(3)) {
-                status = "Every team needs at least 1 player with phone ";
+                status = "Every team needs at least 1 player with phone";
             } else {
                 canStart = true;
                 status = "Team game can be started";
             }
         }
 
-        lobby.setCanStart(canStart);
-        lobby.setStatus(status);
-        lobbyRepository.save(lobby);
+        game.getLobby().setCanStart(canStart);
+        game.getLobby().setStatus(status);
+        lobbyRepository.save(game.getLobby());
 
-        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(lobby));
+        return ResponseEntity.ok(ResponseBuilder.lobbyResponse(game.getLobby()));
     }
 
     @Override
@@ -139,7 +137,7 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findByGameIdString(gameIdString)
                 .orElseThrow(() -> new EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
 
-        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game)); // needs response object
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
  
     @Override
@@ -168,13 +166,6 @@ public class GameServiceImpl implements GameService {
             team.setHasAnswered(false);
             teamRepository.save(team);
         }
-
-        // selects miniGameType, but since there is only one MiniGameType currently
-//        int i = (int) Math.round(Math.random() * (MiniGameType.values().length -1));
-
-//        if (i > 4 || i < 0) {
-//            return ResponseEntity.status(200).body("out of bounds");
-//        }
 
         int i = 0;
 
