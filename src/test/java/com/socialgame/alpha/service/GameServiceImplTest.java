@@ -1,6 +1,7 @@
 package com.socialgame.alpha.service;
 
 import com.socialgame.alpha.domain.*;
+import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.response.ErrorResponse;
 import com.socialgame.alpha.dto.response.LobbyResponse;
 import com.socialgame.alpha.dto.response.PlayerResponse;
@@ -19,9 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.nio.file.attribute.UserPrincipal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,6 +46,11 @@ class GameServiceImplTest {
     Player player4;
     Team team1;
     Team team2;
+
+    Question question1;
+    Question question2;
+    Question question3;
+    Question question4;
 
     HttpServletRequest httpRequest;
     UserPrincipal mockPrincipal;
@@ -146,6 +150,11 @@ class GameServiceImplTest {
     game.getTeams().add(team2);
     lobby.setGame(game);
     lobby.setPlayers(new HashSet<>());
+
+    question1 = new Question();
+    question2 = new Question();
+    question3 = new Question();
+    question4 = new Question();
 
     httpRequest = mock(HttpServletRequest.class);
     mockPrincipal = mock(UserPrincipal.class);
@@ -370,18 +379,46 @@ class GameServiceImplTest {
     @Test
     void nextMiniGame_shouldResetAllTeamsHasAnsweredToFalse() {
         System.out.println("\n |||NextMiniGame Test|||");
+
         team1.setHasAnswered(true);
         team2.setHasAnswered(true);
 
-        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+        Set<String> answersSet =new HashSet<>();
+        answersSet.add("a");
+        answersSet.add("b");
+        answersSet.add("c");
+        answersSet.add("d");
 
-        ResponseEntity<?> responseEntity = gameService.nextMiniGame("abc");
+        List<Question> questionSet = new ArrayList<>();
+        questionSet.add(question1);
+        questionSet.add(question2);
+        questionSet.add(question3);
+        questionSet.add(question4);
+
+        question1.setAllAnswers(new HashSet<>());
+        question2.setAllAnswers(new HashSet<>());
+        question3.setAllAnswers(new HashSet<>());
+        question4.setAllAnswers(new HashSet<>());
+        question1.setAllAnswers(answersSet);
+        question2.setAllAnswers(answersSet);
+        question3.setAllAnswers(answersSet);
+        question4.setAllAnswers(answersSet);
+
+
+        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+        when(questionRepository.findAll()).thenReturn(questionSet);
+
+        gameService.nextMiniGame("abc");
 
         Assertions.assertFalse(team1.getHasAnswered());
             System.out.println("Test Complete: Team1 answered set False");
         Assertions.assertFalse(team2.getHasAnswered());
             System.out.println("Test Complete: Team2 answered set False");
+        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team1));
+        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team2));
+
     }
+
 
 
 
