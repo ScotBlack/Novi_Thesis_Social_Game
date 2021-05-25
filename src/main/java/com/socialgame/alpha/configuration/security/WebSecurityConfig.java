@@ -35,15 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     UserDetailsService userDetailsService;
 
 
-
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
-
-//    @Autowired
-//    RoleRepository roleRepository;
-//
-//    @Autowired
-//    public void setRoleRepository (RoleRepository roleRepository) {this.roleRepository = roleRepository;}
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -61,34 +54,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
-//    @Bean
-//    public RoleRepository roleRepository() { return new RoleRepository(); }
-
     @Bean
     public UserDetailsService userDetailsService() {
         return super.userDetailsService();
     }
 
-
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//
-//    @Bean
-//    public UserDetailsService userDetailsService()  {
-//        UserDetailsService userDetailsService =
-//                new UserDetailsServiceImpl();
-//        return userDetailsService;
-//    }
-
-
-
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

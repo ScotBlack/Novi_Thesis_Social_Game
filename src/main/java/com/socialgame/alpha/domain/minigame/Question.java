@@ -1,6 +1,6 @@
 package com.socialgame.alpha.domain.minigame;
 
-import com.socialgame.alpha.domain.enums.AgeSetting;
+
 import com.socialgame.alpha.domain.enums.MiniGameType;
 
 import javax.persistence.*;
@@ -22,8 +22,8 @@ public class Question extends MiniGame {
     public Question() {
     }
 
-    public Question(MiniGameType miniGameType, String question, AgeSetting ageSetting, String correctAnswer, String[] wrongAnswers, String topic) {
-        super(miniGameType, question, 10,ageSetting);
+    public Question(MiniGameType miniGameType, String question, String correctAnswer, String[] wrongAnswers, String topic) {
+        super(miniGameType, question, 10);
         this.correctAnswer = correctAnswer;
         this.allAnswers = new HashSet<>();
         this.allAnswers.add(correctAnswer);

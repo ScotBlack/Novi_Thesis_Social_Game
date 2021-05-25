@@ -1,12 +1,9 @@
 package com.socialgame.alpha.domain.minigame;
 
-import com.socialgame.alpha.domain.Player;
-import com.socialgame.alpha.domain.enums.AgeSetting;
+
 import com.socialgame.alpha.domain.enums.MiniGameType;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 //@Inheritance
@@ -25,17 +22,13 @@ public abstract class MiniGame {
     @Column
     private int points;
 
-    @Column
-    private AgeSetting ageSetting;
-
     public MiniGame() {
     }
 
-    public MiniGame(MiniGameType miniGameType, String question, int points, AgeSetting ageSetting) {
+    public MiniGame(MiniGameType miniGameType, String question, int points) {
         this.miniGameType = miniGameType;
         this.question = question;
         this.points = points;
-        this.ageSetting = ageSetting;
     }
 
     public long getId() { return id; }
@@ -50,6 +43,4 @@ public abstract class MiniGame {
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }
 
-    public AgeSetting getAgeSetting() { return ageSetting; }
-    public void setAgeSetting(AgeSetting ageSetting) { this.ageSetting = ageSetting; }
 }
