@@ -6,7 +6,6 @@ import com.socialgame.alpha.domain.enums.MiniGameType;
 import javax.persistence.*;
 
 @Entity
-//@Inheritance
 public abstract class MiniGame {
 
     @Id

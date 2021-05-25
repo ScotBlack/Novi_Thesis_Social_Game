@@ -16,13 +16,11 @@ public class Question extends MiniGame {
     @ElementCollection
     private Set<String> allAnswers;
 
-    @Column
-    private String topic;
 
     public Question() {
     }
 
-    public Question(MiniGameType miniGameType, String question, String correctAnswer, String[] wrongAnswers, String topic) {
+    public Question(MiniGameType miniGameType, String question, String correctAnswer, String[] wrongAnswers) {
         super(miniGameType, question, 10);
         this.correctAnswer = correctAnswer;
         this.allAnswers = new HashSet<>();
@@ -30,7 +28,7 @@ public class Question extends MiniGame {
         this.allAnswers.add(wrongAnswers[0]);
         this.allAnswers.add(wrongAnswers[1]);
         this.allAnswers.add(wrongAnswers[2]);
-        this.topic = topic;
+
     }
 
     public String getCorrectAnswer() {
@@ -46,7 +44,4 @@ public class Question extends MiniGame {
     public void setAllAnswers(Set<String> wrongAnswers) {
         this.allAnswers = allAnswers;
     }
-
-    public String getTopic() { return topic; }
-    public void setTopic(String topic) { this.topic = topic; }
 }
