@@ -5,7 +5,6 @@ import com.socialgame.alpha.domain.Lobby;
 import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Team;
 import com.socialgame.alpha.domain.minigame.MiniGame;
-import com.socialgame.alpha.domain.minigame.Question;
 import com.socialgame.alpha.dto.response.minigame.QuestionResponse;
 import com.socialgame.alpha.dto.response.minigame.TeamAnswerResponse;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 public class ResponseBuilder {
 
     public static LobbyResponse lobbyResponse(Lobby lobby) {
-        LobbyResponse lobbyResponse = new LobbyResponse (
+        return new LobbyResponse (
                 lobby.getGameIdString(),
                 lobby.getCanStart(),
                 lobby.getStatus(),
@@ -23,7 +22,6 @@ public class ResponseBuilder {
                 lobby.getGame().getScoreToWin(),
                 playerResponseSet(lobby)
         );
-        return lobbyResponse;
     }
 
     public static PlayerResponse playerResponse (Player player) {

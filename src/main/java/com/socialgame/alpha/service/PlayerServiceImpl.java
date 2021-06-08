@@ -49,35 +49,27 @@ public class PlayerServiceImpl implements PlayerService {
         Color newColor = null;
 
         String username = request.getUserPrincipal().getName();
-        Player player1 = userRepository.findByUsername(username)
+        Player playerJwt = userRepository.findByUsername(username)
                 .orElseThrow(() -> new  EntityNotFoundException("User with: " + username + " does not exist."))
                 .getPlayer();
 
-
-//        String gameIdString = player1.getUser().getGameIdString();
-
-//        Game game = gameRepository.findByGameIdString(gameIdString)
-//                .orElseThrow(() -> new  EntityNotFoundException("Game with: " + gameIdString + " does not exist."));
-//
-//        if (game.getStarted()) throw new IllegalArgumentException("Game has already started.");
-
-        Player player2 = playerRepository.findById(id)
+        Player playerWeb = playerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player with ID: " + id + " does not exist."));
 
-        if (!player1.equals(player2)) {
+        if (!playerJwt.equals(playerWeb)) {
             throw new IllegalArgumentException("You may only change your own color");
         }
 
         for (int i = 0; i < Color.values().length - 1; i++) {
-            if (player2.getColor().equals(Color.values()[i])) {
+            if (playerWeb.getColor().equals(Color.values()[i])) {
                 newColor = Color.values()[i + 1];
             }
         }
 
-        player2.setColor(newColor == null ? Color.RED : newColor);
-        playerRepository.save(player2);
+        playerWeb.setColor(newColor == null ? Color.RED : newColor);
+        playerRepository.save(playerWeb);
 
-        return ResponseEntity.ok(ResponseBuilder.playerResponse(player2));
+        return ResponseEntity.ok(ResponseBuilder.playerResponse(playerWeb));
     }
 
     @Override

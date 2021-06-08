@@ -18,10 +18,10 @@ public class MiniGameConfig {
             answers[1] = "wrong B";
             answers[2] = "wrong C";
 
-            Question one = new Question(MiniGameType.QUESTION, "What color is a Banana", "Yellow", answers, "Biology" );
-            Question two = new Question(MiniGameType.QUESTION,"Capital of Peru", "Lima", answers, "Geography" );
-            Question three = new Question(MiniGameType.QUESTION,"2 + 2", "4", answers, "Math" );
-            Question four = new Question(MiniGameType.QUESTION,"Lead singer Queen?", "Freddie Mercury", answers, "Pop" );
+            Question one = new Question(MiniGameType.QUESTION, "What color is a Banana", "Yellow", answers);
+            Question two = new Question(MiniGameType.QUESTION,"Capital of Peru", "Lima", answers);
+            Question three = new Question(MiniGameType.QUESTION,"2 + 2", "4", answers);
+            Question four = new Question(MiniGameType.QUESTION,"Lead singer Queen?", "Freddie Mercury", answers);
 
             miniGameRepository.save(one);
             miniGameRepository.save(two);

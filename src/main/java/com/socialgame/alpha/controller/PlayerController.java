@@ -23,32 +23,15 @@ public class PlayerController {
     @Autowired
     public void setPlayerService(PlayerService playerService) {this.playerService = playerService;}
 
-//    @GetMapping(path= "/username")
-//    public String currentUserNameSimple(HttpServletRequest request) {
-//        Principal principal = request.getUserPrincipal();
-//        return principal.getName();
-//    }
-
     @PostMapping(path="/answer")
     public ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, @Valid @RequestBody TeamAnswerRequest answerRequest) {
         return playerService.teamAnswer(httpRequest, answerRequest);
     }
 
-
     @GetMapping(path="/toggle/{id}")
     public ResponseEntity<?> togglePlayerColor (@PathVariable("id") Long id, HttpServletRequest request)  {
         return playerService.togglePlayerColor(id, request);
     }
-
-//    @GetMapping(path="/answer")
-//    public ResponseEntity<?> teamAnswer(HttpServletRequest request) {
-//        return playerService.teamAnswer(request);
-//    }
-
-//    @PostMapping(path="/answer/{id}")
-//    public ResponseEntity<?> teamAnswer(@RequestBody TeamAnswerRequest teamAnswerRequest, @PathVariable("id") Long teamId) {
-//        return playerService.teamAnswer(teamAnswerRequest, teamId);
-//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

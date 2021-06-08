@@ -113,6 +113,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok("hallo?? something wrong with ResponseObject");
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
 }
