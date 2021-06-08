@@ -19,13 +19,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     Player findPlayerByNameAndLobbyId(@Param("lobbyId") Long gameId,
                                      @Param("name") String name);
 
-//    @Query("SELECT p FROM Player p WHERE p.lobby.gameIdString= :gameIdString")
-//    List<Player> findPlayersByGameIdString(@Param("gameIdString") String gameIdString);
-
     List<Player> findPlayersByGameIdString(String gameIdString);
 
     Optional<Player> findByName(String name);
-
-//    @Query("SELECT p FROM Player p WHERE p.game.id= :gameId ORDER BY p.id ASC")
-//    List<Player> findPlayersByLobbyId(@Param("gameId") Long lobbyId);
 }

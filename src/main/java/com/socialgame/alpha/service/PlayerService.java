@@ -6,9 +6,6 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 
 public interface PlayerService {
-
     ResponseEntity<?> togglePlayerColor(Long id, HttpServletRequest request);
-//    ResponseEntity<?> teamAnswer(TeamAnswerRequest teamAnswerRequest, Long teamId);
     ResponseEntity<?> teamAnswer(HttpServletRequest httpRequest, TeamAnswerRequest answerRequest);
-
 }

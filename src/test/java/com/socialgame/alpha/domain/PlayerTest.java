@@ -29,7 +29,7 @@ class PlayerTest {
         player.setName("Steve");
         player.setColor(Color.RED);
         player.setPhone(true);
-//        player.setLobby(lobby);
+        player.setLobby(lobby);
     }
 
 

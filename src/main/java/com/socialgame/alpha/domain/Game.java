@@ -36,9 +36,6 @@ public class Game {
     @OneToMany
     private Set<Team> currentCompetingTeams;
 
-    // teams that have answered or sth (so cant get mutliple points per question)
-    // also it can check if all teams have answered, to continue
-
     public Game() {
     }
 

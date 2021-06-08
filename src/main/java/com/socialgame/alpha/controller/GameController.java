@@ -43,8 +43,6 @@ public class GameController {
     public ResponseEntity<?> nextMiniGame(@PathVariable("id") String gameIdString) {
         return gameService.nextMiniGame(gameIdString);
     }
-
-    // need miniGameResult()
 }
 
 

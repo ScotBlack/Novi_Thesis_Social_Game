@@ -1,9 +1,8 @@
 package com.socialgame.alpha.service;
 
-import com.socialgame.alpha.configuration.security.jwt.JwtUtils;
+
 import com.socialgame.alpha.domain.Game;
 import com.socialgame.alpha.domain.Lobby;
-import com.socialgame.alpha.domain.Player;
 import com.socialgame.alpha.domain.Role;
 import com.socialgame.alpha.domain.enums.ERole;
 import com.socialgame.alpha.dto.request.CreateGameRequest;
@@ -15,12 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.Optional;

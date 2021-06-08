@@ -13,12 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface LobbyRepository extends JpaRepository<Lobby, Long> {
-
     Boolean existsByGameIdString(String gameIdString);
     Optional<Lobby> findByGameIdString(String gameIdString);
-
-//    @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
-//    Player findPlayerByNameAndLobbyId(@Param("lobbyId") Long gameId,
-//                                      @Param("name") String name);
-
 }
