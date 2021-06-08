@@ -14,14 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
-
    Boolean existsByGameIdString(String gameIdString);
    Optional<Game> findByGameIdString(String gameIdString);
-
-//    org.mockito.stubbing.OngoingStubbing<Optional<Class<Game>>> findById(Class<Game> gameClass, long l);
-
-//    @Query("SELECT p FROM Player p WHERE p.game.id = :gameId and p.name = :name")
-//    Player findPlayerByNameAndGameId(@Param("gameId") Long gameId,
-//                                     @Param("name") String name);
-
 }

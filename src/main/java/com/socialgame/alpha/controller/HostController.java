@@ -1,9 +1,5 @@
 package com.socialgame.alpha.controller;
 
-import com.socialgame.alpha.domain.enums.GameType;
-import com.socialgame.alpha.dto.request.JwtRequest;
-import com.socialgame.alpha.dto.request.SetGamePointsRequest;
-import com.socialgame.alpha.dto.request.SetGameTypeRequest;
 import com.socialgame.alpha.dto.request.SettingRequest;
 import com.socialgame.alpha.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;

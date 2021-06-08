@@ -7,5 +7,4 @@ import org.springframework.http.ResponseEntity;
 public interface StartService {
     ResponseEntity<?>  createGame (CreateGameRequest createGameRequest);
     ResponseEntity<?> joinGame (JoinGameRequest joinGameRequest);
-
 }

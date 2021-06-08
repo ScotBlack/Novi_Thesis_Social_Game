@@ -48,8 +48,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse();
-
         String username = request.getUserPrincipal().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User with: " + username + " does not exist."));
@@ -60,10 +58,9 @@ public class GameServiceImpl implements GameService {
 
         Set<Player> players = game.getLobby().getPlayers();
 
-        // make list of players & phones per color
+        // makes list of players & phones per color
         List<Integer> teamsList = new ArrayList<>();
 
-        // see if i can turn this into .stream().map() etc
         for (Color color : Color.values()) {
             int playerNum = 0;
             int phoneNum = 0;
@@ -131,7 +128,6 @@ public class GameServiceImpl implements GameService {
 
         return ResponseEntity.ok(ResponseBuilder.playerResponseSet(game.getLobby()));
     }
-
 
     @Override
     public ResponseEntity<?> getScore(String gameIdString) {

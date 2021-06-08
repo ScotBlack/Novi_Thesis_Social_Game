@@ -1,6 +1,6 @@
 package com.socialgame.alpha.domain;
 
-import com.socialgame.alpha.domain.enums.AgeSetting;
+
 import com.socialgame.alpha.domain.enums.MiniGameType;
 import com.socialgame.alpha.domain.minigame.Question;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,16 +19,14 @@ public class QuestionTest {
 
     @BeforeEach
     void setUp() {
-        question = new Question(MiniGameType.BEST_ANSWER, "How?", AgeSetting.NORMAL, "B", answers, "Wrong");
+        question = new Question(MiniGameType.BEST_ANSWER, "How?", "B", answers);
 
         question.setId(1L);
         question.setMiniGameType(MiniGameType.QUESTION);
         question.setQuestion("Why?");
         question.setPoints(10);
-        question.setAgeSetting(AgeSetting.FAMILY);
         question.setCorrectAnswer("A");
         question.setAllAnswers(new HashSet<>());
-        question.setTopic("Test");
     }
 
     @Test
@@ -39,10 +37,8 @@ public class QuestionTest {
                         () ->  assertEquals(MiniGameType.QUESTION, question.getMiniGameType()),
                         () ->  assertEquals("Why?",  question.getQuestion()),
                         () ->  assertEquals(10,  question.getPoints()),
-                        () ->  assertEquals(AgeSetting.FAMILY,  question.getAgeSetting()),
                         () ->  assertEquals("A",  question.getCorrectAnswer()),
-                        () ->  assertTrue(question.getAllAnswers() instanceof Set),
-                        () ->  assertEquals("Test",  question.getTopic())
+                        () ->  assertTrue(question.getAllAnswers() instanceof Set)
                 )
         );
 

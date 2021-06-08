@@ -24,18 +24,18 @@ public class GameController {
         return gameService.findPlayerByID(id);
     }
 
+    @GetMapping("/{gameIdString}/players")
+    public ResponseEntity<?> getPlayers(@PathVariable("gameIdString") String gameIdString) {
+        return gameService.getPlayers(gameIdString);
+    }
+
     @GetMapping("/lobbyStatus")
     public ResponseEntity<?> lobbyStatusUpdate(HttpServletRequest request) {
         return gameService.lobbyStatusUpdate(request);
     }
 
-    @GetMapping("/{id}/players")
-    public ResponseEntity<?> getPlayers(@PathVariable("id") String gameIdString) {
-        return gameService.getPlayers(gameIdString);
-    }
-
-    @GetMapping(path="/{id}/score")
-    public ResponseEntity<?> getScore(@PathVariable("id") String gameIdString) {
+    @GetMapping(path="/{gameIdString}/score")
+    public ResponseEntity<?> getScore(@PathVariable("gameIdString") String gameIdString) {
         return gameService.getScore(gameIdString);
     }
 
@@ -43,8 +43,6 @@ public class GameController {
     public ResponseEntity<?> nextMiniGame(@PathVariable("id") String gameIdString) {
         return gameService.nextMiniGame(gameIdString);
     }
-
-    // need miniGameResult()
 }
 
 

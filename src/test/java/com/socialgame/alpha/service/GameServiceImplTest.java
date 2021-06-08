@@ -375,51 +375,47 @@ class GameServiceImplTest {
         Assertions.assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
-    /** nextMiniGame tests */
-    @Test
-    void nextMiniGame_shouldResetAllTeamsHasAnsweredToFalse() {
-        System.out.println("\n |||NextMiniGame Test|||");
-
-        team1.setHasAnswered(true);
-        team2.setHasAnswered(true);
-
-        Set<String> answersSet =new HashSet<>();
-        answersSet.add("a");
-        answersSet.add("b");
-        answersSet.add("c");
-        answersSet.add("d");
-
-        List<Question> questionSet = new ArrayList<>();
-        questionSet.add(question1);
-        questionSet.add(question2);
-        questionSet.add(question3);
-        questionSet.add(question4);
-
-        question1.setAllAnswers(new HashSet<>());
-        question2.setAllAnswers(new HashSet<>());
-        question3.setAllAnswers(new HashSet<>());
-        question4.setAllAnswers(new HashSet<>());
-        question1.setAllAnswers(answersSet);
-        question2.setAllAnswers(answersSet);
-        question3.setAllAnswers(answersSet);
-        question4.setAllAnswers(answersSet);
-
-
-        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
-        when(questionRepository.findAll()).thenReturn(questionSet);
-
-        gameService.nextMiniGame("abc");
-
-        Assertions.assertFalse(team1.getHasAnswered());
-            System.out.println("Test Complete: Team1 answered set False");
-        Assertions.assertFalse(team2.getHasAnswered());
-            System.out.println("Test Complete: Team2 answered set False");
-        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team1));
-        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team2));
-
-    }
-
-
-
-
+//    /** nextMiniGame tests */
+//    @Test
+//    void nextMiniGame_shouldResetAllTeamsHasAnsweredToFalse() {
+//        System.out.println("\n |||NextMiniGame Test|||");
+//
+//        team1.setHasAnswered(true);
+//        team2.setHasAnswered(true);
+//
+//        Set<String> answersSet =new HashSet<>();
+//        answersSet.add("a");
+//        answersSet.add("b");
+//        answersSet.add("c");
+//        answersSet.add("d");
+//
+//        List<Question> questionSet = new ArrayList<>();
+//        questionSet.add(question1);
+//        questionSet.add(question2);
+//        questionSet.add(question3);
+//        questionSet.add(question4);
+//
+//        question1.setAllAnswers(new HashSet<>());
+//        question2.setAllAnswers(new HashSet<>());
+//        question3.setAllAnswers(new HashSet<>());
+//        question4.setAllAnswers(new HashSet<>());
+//        question1.setAllAnswers(answersSet);
+//        question2.setAllAnswers(answersSet);
+//        question3.setAllAnswers(answersSet);
+//        question4.setAllAnswers(answersSet);
+//
+//
+//        when(gameRepository.findByGameIdString("abc")).thenReturn(Optional.ofNullable(game));
+//        when(questionRepository.findAll()).thenReturn(questionSet);
+//
+//        gameService.nextMiniGame("abc");
+//
+//        Assertions.assertFalse(team1.getHasAnswered());
+//            System.out.println("Test Complete: Team1 answered set False");
+//        Assertions.assertFalse(team2.getHasAnswered());
+//            System.out.println("Test Complete: Team2 answered set False");
+//        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team1));
+//        Assertions.assertTrue(game.getCurrentCompetingTeams().contains(team2));
+//
+//    }
 }

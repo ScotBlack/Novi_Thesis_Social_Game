@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -113,6 +112,6 @@ public class HostServiceImpl implements HostService {
         game.setStarted(true);
         gameRepository.save(game);
 
-        return ResponseEntity.ok("hallo?? something wrong with ResponseObject");
+        return ResponseEntity.ok(ResponseBuilder.teamResponseSet(game));
     }
 }
